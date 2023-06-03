@@ -3,7 +3,7 @@ package org.consoleApp.Students;
 import java.util.List;
 
 public interface StudentsDAO {
-    List<Student> findById();
+    List<Student> findAll();
     Student findById(int studentId);
     void insert(Student student);
     void update(Student student);

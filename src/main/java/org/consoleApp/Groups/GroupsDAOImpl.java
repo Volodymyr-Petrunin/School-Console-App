@@ -1,0 +1,107 @@
+package org.consoleApp.Groups;
+
+import org.consoleApp.DataBaseSettings.DBConnector;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class GroupsDAOImpl implements GroupDAO{
+
+    private Connection connection;
+
+    public GroupsDAOImpl(DBConnector dbConnector) {
+        connection = dbConnector.getConnection();
+    }
+
+    @Override
+    public List<Group> findAll() {
+        List<Group> groups = new ArrayList<>();
+
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM groups");
+
+            while (resultSet.next()){
+                int groupId = resultSet.getInt("group_id");
+                String groupName = resultSet.getString("group_name");
+
+                Group group = new Group(groupId, groupName);
+                groups.add(group);
+            }
+
+            resultSet.close();
+            statement.close();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return groups;
+    }
+
+    @Override
+    public Group findById(int id) {
+        Group group = null;
+
+        PreparedStatement statement = null;
+        try {
+            statement = connection.prepareStatement("SELECT * FROM groups WHERE group_id = ?");
+            statement.setInt(1,id);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()){
+                String groupName = resultSet.getString("group_name");
+                group = new Group(id, groupName);
+            }
+
+            resultSet.close();
+            statement.close();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return group;
+    }
+
+    @Override
+    public void insert(Group group) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO groups (group_name) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
+            statement.setString(1, group.groupName());
+            statement.executeUpdate();
+
+            statement.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void update(Group group) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("UPDATE groups SET group_name = ? WHERE group_id = ?");
+            statement.setString(1, group.groupName());
+            statement.setInt(2, group.groupId());
+            statement.executeUpdate();
+
+            statement.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void delete(Group group) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("DELETE FROM groups WHERE group_id = ?");
+            statement.setInt(1, group.groupId());
+            statement.executeUpdate();
+
+            statement.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}

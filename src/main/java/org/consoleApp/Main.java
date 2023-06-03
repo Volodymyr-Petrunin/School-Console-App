@@ -19,6 +19,9 @@ public class Main {
         Course newCourse = new Course(1,"New Course", "Description");
         courseDAO.insert(newCourse);
 
+        Course course1 = new Course(1,"New Course", "Description");
+        courseDAO.insert(course1);
+
         Course courseToUpdate = new Course(1, "Updated Course", "Updated Description");
         courseDAO.update(courseToUpdate);
 
@@ -26,8 +29,6 @@ public class Main {
         Course foundCourse = courseDAO.findById(courseId);
         System.out.println(foundCourse);
 
-        Course courseToDelete = new Course(1,null, null);
-        courseDAO.delete(courseToDelete);
 
 
         List<Course> allCourses = courseDAO.findAll();

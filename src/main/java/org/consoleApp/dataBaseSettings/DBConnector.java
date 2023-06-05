@@ -1,4 +1,4 @@
-package org.consoleApp.DataBaseSettings;
+package org.consoleApp.dataBaseSettings;
 
 import java.sql.*;
 public class DBConnector {

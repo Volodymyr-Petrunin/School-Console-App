@@ -1,4 +1,4 @@
-package org.consoleApp.Courses;
+package org.consoleApp.courses;
 
 import java.util.List;
 

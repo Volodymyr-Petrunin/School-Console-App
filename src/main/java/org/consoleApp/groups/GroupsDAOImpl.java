@@ -1,6 +1,6 @@
-package org.consoleApp.Groups;
+package org.consoleApp.groups;
 
-import org.consoleApp.DataBaseSettings.DBConnector;
+import org.consoleApp.dataBaseSettings.DBConnector;
 
 import java.sql.*;
 import java.util.ArrayList;

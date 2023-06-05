@@ -1,8 +1,8 @@
 package org.consoleApp;
 
-import org.consoleApp.Courses.CourseDAOImpl;
-import org.consoleApp.DataBaseSettings.DBConnector;
-import org.consoleApp.DataBaseSettings.ScriptRunner;
+import org.consoleApp.courses.CourseDAOImpl;
+import org.consoleApp.dataBaseSettings.DBConnector;
+import org.consoleApp.dataBaseSettings.ScriptRunner;
 
 import java.util.Scanner;
 import java.util.StringJoiner;

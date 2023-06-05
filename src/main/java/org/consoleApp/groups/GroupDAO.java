@@ -1,4 +1,4 @@
-package org.consoleApp.Groups;
+package org.consoleApp.groups;
 
 import java.util.List;
 

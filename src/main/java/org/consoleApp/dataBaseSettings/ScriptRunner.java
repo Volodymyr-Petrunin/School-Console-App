@@ -1,4 +1,4 @@
-package org.consoleApp.DataBaseSettings;
+package org.consoleApp.dataBaseSettings;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

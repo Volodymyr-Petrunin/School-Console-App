@@ -1,4 +1,4 @@
-package org.consoleApp.Students;
+package org.consoleApp.students;
 
 import java.util.List;
 

@@ -1,7 +1,5 @@
 package org.consoleApp;
 
-import org.consoleApp.readers.ResourcesFileReader;
-
 import java.util.*;
 
 public class GenerationTestData {

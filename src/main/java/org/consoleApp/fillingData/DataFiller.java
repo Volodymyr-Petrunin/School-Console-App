@@ -1,4 +1,4 @@
-package org.consoleApp.FillingData;
+package org.consoleApp.fillingData;
 
 public interface DataFiller {
     void fillData();

@@ -1,16 +1,5 @@
 package org.consoleApp;
 
-import org.consoleApp.DataBaseSettings.DBConnector;
-import org.consoleApp.DataBaseSettings.ScriptRunner;
-import org.consoleApp.Groups.Group;
-import org.consoleApp.Groups.GroupsDAOImpl;
-import org.consoleApp.Students.Student;
-import org.consoleApp.Students.StudentsDAOImpl;
-import org.consoleApp.readers.ResourcesFileReader;
-
-import java.sql.SQLException;
-import java.util.List;
-
 public class Main {
     public static void main(String[] args) {
 //        CourseDAOImpl courseDAO = new CourseDAOImpl(dbConnector);

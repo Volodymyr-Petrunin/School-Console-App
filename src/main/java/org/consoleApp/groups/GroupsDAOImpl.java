@@ -61,7 +61,6 @@ public class GroupsDAOImpl implements GroupDAO{
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
         return group;
     }
 

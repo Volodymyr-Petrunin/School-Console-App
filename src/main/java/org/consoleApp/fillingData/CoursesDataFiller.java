@@ -17,7 +17,7 @@ public class CoursesDataFiller implements DataFiller{
     private final List<String> courseNameList = courseName(coursesList);
     private final List<String> courseDescriptionList = courseDescription(coursesList);
     private final DBConnector dbConnector = new DBConnector();
-    private CourseDAOImpl courseImpl = new CourseDAOImpl(dbConnector);
+    private final CourseDAOImpl courseImpl = new CourseDAOImpl(dbConnector);
 
     @Override
     public void fillData() {

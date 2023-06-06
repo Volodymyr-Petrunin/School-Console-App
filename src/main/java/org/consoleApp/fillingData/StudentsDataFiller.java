@@ -1,6 +1,6 @@
 package org.consoleApp.fillingData;
 
-import org.consoleApp.generationData.GenerationTestData;
+import org.consoleApp.generationData.GenerationDataInitial;
 import org.consoleApp.dataBaseSettings.DBConnector;
 import org.consoleApp.readers.ResourcesFileReader;
 import org.consoleApp.students.Student;
@@ -13,7 +13,6 @@ public class StudentsDataFiller implements DataFiller{
     private final DBConnector dbConnector = new DBConnector();
     private final ResourcesFileReader readerFirstName = new ResourcesFileReader("firstName.txt");
     private final ResourcesFileReader readerSecondName = new ResourcesFileReader("secondName.txt");
-    private final GenerationTestData generationTestData = new GenerationTestData();
     private final StudentsDAOImpl studentsDAO = new StudentsDAOImpl(dbConnector);
     public StudentsDataFiller(int quantityGenerations) {
         this.quantityGenerations = quantityGenerations;
@@ -21,8 +20,14 @@ public class StudentsDataFiller implements DataFiller{
 
     @Override
     public void fillData() {
-        List<String> firstNameList = generationTestData.generationData(readerFirstName.read(),quantityGenerations);
-        List<String> secondNameList = generationTestData.generationData(readerSecondName.read(),quantityGenerations);
+        GenerationDataInitial firstName = new GenerationDataInitial(readerFirstName.read(),quantityGenerations);
+        GenerationDataInitial secondName = new GenerationDataInitial(readerSecondName.read(),quantityGenerations);
+
+        List<String> firstNameList = firstName.generationData();
+        List<String> secondNameList = secondName.generationData();
+
+        System.out.println(firstNameList);
+        System.out.println(secondNameList);
 
         for (int currentIndex = 0; currentIndex < quantityGenerations; currentIndex++){
             Student student = new Student(currentIndex,1,firstNameList.get(currentIndex),secondNameList.get(currentIndex));

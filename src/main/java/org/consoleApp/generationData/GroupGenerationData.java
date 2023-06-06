@@ -6,18 +6,25 @@ import java.util.Random;
 
 public class GroupGenerationData implements GenerationData{
     private final Random random = new Random();
+    private List<String> nameList;
+    private List<String> numberList;
+    private int quantity;
+
+    public GroupGenerationData(List<String> dataNameList, List<String> dataNumberList, int quantity) {
+        this.nameList = dataNameList;
+        this.numberList = dataNumberList;
+        this.quantity = quantity;
+    }
     @Override
-    public List<String> generationData(List<String> dataList, int quantity) {
+    public List<String> generationData() {
         StringBuilder resultBuilder = new StringBuilder();
-        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        String numbers = "0123456789";
 
         List<String> result = new ArrayList<>();
 
-        for (int i = 0; i < quantity; i++){
-            resultBuilder.append(randomChar(characters,2));
+        for (int index = 0; index < quantity; index++){
+            resultBuilder.append(randomChar(nameList.get(0),2)); // get 0 because in file 1 line
             resultBuilder.append("-");
-            resultBuilder.append(randomChar(numbers,2));
+            resultBuilder.append(randomChar(numberList.get(0),2)); // same here
 
             result.add(resultBuilder.toString());
             resultBuilder.setLength(0);

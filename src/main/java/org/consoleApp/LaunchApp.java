@@ -7,7 +7,6 @@ import org.consoleApp.dataBaseSettings.ScriptRunner;
 import org.consoleApp.fillingData.CoursesDataFiller;
 import org.consoleApp.fillingData.GroupDataFiller;
 import org.consoleApp.fillingData.StudentsDataFiller;
-import org.consoleApp.generationData.GroupGenerationData;
 import org.consoleApp.groups.Group;
 import org.consoleApp.groups.GroupsDAOImpl;
 import org.consoleApp.students.Student;
@@ -29,8 +28,7 @@ public class LaunchApp {
     private final CoursesDataFiller dataFiller = new CoursesDataFiller();
     private boolean exit = false;
     public void launch(){
-        GroupGenerationData data = new GroupGenerationData();
-        data.generationData(null,3);
+
         while (!exit){
             System.out.println(menu());
             userChooses();

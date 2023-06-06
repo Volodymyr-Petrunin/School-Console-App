@@ -9,13 +9,14 @@ import org.consoleApp.records.CourseInfo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 public class CoursesDataFiller implements DataFiller{
     private final ResourcesFileReader readerCourses = new ResourcesFileReader("courses.txt");
     private final CourseParser parser = new CourseParser();
     private final List<CourseInfo> coursesList = parsedList(readerCourses.read());
-    private final List<String> courseNameList = courseName(coursesList);
-    private final List<String> courseDescriptionList = courseDescription(coursesList);
+    private final List<String> courseNameList = getCourseInfo(coursesList, CourseInfo::name);
+    private final List<String> courseDescriptionList = getCourseInfo(coursesList, CourseInfo::description);
     private final DBConnector dbConnector = new DBConnector();
     private final CourseDAOImpl courseImpl = new CourseDAOImpl(dbConnector);
 
@@ -41,18 +42,12 @@ public class CoursesDataFiller implements DataFiller{
         return result;
     }
 
-    private List<String> courseName(List<CourseInfo> currentObject){
-        List<String> nameList = new ArrayList<>();
+    private List<String> getCourseInfo(List<CourseInfo> currentObject, Function<CourseInfo, String> getInfo){
+        List<String> currentList = new ArrayList<>();
         for (CourseInfo currentLine : currentObject){
-            nameList.add(currentLine.name());
+            String value = getInfo.apply(currentLine);
+            currentList.add(value);
         }
-        return nameList;
-    }
-    private List<String> courseDescription(List<CourseInfo> currentObject){
-        List<String> descriptionList = new ArrayList<>();
-        for (CourseInfo currentLine : currentObject){
-            descriptionList.add(currentLine.description());
-        }
-        return descriptionList;
+        return currentList;
     }
 }

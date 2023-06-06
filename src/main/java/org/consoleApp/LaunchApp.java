@@ -6,8 +6,12 @@ import org.consoleApp.dataBaseSettings.DBConnector;
 import org.consoleApp.dataBaseSettings.ScriptRunner;
 import org.consoleApp.fillingData.CoursesDataFiller;
 import org.consoleApp.fillingData.GroupDataFiller;
+import org.consoleApp.fillingData.StudentsDataFiller;
+import org.consoleApp.generationData.GroupGenerationData;
 import org.consoleApp.groups.Group;
 import org.consoleApp.groups.GroupsDAOImpl;
+import org.consoleApp.students.Student;
+import org.consoleApp.students.StudentsDAOImpl;
 
 import java.util.List;
 import java.util.Scanner;
@@ -19,10 +23,14 @@ public class LaunchApp {
     private final ScriptRunner scriptRunner = new ScriptRunner(dbConnector);
     private final CourseDAOImpl courseDAO = new CourseDAOImpl(dbConnector);
     private final GroupsDAOImpl groupsDAO = new GroupsDAOImpl(dbConnector);
+    private final StudentsDAOImpl studentsDAO = new StudentsDAOImpl(dbConnector);
     private final GroupDataFiller groupDataFiller = new GroupDataFiller(10);
+    private final StudentsDataFiller studentsDataFiller = new StudentsDataFiller(200);
     private final CoursesDataFiller dataFiller = new CoursesDataFiller();
     private boolean exit = false;
     public void launch(){
+        GroupGenerationData data = new GroupGenerationData();
+        data.generationData(null,3);
         while (!exit){
             System.out.println(menu());
             userChooses();
@@ -64,7 +72,11 @@ public class LaunchApp {
                 System.out.println(group);
             }
         }else if (currentChose == 3){
-
+            List<Student> allCourses = studentsDAO.findAll();
+            System.out.println("All Courses:");
+            for (Student student : allCourses) {
+                System.out.println(student);
+            }
         }else if (currentChose == 4){
 
         }else if (currentChose == 5){
@@ -81,6 +93,7 @@ public class LaunchApp {
 
         dataFiller.fillData();
         groupDataFiller.fillData();
+        studentsDataFiller.fillData();
     }
 
 }

@@ -1,6 +1,6 @@
 package org.consoleApp.fillingData;
 
-import org.consoleApp.GenerationTestData;
+import org.consoleApp.generationData.GenerationTestData;
 import org.consoleApp.dataBaseSettings.DBConnector;
 import org.consoleApp.groups.Group;
 import org.consoleApp.groups.GroupsDAOImpl;

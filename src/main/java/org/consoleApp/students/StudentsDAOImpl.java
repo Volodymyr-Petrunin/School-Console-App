@@ -110,4 +110,23 @@ public class StudentsDAOImpl implements StudentsDAO{
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public int getGroupSize(int groupId) {
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) FROM students WHERE group_id = ?");
+            statement.setInt(1,groupId);
+            ResultSet resultSet = statement.executeQuery();
+
+            if (resultSet.next()){
+                return resultSet.getInt("count");
+            }
+
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return 0;
+    }
 }

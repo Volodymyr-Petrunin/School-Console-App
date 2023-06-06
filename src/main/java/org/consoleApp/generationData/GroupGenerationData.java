@@ -6,15 +6,20 @@ import java.util.Random;
 
 public class GroupGenerationData implements GenerationData{
     private final Random random = new Random();
-    private List<String> nameList;
-    private List<String> numberList;
+    private List<String> caractersList;
+    private List<String> numbersList;
     private int quantity;
+    private int amountOfLetters;
+    private int amountOfNumbers;
 
-    public GroupGenerationData(List<String> dataNameList, List<String> dataNumberList, int quantity) {
-        this.nameList = dataNameList;
-        this.numberList = dataNumberList;
+    public GroupGenerationData(List<String> caractersList, List<String> numbersList, int quantity, int amountOfLetters, int amountOfNumbers) {
+        this.caractersList = caractersList;
+        this.numbersList = numbersList;
         this.quantity = quantity;
+        this.amountOfLetters = amountOfLetters;
+        this.amountOfNumbers = amountOfNumbers;
     }
+
     @Override
     public List<String> generationData() {
         StringBuilder resultBuilder = new StringBuilder();
@@ -22,15 +27,16 @@ public class GroupGenerationData implements GenerationData{
         List<String> result = new ArrayList<>();
 
         for (int index = 0; index < quantity; index++){
-            resultBuilder.append(randomChar(nameList.get(0),2)); // get 0 because in file 1 line
+            resultBuilder.append(randomChar(caractersList.get(0),amountOfLetters)); // get 0 because in file characters 1 line
             resultBuilder.append("-");
-            resultBuilder.append(randomChar(numberList.get(0),2)); // same here
+            resultBuilder.append(randomChar(numbersList.get(0),amountOfNumbers)); // same here but file numbers
 
             result.add(resultBuilder.toString());
             resultBuilder.setLength(0);
         }
         return result;
     }
+
     private String randomChar(String characters, int quantity){
         StringBuilder result = new StringBuilder();
 

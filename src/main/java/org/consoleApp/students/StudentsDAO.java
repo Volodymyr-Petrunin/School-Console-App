@@ -8,4 +8,5 @@ public interface StudentsDAO {
     void insert(Student student);
     void update(Student student);
     void delete(int studentId);
+    int getGroupSize(int groupId);
 }

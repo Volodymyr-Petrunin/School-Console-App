@@ -23,9 +23,8 @@ public class GroupDataFiller implements DataFiller {
         List<String> characters = readCharacters.read();
         List<String> numbers = readNumbers.read();
 
-        GroupGenerationData generationData = new GroupGenerationData(characters,numbers,quantityGenerations);
+        GroupGenerationData generationData = new GroupGenerationData(characters,numbers,quantityGenerations,2,2);
         List<String> result = generationData.generationData();
-        System.out.println(result);
 
         for (int currentIndex = 0; currentIndex < quantityGenerations; currentIndex++){
             groupsDAO.insert(new Group(currentIndex, result.get(currentIndex)));

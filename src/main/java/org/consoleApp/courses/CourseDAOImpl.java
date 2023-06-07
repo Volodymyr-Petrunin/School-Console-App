@@ -26,7 +26,7 @@ public class CourseDAOImpl implements CourseDAO{
                 String courseName = resultSet.getString("course_name");
                 String courseDescription = resultSet.getString("course_description");
 
-                Course currentCourse = new Course(courseId,courseName, courseDescription, new ArrayList<>());
+                Course currentCourse = new Course(courseId,courseName, courseDescription);
                 courses.add(currentCourse);
             }
 
@@ -53,7 +53,7 @@ public class CourseDAOImpl implements CourseDAO{
                 String courseName = resultSet.getString("course_name");
                 String courseDescription = resultSet.getString("course_description");
 
-                course = new Course(courseId, courseName, courseDescription, new ArrayList<>());
+                course = new Course(courseId, courseName, courseDescription);
             }
 
             resultSet.close();

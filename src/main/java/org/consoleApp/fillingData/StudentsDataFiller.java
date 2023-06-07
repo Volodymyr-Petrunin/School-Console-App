@@ -1,7 +1,6 @@
 package org.consoleApp.fillingData;
 
-import org.consoleApp.courses.Course;
-import org.consoleApp.courses.CourseDAOImpl;
+
 import org.consoleApp.generationData.GenerationDataInitial;
 import org.consoleApp.dataBaseSettings.DBConnector;
 import org.consoleApp.groups.Group;
@@ -36,7 +35,7 @@ public class StudentsDataFiller implements DataFiller{
 
         for (int currentIndex = 0; currentIndex < quantityGenerations; currentIndex++){
             int randomGroup = choseGroup();
-            Student student = new Student(currentIndex,randomGroup,firstNameList.get(currentIndex),secondNameList.get(currentIndex),new ArrayList<>());
+            Student student = new Student(currentIndex,randomGroup,firstNameList.get(currentIndex),secondNameList.get(currentIndex));
             studentsDAO.insert(student);
         }
     }

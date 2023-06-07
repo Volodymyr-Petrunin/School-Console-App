@@ -27,7 +27,7 @@ public class StudentsDAOImpl implements StudentsDAO{
                 String firstName = resultSet.getString("first_name");
                 String lastName = resultSet.getString("last_name");
 
-                Student student = new Student(studentId, groupId, firstName, lastName,new ArrayList<>());
+                Student student = new Student(studentId, groupId, firstName, lastName);
                 students.add(student);
             }
 
@@ -54,7 +54,7 @@ public class StudentsDAOImpl implements StudentsDAO{
                 String firstName = resultSet.getString("first_name");
                 String lastName = resultSet.getString("last_name");
 
-                student = new Student(studentId,groupId,firstName,lastName,new ArrayList<>());
+                student = new Student(studentId,groupId,firstName,lastName);
             }
 
             resultSet.close();

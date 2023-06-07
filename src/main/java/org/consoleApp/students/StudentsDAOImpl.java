@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class StudentsDAOImpl implements StudentsDAO{
-    Connection connection;
+    private Connection connection;
 
     public StudentsDAOImpl(DBConnector dbConnector) {
         connection = dbConnector.getConnection();
@@ -27,7 +27,7 @@ public class StudentsDAOImpl implements StudentsDAO{
                 String firstName = resultSet.getString("first_name");
                 String lastName = resultSet.getString("last_name");
 
-                Student student = new Student(studentId, groupId, firstName, lastName);
+                Student student = new Student(studentId, groupId, firstName, lastName,new ArrayList<>());
                 students.add(student);
             }
 
@@ -54,7 +54,7 @@ public class StudentsDAOImpl implements StudentsDAO{
                 String firstName = resultSet.getString("first_name");
                 String lastName = resultSet.getString("last_name");
 
-                student = new Student(studentId,groupId,firstName,lastName);
+                student = new Student(studentId,groupId,firstName,lastName,new ArrayList<>());
             }
 
             resultSet.close();

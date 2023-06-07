@@ -1,4 +1,8 @@
 package org.consoleApp.courses;
 
-public record Course(int courseId, String courseName, String courseDescription) {
+import org.consoleApp.enrollments.Enrollment;
+
+import java.util.List;
+
+public record Course(int courseId, String courseName, String courseDescription, List<Enrollment> enrollments) {
 }

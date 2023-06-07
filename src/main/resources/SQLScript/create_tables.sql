@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS groups CASCADE;
 DROP TABLE IF EXISTS students;
 DROP TABLE IF EXISTS courses;
+DROP TABLE IF EXISTS enrollments;
 
 
 CREATE TABLE groups(
@@ -20,5 +21,11 @@ CREATE TABLE courses (
     course_id SERIAL PRIMARY KEY,
     course_name VARCHAR(100),
     course_description VARCHAR(200)
+);
+CREATE TABLE enrollments(
+    student_id INT,
+    course_id INT,
+    FOREIGN KEY (student_id) REFERENCES students(student_id),
+    FOREIGN KEY (course_id) REFERENCES courses(course_id)
 );
 ALTER SEQUENCE course_id_sequence RESTART WITH 1;

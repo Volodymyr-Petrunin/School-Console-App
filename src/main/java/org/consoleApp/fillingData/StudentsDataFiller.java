@@ -22,7 +22,6 @@ public class StudentsDataFiller implements DataFiller{
     private final ResourcesFileReader readerSecondName = new ResourcesFileReader("secondName.txt");
     private final StudentsDAOImpl studentsDAO = new StudentsDAOImpl(dbConnector);
     private final GroupsDAOImpl groupsDAO = new GroupsDAOImpl(dbConnector);
-    private final CourseDAOImpl courseDAO = new CourseDAOImpl(dbConnector);
     public StudentsDataFiller(int quantityGenerations) {
         this.quantityGenerations = quantityGenerations;
     }

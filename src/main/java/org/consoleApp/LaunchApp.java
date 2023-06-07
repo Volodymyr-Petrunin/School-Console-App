@@ -5,6 +5,7 @@ import org.consoleApp.courses.CourseDAOImpl;
 import org.consoleApp.dataBaseSettings.DBConnector;
 import org.consoleApp.dataBaseSettings.ScriptRunner;
 import org.consoleApp.fillingData.CoursesDataFiller;
+import org.consoleApp.fillingData.EnrollmentsDataFiller;
 import org.consoleApp.fillingData.GroupDataFiller;
 import org.consoleApp.fillingData.StudentsDataFiller;
 import org.consoleApp.groups.Group;
@@ -25,7 +26,8 @@ public class LaunchApp {
     private final StudentsDAOImpl studentsDAO = new StudentsDAOImpl(dbConnector);
     private final GroupDataFiller groupDataFiller = new GroupDataFiller(10);
     private final StudentsDataFiller studentsDataFiller = new StudentsDataFiller(200);
-    private final CoursesDataFiller dataFiller = new CoursesDataFiller();
+    private final CoursesDataFiller coursesDataFiller = new CoursesDataFiller();
+    private final EnrollmentsDataFiller enrollmentsDataFiller = new EnrollmentsDataFiller(3);
     private boolean exit = false;
     public void launch(){
 
@@ -89,9 +91,10 @@ public class LaunchApp {
     public void fillData(){
         scriptRunner.runScript(scriptCreateTables);
 
-        dataFiller.fillData();
+        coursesDataFiller.fillData();
         groupDataFiller.fillData();
         studentsDataFiller.fillData();
+        enrollmentsDataFiller.fillData();
     }
 
 }

@@ -99,7 +99,7 @@ public class StudentsDAOImpl implements StudentsDAO{
     }
 
     @Override
-    public void delete(int studentId) {
+    public void deleteStudentById(int studentId) {
         try {
             PreparedStatement statement = connection.prepareStatement("DELETE FROM students WHERE student_id = ?");
             statement.setInt(1, studentId);

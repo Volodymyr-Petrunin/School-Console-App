@@ -4,6 +4,7 @@ import org.consoleApp.courses.Course;
 import org.consoleApp.courses.CourseDAOImpl;
 import org.consoleApp.dataBaseSettings.DBConnector;
 import org.consoleApp.dataBaseSettings.ScriptRunner;
+import org.consoleApp.enrollments.EnrollmentsDAOImpl;
 import org.consoleApp.fillingData.CoursesDataFiller;
 import org.consoleApp.fillingData.EnrollmentsDataFiller;
 import org.consoleApp.fillingData.GroupDataFiller;
@@ -24,6 +25,7 @@ public class LaunchApp {
     private final CourseDAOImpl courseDAO = new CourseDAOImpl(dbConnector);
     private final GroupsDAOImpl groupsDAO = new GroupsDAOImpl(dbConnector);
     private final StudentsDAOImpl studentsDAO = new StudentsDAOImpl(dbConnector);
+    private final EnrollmentsDAOImpl enrollmentsDAO = new EnrollmentsDAOImpl(dbConnector);
     private final GroupDataFiller groupDataFiller = new GroupDataFiller(10);
     private final StudentsDataFiller studentsDataFiller = new StudentsDataFiller(200);
     private final CoursesDataFiller coursesDataFiller = new CoursesDataFiller();
@@ -75,7 +77,7 @@ public class LaunchApp {
                 System.out.println(student);
             }
         }else if (currentChose == 4){
-
+            deleteStudentByStudentId();
         }else if (currentChose == 5){
 
         }else if (currentChose == 6){
@@ -111,4 +113,13 @@ public class LaunchApp {
         }
     }
 
+    private void deleteStudentByStudentId(){
+        System.out.println("Now write the id of the student you wont to delete ;)");
+        int studentId = scan.nextInt();
+
+        if (studentId != 0){
+            enrollmentsDAO.deleteStudentById(studentId);
+            studentsDAO.deleteStudentById(studentId);
+        }
+    }
 }

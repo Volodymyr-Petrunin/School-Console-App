@@ -28,6 +28,8 @@ public class LaunchApp {
     private final StudentsDataFiller studentsDataFiller = new StudentsDataFiller(200);
     private final CoursesDataFiller coursesDataFiller = new CoursesDataFiller();
     private final EnrollmentsDataFiller enrollmentsDataFiller = new EnrollmentsDataFiller(3);
+    private final Scanner scan = new Scanner(System.in);
+    private final String dash = "-".repeat(50); // yes magic number. But it doesn't affect anything
     private boolean exit = false;
     public void launch(){
 
@@ -49,27 +51,22 @@ public class LaunchApp {
         menu.add("6. Remove a student from one of their courses");
         menu.add("");
         menu.add("0. Exit");
-        menu.add("-".repeat(50)); // yes magic number. But it doesn't affect anything
+        menu.add(dash);
 
         return menu.toString();
     }
 
     private void userChooses(){
-        Scanner scan = new Scanner(System.in);
         System.out.print("Yor choice: ");
         int currentChose = scan.nextInt();
 
         if (currentChose == 1){
+            findGroupsWithLessOrEqualStudents();
+        }else if (currentChose == 2){
             List<Course> allCourses = courseDAO.findAll();
             System.out.println("All Courses:");
             for (Course course : allCourses) {
                 System.out.println(course);
-            }
-        }else if (currentChose == 2){
-            List<Group> allCourses = groupsDAO.findAll();
-            System.out.println("All Courses:");
-            for (Group group : allCourses) {
-                System.out.println(group);
             }
         }else if (currentChose == 3){
             List<Student> allCourses = studentsDAO.findAll();
@@ -95,6 +92,23 @@ public class LaunchApp {
         groupDataFiller.fillData();
         studentsDataFiller.fillData();
         enrollmentsDataFiller.fillData();
+    }
+
+    private void findGroupsWithLessOrEqualStudents(){
+        System.out.println("Now write how many students should be in one group at least and I will try to find such groups :)");
+        int maxStudentsInGroup = scan.nextInt();
+
+        List<Group> allCourses = groupsDAO.findGroupsWithLessOrEqualStudents(maxStudentsInGroup);
+        if (!allCourses.isEmpty()) {
+            System.out.println("All Group:");
+            for (Group group : allCourses) {
+                System.out.println("Group name: " + group.groupName() + " and group id " + group.groupId());
+            }
+            System.out.println(dash);
+        }else {
+            System.out.println("No find groups!");
+            System.out.println(dash);
+        }
     }
 
 }

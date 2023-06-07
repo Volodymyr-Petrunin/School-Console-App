@@ -8,4 +8,5 @@ public interface GroupDAO {
     void insert(Group group);
     void update(Group group);
     void delete(Group group);
+    List<Group> findGroupsWithLessOrEqualStudents(int maxStudents);
 }

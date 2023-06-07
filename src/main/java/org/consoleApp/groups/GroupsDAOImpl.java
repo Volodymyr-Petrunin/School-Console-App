@@ -22,16 +22,7 @@ public class GroupsDAOImpl implements GroupDAO{
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT * FROM groups");
 
-            while (resultSet.next()){
-                int groupId = resultSet.getInt("group_id");
-                String groupName = resultSet.getString("group_name");
-
-                Group group = new Group(groupId, groupName);
-                groups.add(group);
-            }
-
-            resultSet.close();
-            statement.close();
+            getCurrentList(groups, statement, resultSet);
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -44,9 +35,8 @@ public class GroupsDAOImpl implements GroupDAO{
     public Group findById(int id) {
         Group group = null;
 
-        PreparedStatement statement = null;
         try {
-            statement = connection.prepareStatement("SELECT * FROM groups WHERE group_id = ?");
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM groups WHERE group_id = ?");
             statement.setInt(1,id);
             ResultSet resultSet = statement.executeQuery();
 
@@ -102,5 +92,33 @@ public class GroupsDAOImpl implements GroupDAO{
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public List<Group> findGroupsWithLessOrEqualStudents(int maxStudents) {
+        List<Group> groups = new ArrayList<>();
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM groups WHERE (SELECT COUNT(*) FROM students WHERE students.group_id = groups.group_id) <= ?");
+            statement.setInt(1, maxStudents);
+            ResultSet resultSet = statement.executeQuery();
+
+            getCurrentList(groups, statement, resultSet);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return groups;
+    }
+
+    private void getCurrentList(List<Group> groups, Statement statement, ResultSet resultSet) throws SQLException {
+        while (resultSet.next()){
+            int groupId = resultSet.getInt("group_id");
+            String groupName = resultSet.getString("group_name");
+
+            Group group = new Group(groupId, groupName);
+            groups.add(group);
+        }
+
+        resultSet.close();
+        statement.close();
     }
 }

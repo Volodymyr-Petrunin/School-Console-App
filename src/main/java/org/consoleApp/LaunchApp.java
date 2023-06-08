@@ -68,11 +68,7 @@ public class LaunchApp {
         }else if (currentChose == 2){
             findAllStudentsRelatedToCourseWithSpecifiedName();
         }else if (currentChose == 3){
-            List<Student> allCourses = studentsDAO.findAll();
-            System.out.println("All Courses:");
-            for (Student student : allCourses) {
-                System.out.println(student);
-            }
+            addNewStudent();
         }else if (currentChose == 4){
             deleteStudentByStudentId();
         }else if (currentChose == 5){
@@ -139,5 +135,24 @@ public class LaunchApp {
             result.add("Initial: " + student.first_name() + " " + student.last_name() + " group " + group.groupName());
         }
         System.out.println(result);
+    }
+
+    private void addNewStudent(){
+        System.out.println("Enter student details =)");
+        System.out.print("First Name: ");
+        String firstName = scan.next();
+        System.out.print("Last Name: ");
+        String lastName = scan.next();
+        System.out.print("Group name: ");
+        String groupName = scan.next();
+
+        Group group = groupsDAO.findGroupIdByName(groupName);
+        int groupId = group.groupId();
+        int studentId = studentsDAO.getNextStudentId();
+
+        Student newStudent = new Student(studentId,groupId,firstName,lastName);
+        studentsDAO.insertNewStudent(newStudent);
+
+        System.out.println("New student added successfully!");
     }
 }

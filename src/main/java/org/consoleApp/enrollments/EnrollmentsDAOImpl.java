@@ -1,7 +1,6 @@
 package org.consoleApp.enrollments;
 
 import org.consoleApp.dataBaseSettings.DBConnector;
-import org.consoleApp.students.Student;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

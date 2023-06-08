@@ -67,7 +67,7 @@ public class StudentsDAOImpl implements StudentsDAO{
     }
 
     @Override
-    public void insert(Student student) {
+    public void insertNewStudent(Student student) {
         try {
             PreparedStatement statement = connection.prepareStatement("INSERT INTO students (group_id, first_name, last_name) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             statement.setInt(1,student.group_id());
@@ -89,7 +89,6 @@ public class StudentsDAOImpl implements StudentsDAO{
             statement.setInt(1, student.group_id());
             statement.setString(2, student.first_name());
             statement.setString(3, student.last_name());
-            statement.setInt(4, student.student_id());
             statement.executeUpdate();
 
             statement.close();
@@ -128,5 +127,26 @@ public class StudentsDAOImpl implements StudentsDAO{
             throw new RuntimeException(e);
         }
         return 0;
+    }
+
+    @Override
+    public int getNextStudentId() {
+        int nextStudentId = 0;
+
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT MAX(student_id) FROM students");
+
+            while (resultSet.next()){
+                nextStudentId = resultSet.getInt(1) + 1;
+            }
+
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return nextStudentId;
     }
 }

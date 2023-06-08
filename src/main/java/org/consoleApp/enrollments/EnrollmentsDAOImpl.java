@@ -16,14 +16,15 @@ public class EnrollmentsDAOImpl implements EnrollmentsDAO{
     }
 
     @Override
-    public void enrollStudentInCourse(int studentId, int courseId) {
+    public boolean enrollStudentInCourse(int studentId, int courseId) {
         try {
             PreparedStatement statement = connection.prepareStatement("INSERT INTO enrollments (student_id,course_id) VALUES (?,?)");
             statement.setInt(1,studentId);
             statement.setInt(2,courseId);
-            statement.executeUpdate();
+            int rowsAffected = statement.executeUpdate();
 
             statement.close();
+            return rowsAffected > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

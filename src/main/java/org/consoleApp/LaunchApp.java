@@ -73,7 +73,7 @@ public class LaunchApp {
         }else if (currentChose == 4){
             deleteStudentByStudentId();
         }else if (currentChose == 5){
-
+            addStudentToCourse();
         }else if (currentChose == 6){
             removeStudentFromOneOfTheirCourses();
         } else {
@@ -194,15 +194,7 @@ public class LaunchApp {
         StringJoiner currentStudents = new StringJoiner(System.lineSeparator());
         System.out.println("I find " + foundedStudents.size() + " students:");
 
-        int maxFirstNameLength = findMaxNameLength(foundedStudents, Student::first_name);
-        int maxLastNameLength = findMaxNameLength(foundedStudents, Student::last_name);
-
-        for (Student student : foundedStudents){
-            Group group = groupsDAO.findGroupById(student.group_id());
-            currentStudents.add(String.format("ID: %3d Initial: %-" + maxFirstNameLength + "s %-" + maxLastNameLength + "s | Group: %s", student.student_id(), student.first_name(), student.last_name(), group.groupName()));
-        }
-
-        System.out.println(currentStudents);
+        printStudents(foundedStudents, currentStudents);
 
         System.out.print("Now choose which one you need and write its id: ");
         int studentId = scan.nextInt();
@@ -234,6 +226,51 @@ public class LaunchApp {
             System.out.println("Something wrong! :(");
             System.out.println(dash);
         }
+    }
+
+    private void addStudentToCourse(){
+        List<Student> students = studentsDAO.findAll();
+        List<Course> courses = courseDAO.findAll();
+        StringJoiner outputStudent = new StringJoiner(System.lineSeparator());
+        StringJoiner outputCourses = new StringJoiner(System.lineSeparator());
+
+        System.out.println("All students:");
+        printStudents(students, outputStudent);
+
+        System.out.print("Now choose student id: ");
+        int studentId = scan.nextInt();
+
+        System.out.println("All courses:");
+
+        for (Course course : courses){
+            outputCourses.add(String.format("ID: %d Course name: %s. Course description: %s", course.courseId(), course.courseName(), course.courseDescription()));
+        }
+        System.out.println(outputCourses);
+
+        System.out.print("Now choose courses id: ");
+        int coursesId = scan.nextInt();
+
+        boolean addStudentSuccess = enrollmentsDAO.enrollStudentInCourse(studentId, coursesId);
+
+        if (addStudentSuccess){
+            System.out.println("Add student successfully!");
+            System.out.println(dash);
+        }else {
+            System.out.println("Something wrong! :(");
+            System.out.println(dash);
+        }
+    }
+
+    private void printStudents(List<Student> students, StringJoiner result) {
+        int maxFirstNameLength = findMaxNameLength(students, Student::first_name);
+        int maxLastNameLength = findMaxNameLength(students, Student::last_name);
+
+        for (Student student : students){
+            Group group = groupsDAO.findGroupById(student.group_id());
+            result.add(String.format("ID: %3d Initial: %-" + maxFirstNameLength + "s %-" + maxLastNameLength + "s | Group: %s", student.student_id(), student.first_name(), student.last_name(), group.groupName()));
+        }
+
+        System.out.println(result);
     }
 
     private int findMaxNameLength(List<Student> students, Function<Student, String> nameExtractor) {

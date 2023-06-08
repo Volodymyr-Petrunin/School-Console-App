@@ -6,4 +6,6 @@ public interface EnrollmentsDAO {
     void enrollStudentInCourse(int studentId, int courseId);
     boolean deleteStudentById(int studentId);
     List<Integer> findAllStudentsIdByCourseId(int courseId);
+    List<Integer> findAllCourseIdByStudentsId(int studentId);
+    boolean removeStudentFromCourse(int studentId, int courseId);
 }

@@ -67,16 +67,17 @@ public class StudentsDAOImpl implements StudentsDAO{
     }
 
     @Override
-    public void insertNewStudent(Student student) {
+    public boolean insertNewStudent(Student student) {
         try {
             PreparedStatement statement = connection.prepareStatement("INSERT INTO students (group_id, first_name, last_name) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             statement.setInt(1,student.group_id());
             statement.setString(2,student.first_name());
             statement.setString(3,student.last_name());
-            statement.executeUpdate();
+            int rowsAffected = statement.executeUpdate();
 
 
             statement.close();
+            return rowsAffected > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -98,13 +99,15 @@ public class StudentsDAOImpl implements StudentsDAO{
     }
 
     @Override
-    public void deleteStudentById(int studentId) {
+    public boolean deleteStudentById(int studentId) {
         try {
             PreparedStatement statement = connection.prepareStatement("DELETE FROM students WHERE student_id = ?");
             statement.setInt(1, studentId);
-            statement.executeUpdate();
+            int rowsAffected = statement.executeUpdate();
 
             statement.close();
+
+            return rowsAffected > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -148,5 +151,31 @@ public class StudentsDAOImpl implements StudentsDAO{
         }
 
         return nextStudentId;
+    }
+
+    @Override
+    public List<Student> findByFirstName(String firstName) {
+        List<Student> students = new ArrayList<>();
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM students WHERE first_name = ?");
+            statement.setString(1, firstName);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()){
+                int studentId = resultSet.getInt("student_id");
+                int groupId = resultSet.getInt("group_id");
+                String lastName = resultSet.getString("last_name");
+
+                Student student = new Student(studentId,groupId,firstName,lastName);
+                students.add(student);
+            }
+
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return students;
     }
 }

@@ -30,13 +30,14 @@ public class EnrollmentsDAOImpl implements EnrollmentsDAO{
     }
 
     @Override
-    public void deleteStudentById(int studentId) {
+    public boolean deleteStudentById(int studentId) {
         try {
             PreparedStatement statement = connection.prepareStatement("DELETE FROM enrollments WHERE student_id = ?");
             statement.setInt(1, studentId);
-            statement.executeUpdate();
+            int rowsAffected = statement.executeUpdate();
 
             statement.close();
+            return rowsAffected > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

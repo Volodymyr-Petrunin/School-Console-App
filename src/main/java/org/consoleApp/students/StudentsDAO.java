@@ -5,9 +5,10 @@ import java.util.List;
 public interface StudentsDAO {
     List<Student> findAll();
     Student findById(int studentId);
-    void insertNewStudent(Student student);
+    boolean insertNewStudent(Student student);
     void updateStudent(Student student);
-    void deleteStudentById(int studentId);
+    boolean deleteStudentById(int studentId);
     int getGroupSize(int groupId);
     int getNextStudentId();
+    List<Student> findByFirstName(String firstName);
 }

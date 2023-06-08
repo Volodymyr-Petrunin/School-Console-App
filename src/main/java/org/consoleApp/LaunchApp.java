@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.StringJoiner;
+import java.util.function.Function;
 
 public class LaunchApp {
     private final DBConnector dbConnector = new DBConnector();
@@ -74,7 +75,7 @@ public class LaunchApp {
         }else if (currentChose == 5){
 
         }else if (currentChose == 6){
-
+            removeStudentFromOneOfTheirCourses();
         } else {
             exit = true;
         }
@@ -111,8 +112,14 @@ public class LaunchApp {
         int studentId = scan.nextInt();
 
         if (studentId != 0){
-            enrollmentsDAO.deleteStudentById(studentId);
-            studentsDAO.deleteStudentById(studentId);
+           boolean deleteFromEnrollSuccessful =  enrollmentsDAO.deleteStudentById(studentId);
+           boolean deleteFromStudentsSuccessful =  studentsDAO.deleteStudentById(studentId);
+
+           if (deleteFromEnrollSuccessful && deleteFromStudentsSuccessful){
+               System.out.println("Delete student successfully!");
+           }else {
+               System.out.println("Something wrong! :(");
+           }
         }
     }
     private void findAllStudentsRelatedToCourseWithSpecifiedName(){
@@ -130,10 +137,14 @@ public class LaunchApp {
         StringJoiner result = new StringJoiner(System.lineSeparator());
         System.out.println("All Students: ");
 
+        int maxFirstNameLength = findMaxNameLength(students, Student::first_name);
+        int maxLastNameLength = findMaxNameLength(students, Student::last_name);
+
         for (Student student : students){
             Group group = groupsDAO.findGroupById(student.group_id());
-            result.add("Initial: " + student.first_name() + " " + student.last_name() + " group " + group.groupName());
+            result.add(String.format("Initial: %-" + maxFirstNameLength + "s %-" + maxLastNameLength + "s | Group: %s", student.first_name(), student.last_name(), group.groupName()));
         }
+
         System.out.println(result);
     }
 
@@ -141,9 +152,18 @@ public class LaunchApp {
         System.out.println("Enter student details =)");
         System.out.print("First Name: ");
         String firstName = scan.next();
+
         System.out.print("Last Name: ");
         String lastName = scan.next();
-        System.out.print("Group name: ");
+
+        System.out.println("All groups: ");
+        List<Group> allGroups = groupsDAO.findAll();
+
+        for (Group group : allGroups){
+            System.out.println("Group name: " + group.groupName());
+        }
+
+        System.out.print("Choose group name: ");
         String groupName = scan.next();
 
         Group group = groupsDAO.findGroupIdByName(groupName);
@@ -151,8 +171,41 @@ public class LaunchApp {
         int studentId = studentsDAO.getNextStudentId();
 
         Student newStudent = new Student(studentId,groupId,firstName,lastName);
-        studentsDAO.insertNewStudent(newStudent);
+        boolean operationSuccessful = studentsDAO.insertNewStudent(newStudent);
 
-        System.out.println("New student added successfully!");
+        if (operationSuccessful){
+            System.out.println("New student added successfully! :)");
+        }else {
+            System.out.println("Something wrong! :(");
+        }
+    }
+
+    private void removeStudentFromOneOfTheirCourses(){
+        System.out.print("Enter student name: ");
+        String studentName = scan.next();
+
+        List<Student> foundedStudents = studentsDAO.findByFirstName(studentName);
+
+        StringJoiner result = new StringJoiner(System.lineSeparator());
+        System.out.println("I find " + foundedStudents.size() + " students:");
+
+        int maxFirstNameLength = findMaxNameLength(foundedStudents, Student::first_name);
+        int maxLastNameLength = findMaxNameLength(foundedStudents, Student::last_name);
+
+        for (Student student : foundedStudents){
+            Group group = groupsDAO.findGroupById(student.group_id());
+            result.add(String.format("ID: %3d Initial: %-" + maxFirstNameLength + "s %-" + maxLastNameLength + "s | Group: %s", student.student_id(), student.first_name(), student.last_name(), group.groupName()));
+        }
+
+        System.out.println(result);
+    }
+
+    private int findMaxNameLength(List<Student> students, Function<Student, String> nameExtractor) {
+        int maxLength = 0;
+        for (Student student : students) {
+            int nameLength = nameExtractor.apply(student).length();
+            maxLength = Math.max(maxLength, nameLength);
+        }
+        return maxLength;
     }
 }

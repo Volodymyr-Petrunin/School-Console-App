@@ -27,7 +27,7 @@ public class GroupDataFiller implements DataFiller {
         List<String> result = generationData.generationData();
 
         for (int currentIndex = 0; currentIndex < quantityGenerations; currentIndex++){
-            groupsDAO.insert(new Group(currentIndex, result.get(currentIndex)));
+            groupsDAO.insertNewGroup(new Group(currentIndex, result.get(currentIndex)));
         }
     }
 }

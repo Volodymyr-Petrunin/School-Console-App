@@ -28,7 +28,7 @@ public class CoursesDataFiller implements DataFiller{
                 String description = courseDescriptionList.get(currentIndex);
 
                 Course course = new Course(currentIndex, name, description);
-                courseImpl.insert(course);
+                courseImpl.insertNewCourse(course);
             }
         }
     }

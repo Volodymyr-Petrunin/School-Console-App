@@ -4,9 +4,9 @@ import java.util.List;
 
 public interface GroupDAO {
     List<Group> findAll();
-    Group findById(int id);
-    void insert(Group group);
-    void update(Group group);
-    void delete(Group group);
+    Group findGroupById(int id);
+    void insertNewGroup(Group group);
+    void updateGroup(Group group);
+    void deleteGroup(Group group);
     List<Group> findGroupsWithLessOrEqualStudents(int maxStudents);
 }

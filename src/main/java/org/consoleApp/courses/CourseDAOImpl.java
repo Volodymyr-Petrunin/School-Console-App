@@ -67,7 +67,7 @@ public class CourseDAOImpl implements CourseDAO{
     }
 
     @Override
-    public void insert(Course course) {
+    public void insertNewCourse(Course course) {
         try {
             PreparedStatement statement = connection.prepareStatement("INSERT INTO courses (course_id, course_name, course_description) VALUES (nextval('course_id_sequence'), ?, ?)");
             statement.setString(1,course.courseName());
@@ -81,7 +81,7 @@ public class CourseDAOImpl implements CourseDAO{
     }
 
     @Override
-    public void update(Course course) {
+    public void updateCourse(Course course) {
         try {
             PreparedStatement statement = connection.prepareStatement("UPDATE courses SET course_name = ?, course_description = ? WHERE course_id = ?");
             statement.setString(1,course.courseName());
@@ -96,7 +96,7 @@ public class CourseDAOImpl implements CourseDAO{
     }
 
     @Override
-    public void delete(Course course) {
+    public void deleteCourse(Course course) {
         try {
             PreparedStatement statement = connection.prepareStatement("DELETE FROM courses WHERE course_id = ?");
             statement.setInt(1,course.courseId());
@@ -106,5 +106,29 @@ public class CourseDAOImpl implements CourseDAO{
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public Course findByCourseName(String courseName) {
+        Course course = null;
+        try {
+            PreparedStatement statement = connection.prepareStatement("SELECT * FROM courses WHERE course_name = ?");
+            statement.setString(1, courseName);
+            ResultSet resultSet = statement.executeQuery();
+
+            while (resultSet.next()){
+                int courseId = resultSet.getInt("course_id");
+                String courseDescription = resultSet.getString("course_description");
+
+                course = new Course(courseId,courseName, courseDescription);
+            }
+
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return course;
     }
 }

@@ -5,7 +5,8 @@ import java.util.List;
 public interface CourseDAO {
     List<Course> findAll();
     Course findById(int courseId);
-    void insert(Course course);
-    void update(Course course);
-    void delete(Course course);
+    void insertNewCourse(Course course);
+    void updateCourse(Course course);
+    void deleteCourse(Course course);
+    Course findByCourseName(String courseName);
 }

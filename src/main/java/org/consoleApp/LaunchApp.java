@@ -14,6 +14,7 @@ import org.consoleApp.groups.GroupsDAOImpl;
 import org.consoleApp.students.Student;
 import org.consoleApp.students.StudentsDAOImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.StringJoiner;
@@ -65,11 +66,7 @@ public class LaunchApp {
         if (currentChose == 1){
             findGroupsWithLessOrEqualStudents();
         }else if (currentChose == 2){
-            List<Course> allCourses = courseDAO.findAll();
-            System.out.println("All Courses:");
-            for (Course course : allCourses) {
-                System.out.println(course);
-            }
+            findAllStudentsRelatedToCourseWithSpecifiedName();
         }else if (currentChose == 3){
             List<Student> allCourses = studentsDAO.findAll();
             System.out.println("All Courses:");
@@ -121,5 +118,26 @@ public class LaunchApp {
             enrollmentsDAO.deleteStudentById(studentId);
             studentsDAO.deleteStudentById(studentId);
         }
+    }
+    private void findAllStudentsRelatedToCourseWithSpecifiedName(){
+        System.out.println("Now write the name of course 0_0");
+        String courseName = scan.next();
+        Course course = courseDAO.findByCourseName(courseName);
+
+        List<Integer> studentsId = enrollmentsDAO.findAllStudentsIdByCourseId(course.courseId());
+        List<Student> students = new ArrayList<>();
+
+        for (Integer currentId : studentsId){
+            students.add(studentsDAO.findById(currentId));
+        }
+
+        StringJoiner result = new StringJoiner(System.lineSeparator());
+        System.out.println("All Students: ");
+
+        for (Student student : students){
+            Group group = groupsDAO.findGroupById(student.group_id());
+            result.add("Initial: " + student.first_name() + " " + student.last_name() + " group " + group.groupName());
+        }
+        System.out.println(result);
     }
 }

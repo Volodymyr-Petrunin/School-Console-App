@@ -32,7 +32,7 @@ public class GroupsDAOImpl implements GroupDAO{
     }
 
     @Override
-    public Group findById(int id) {
+    public Group findGroupById(int id) {
         Group group = null;
 
         try {
@@ -55,7 +55,7 @@ public class GroupsDAOImpl implements GroupDAO{
     }
 
     @Override
-    public void insert(Group group) {
+    public void insertNewGroup(Group group) {
         try {
             PreparedStatement statement = connection.prepareStatement("INSERT INTO groups (group_name) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, group.groupName());
@@ -68,7 +68,7 @@ public class GroupsDAOImpl implements GroupDAO{
     }
 
     @Override
-    public void update(Group group) {
+    public void updateGroup(Group group) {
         try {
             PreparedStatement statement = connection.prepareStatement("UPDATE groups SET group_name = ? WHERE group_id = ?");
             statement.setString(1, group.groupName());
@@ -82,7 +82,7 @@ public class GroupsDAOImpl implements GroupDAO{
     }
 
     @Override
-    public void delete(Group group) {
+    public void deleteGroup(Group group) {
         try {
             PreparedStatement statement = connection.prepareStatement("DELETE FROM groups WHERE group_id = ?");
             statement.setInt(1, group.groupId());

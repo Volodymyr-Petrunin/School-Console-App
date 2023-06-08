@@ -28,4 +28,3 @@ CREATE TABLE enrollments(
     FOREIGN KEY (student_id) REFERENCES students(student_id),
     FOREIGN KEY (course_id) REFERENCES courses(course_id)
 );
-ALTER SEQUENCE course_id_sequence RESTART WITH 1;

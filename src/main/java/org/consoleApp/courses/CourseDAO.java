@@ -9,4 +9,5 @@ public interface CourseDAO {
     void updateCourse(Course course);
     void deleteCourse(Course course);
     Course findByCourseName(String courseName);
+    int getNextCourseId();
 }

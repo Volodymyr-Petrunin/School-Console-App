@@ -69,7 +69,7 @@ public class CourseDAOImpl implements CourseDAO{
     @Override
     public void insertNewCourse(Course course) {
         try {
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO courses (course_id, course_name, course_description) VALUES (nextval('course_id_sequence'), ?, ?)");
+            PreparedStatement statement = connection.prepareStatement("INSERT INTO courses (course_name, course_description) VALUES (?, ?)" , Statement.RETURN_GENERATED_KEYS);
             statement.setString(1,course.courseName());
             statement.setString(2,course.courseDescription());
             statement.executeUpdate();
@@ -130,5 +130,26 @@ public class CourseDAOImpl implements CourseDAO{
         }
 
         return course;
+    }
+
+    @Override
+    public int getNextCourseId() {
+        int nextCourseId = 0;
+
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT MAX(course_id) FROM courses");
+
+            while (resultSet.next()){
+                nextCourseId = resultSet.getInt(1) + 1;
+            }
+
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return nextCourseId;
     }
 }

@@ -131,6 +131,27 @@ public class GroupsDAOImpl implements GroupDAO{
         return group;
     }
 
+    @Override
+    public int getNextGroupId() {
+        int nextGroupId = 0;
+
+        try {
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery("SELECT MAX(group_id) FROM groups");
+
+            while (resultSet.next()){
+                nextGroupId = resultSet.getInt(1) + 1;
+            }
+
+            resultSet.close();
+            statement.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        return nextGroupId;
+    }
+
     private void getCurrentList(List<Group> groups, Statement statement, ResultSet resultSet) throws SQLException {
         while (resultSet.next()){
             int groupId = resultSet.getInt("group_id");

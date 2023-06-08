@@ -6,7 +6,7 @@ public interface StudentsDAO {
     List<Student> findAll();
     Student findById(int studentId);
     void insertNewStudent(Student student);
-    void update(Student student);
+    void updateStudent(Student student);
     void deleteStudentById(int studentId);
     int getGroupSize(int groupId);
     int getNextStudentId();

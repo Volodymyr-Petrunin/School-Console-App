@@ -83,7 +83,7 @@ public class StudentsDAOImpl implements StudentsDAO{
     }
 
     @Override
-    public void update(Student student) {
+    public void updateStudent(Student student) {
         try {
             PreparedStatement statement = connection.prepareStatement("UPDATE students SET group_id = ?, first_name = ?, last_name = ? WHERE student_id = ?");
             statement.setInt(1, student.group_id());

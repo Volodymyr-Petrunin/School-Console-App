@@ -41,7 +41,7 @@ public class CourseDAOImpl implements CourseDAO{
     }
 
     @Override
-    public Course findById(int courseId) {
+    public Course findCourseById(int courseId) {
         Course course = null;
 
         try {

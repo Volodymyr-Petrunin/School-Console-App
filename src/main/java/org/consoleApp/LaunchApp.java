@@ -14,6 +14,7 @@ import org.consoleApp.groups.GroupsDAOImpl;
 import org.consoleApp.students.Student;
 import org.consoleApp.students.StudentsDAOImpl;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -40,6 +41,12 @@ public class LaunchApp {
         while (!exit){
             System.out.println(menu());
             userChooses();
+        }
+
+        try {
+            dbConnector.closeConnection();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -136,18 +143,9 @@ public class LaunchApp {
             students.add(studentsDAO.findById(currentId));
         }
 
-        StringJoiner result = new StringJoiner(System.lineSeparator());
         System.out.println("All Students: ");
+        printStudents(students);
 
-        int maxFirstNameLength = findMaxNameLength(students, Student::first_name);
-        int maxLastNameLength = findMaxNameLength(students, Student::last_name);
-
-        for (Student student : students){
-            Group group = groupsDAO.findGroupById(student.group_id());
-            result.add(String.format("Initial: %-" + maxFirstNameLength + "s %-" + maxLastNameLength + "s | Group: %s", student.first_name(), student.last_name(), group.groupName()));
-        }
-
-        System.out.println(result);
         System.out.println(dash);
     }
 
@@ -191,10 +189,9 @@ public class LaunchApp {
 
         List<Student> foundedStudents = studentsDAO.findByFirstName(studentName);
 
-        StringJoiner currentStudents = new StringJoiner(System.lineSeparator());
         System.out.println("I find " + foundedStudents.size() + " students:");
 
-        printStudents(foundedStudents, currentStudents);
+        printStudents(foundedStudents);
 
         System.out.print("Now choose which one you need and write its id: ");
         int studentId = scan.nextInt();
@@ -203,17 +200,12 @@ public class LaunchApp {
         List<Course> courses = new ArrayList<>();
 
         for (Integer currentInt : coursesId){
-            courses.add(courseDAO.findById(currentInt));
+            courses.add(courseDAO.findCourseById(currentInt));
         }
 
         System.out.println("Now select the course id you want to remove from your student: ");
-        StringJoiner currentCourses = new StringJoiner(System.lineSeparator());
 
-        for (Course course : courses){
-            currentCourses.add(String.format("ID: %d Course name: %s. Course description: %s", course.courseId(), course.courseName(), course.courseDescription()));
-        }
-
-        System.out.println(currentCourses);
+        printCourses(courses);
 
         int courseId = scan.nextInt();
 
@@ -231,21 +223,15 @@ public class LaunchApp {
     private void addStudentToCourse(){
         List<Student> students = studentsDAO.findAll();
         List<Course> courses = courseDAO.findAll();
-        StringJoiner outputStudent = new StringJoiner(System.lineSeparator());
-        StringJoiner outputCourses = new StringJoiner(System.lineSeparator());
 
         System.out.println("All students:");
-        printStudents(students, outputStudent);
+        printStudents(students);
 
         System.out.print("Now choose student id: ");
         int studentId = scan.nextInt();
 
         System.out.println("All courses:");
-
-        for (Course course : courses){
-            outputCourses.add(String.format("ID: %d Course name: %s. Course description: %s", course.courseId(), course.courseName(), course.courseDescription()));
-        }
-        System.out.println(outputCourses);
+        printCourses(courses);
 
         System.out.print("Now choose courses id: ");
         int coursesId = scan.nextInt();
@@ -261,7 +247,8 @@ public class LaunchApp {
         }
     }
 
-    private void printStudents(List<Student> students, StringJoiner result) {
+    private void printStudents(List<Student> students) {
+        StringJoiner result = new StringJoiner(System.lineSeparator());
         int maxFirstNameLength = findMaxNameLength(students, Student::first_name);
         int maxLastNameLength = findMaxNameLength(students, Student::last_name);
 
@@ -273,12 +260,26 @@ public class LaunchApp {
         System.out.println(result);
     }
 
-    private int findMaxNameLength(List<Student> students, Function<Student, String> nameExtractor) {
+    private void printCourses(List<Course> courses){
+        StringJoiner result = new StringJoiner(System.lineSeparator());
+        int maxCourseNameLength = findMaxNameLength(courses, Course::courseName);
+        int maxCourseDescriptionLength = findMaxNameLength(courses, Course::courseDescription);
+
+        for (Course course : courses){
+            result.add(String.format("ID: %d Course name: %-" + maxCourseNameLength + "s Course description: %-" + maxCourseDescriptionLength + "s", course.courseId(), course.courseName(), course.courseDescription()));
+        }
+
+        System.out.println(result);
+    }
+
+    private <T> int findMaxNameLength(List<T> objects, Function<T, String> nameExtractor) {
         int maxLength = 0;
-        for (Student student : students) {
-            int nameLength = nameExtractor.apply(student).length();
+
+        for (T object : objects) {
+            int nameLength = nameExtractor.apply(object).length();
             maxLength = Math.max(maxLength, nameLength);
         }
+
         return maxLength;
     }
 }

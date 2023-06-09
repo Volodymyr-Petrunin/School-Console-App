@@ -7,15 +7,17 @@ import org.consoleApp.enrollments.EnrollmentsDAOImpl;
 import org.consoleApp.students.Student;
 import org.consoleApp.students.StudentsDAOImpl;
 
+import javax.sql.DataSource;
 import java.util.List;
 import java.util.Random;
 
 public class EnrollmentsDataFiller implements DataFiller{
     private final Random random = new Random();
-    private final DBConnector dbConnector = new DBConnector();
-    private final EnrollmentsDAOImpl enrollmentsDAO = new EnrollmentsDAOImpl(dbConnector);
-    private final StudentsDAOImpl studentsDAO = new StudentsDAOImpl(dbConnector);
-    private final CourseDAOImpl courseDAO = new CourseDAOImpl(dbConnector);
+    private final DBConnector dbConnector = new DBConnector(10);
+    private final DataSource dataSource = dbConnector.getConnection();
+    private final EnrollmentsDAOImpl enrollmentsDAO = new EnrollmentsDAOImpl(dataSource);
+    private final StudentsDAOImpl studentsDAO = new StudentsDAOImpl(dataSource);
+    private final CourseDAOImpl courseDAO = new CourseDAOImpl(dataSource);
     int numberOfStudentInOneCourse;
     public EnrollmentsDataFiller(int numberOfStudentInOneCourse) {
         this.numberOfStudentInOneCourse = numberOfStudentInOneCourse;

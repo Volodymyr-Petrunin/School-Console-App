@@ -6,12 +6,14 @@ import org.consoleApp.groups.Group;
 import org.consoleApp.groups.GroupsDAOImpl;
 import org.consoleApp.readers.ResourcesFileReader;
 
+import javax.sql.DataSource;
 import java.util.List;
 
 public class GroupDataFiller implements DataFiller {
     private int quantityGenerations;
-    private final DBConnector dbConnector = new DBConnector();
-    private final GroupsDAOImpl groupsDAO = new GroupsDAOImpl(dbConnector);
+    private final DBConnector dbConnector = new DBConnector(10);
+    private final DataSource dataSource = dbConnector.getConnection();
+    private final GroupsDAOImpl groupsDAO = new GroupsDAOImpl(dataSource);
     private final ResourcesFileReader readCharacters = new ResourcesFileReader("characters.txt");
     private final ResourcesFileReader readNumbers = new ResourcesFileReader("numbers.txt");
     public GroupDataFiller(int quantityGenerations) {
@@ -28,7 +30,7 @@ public class GroupDataFiller implements DataFiller {
 
         for (int currentIndex = 0; currentIndex < quantityGenerations; currentIndex++){
             int nextGroupId = groupsDAO.getNextGroupId();
-            groupsDAO.insertNewGroup(new Group(nextGroupId, result.get(currentIndex)));
+            groupsDAO.insert(new Group(nextGroupId, result.get(currentIndex)));
         }
     }
 }

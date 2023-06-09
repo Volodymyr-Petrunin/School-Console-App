@@ -1,7 +1,7 @@
 package org.consoleApp.enrollments;
 
-import org.consoleApp.dataBaseSettings.DBConnector;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,14 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EnrollmentsDAOImpl implements EnrollmentsDAO{
-    private Connection connection;
-    public EnrollmentsDAOImpl(DBConnector dbConnector) {
-        connection = dbConnector.getConnection();
+    private DataSource dataSource;
+    public EnrollmentsDAOImpl(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override
     public boolean enrollStudentInCourse(int studentId, int courseId) {
-        try {
+        try (Connection connection = dataSource.getConnection()){
             PreparedStatement statement = connection.prepareStatement("INSERT INTO enrollments (student_id,course_id) VALUES (?,?)");
             statement.setInt(1,studentId);
             statement.setInt(2,courseId);
@@ -32,7 +32,7 @@ public class EnrollmentsDAOImpl implements EnrollmentsDAO{
 
     @Override
     public boolean deleteStudentById(int studentId) {
-        try {
+        try (Connection connection = dataSource.getConnection()){
             PreparedStatement statement = connection.prepareStatement("DELETE FROM enrollments WHERE student_id = ?");
             statement.setInt(1, studentId);
             int rowsAffected = statement.executeUpdate();
@@ -47,7 +47,7 @@ public class EnrollmentsDAOImpl implements EnrollmentsDAO{
     @Override
     public List<Integer> findAllStudentsIdByCourseId(int courseId) {
         List<Integer> studentsId = new ArrayList<>();
-        try {
+        try (Connection connection = dataSource.getConnection()){
             PreparedStatement statement = connection.prepareStatement("SELECT student_id FROM enrollments WHERE course_id = ?");
             statement.setInt(1, courseId);
             ResultSet resultSet = statement.executeQuery();
@@ -67,7 +67,7 @@ public class EnrollmentsDAOImpl implements EnrollmentsDAO{
     @Override
     public List<Integer> findAllCourseIdByStudentsId(int studentId) {
         List<Integer> coursesId = new ArrayList<>();
-        try {
+        try (Connection connection = dataSource.getConnection()){
             PreparedStatement statement = connection.prepareStatement("SELECT course_id FROM enrollments WHERE student_id = ?");
             statement.setInt(1, studentId);
             ResultSet resultSet = statement.executeQuery();
@@ -88,7 +88,7 @@ public class EnrollmentsDAOImpl implements EnrollmentsDAO{
 
     @Override
     public boolean removeStudentFromCourse(int studentId, int courseId) {
-        try {
+        try (Connection connection = dataSource.getConnection()){
             PreparedStatement statement = connection.prepareStatement("DELETE FROM enrollments WHERE student_id = ? AND course_id = ?");
             statement.setInt(1, studentId);
             statement.setInt(2, courseId);

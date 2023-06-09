@@ -9,6 +9,7 @@ import org.consoleApp.readers.ResourcesFileReader;
 import org.consoleApp.students.Student;
 import org.consoleApp.students.StudentsDAOImpl;
 
+import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -16,11 +17,12 @@ import java.util.Random;
 public class StudentsDataFiller implements DataFiller{
     private int quantityGenerations;
     private final Random random = new Random();
-    private final DBConnector dbConnector = new DBConnector();
+    private final DBConnector dbConnector = new DBConnector(10);
+    private final DataSource dataSource = dbConnector.getConnection();
     private final ResourcesFileReader readerFirstName = new ResourcesFileReader("firstName.txt");
     private final ResourcesFileReader readerSecondName = new ResourcesFileReader("secondName.txt");
-    private final StudentsDAOImpl studentsDAO = new StudentsDAOImpl(dbConnector);
-    private final GroupsDAOImpl groupsDAO = new GroupsDAOImpl(dbConnector);
+    private final StudentsDAOImpl studentsDAO = new StudentsDAOImpl(dataSource);
+    private final GroupsDAOImpl groupsDAO = new GroupsDAOImpl(dataSource);
     public StudentsDataFiller(int quantityGenerations) {
         this.quantityGenerations = quantityGenerations;
     }
@@ -37,7 +39,7 @@ public class StudentsDataFiller implements DataFiller{
             int randomGroup = choseGroup();
             int nextStudentId = studentsDAO.getNextStudentId();
             Student student = new Student(nextStudentId,randomGroup,firstNameList.get(currentIndex),secondNameList.get(currentIndex));
-            studentsDAO.insertNewStudent(student);
+            studentsDAO.insert(student);
         }
     }
 

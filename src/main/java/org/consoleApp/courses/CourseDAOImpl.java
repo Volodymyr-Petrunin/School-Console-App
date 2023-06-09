@@ -1,23 +1,23 @@
 package org.consoleApp.courses;
 
-import org.consoleApp.dataBaseSettings.DBConnector;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CourseDAOImpl implements CourseDAO{
-    private Connection connection;
+    private DataSource dataSource;
 
-    public CourseDAOImpl(DBConnector dbConnector) {
-        connection = dbConnector.getConnection();
+    public CourseDAOImpl(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override
     public List<Course> findAll() {
         List<Course> courses = new ArrayList<>();
 
-        try {
+        try (Connection connection = dataSource.getConnection()){
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT * FROM courses");
 
@@ -41,10 +41,10 @@ public class CourseDAOImpl implements CourseDAO{
     }
 
     @Override
-    public Course findCourseById(int courseId) {
+    public Course findById(int courseId) {
         Course course = null;
 
-        try {
+        try (Connection connection = dataSource.getConnection()){
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM courses WHERE course_id = ?");
             statement.setInt(1,courseId);
             ResultSet resultSet = statement.executeQuery();
@@ -67,8 +67,8 @@ public class CourseDAOImpl implements CourseDAO{
     }
 
     @Override
-    public void insertNewCourse(Course course) {
-        try {
+    public void insert(Course course) {
+        try (Connection connection = dataSource.getConnection()){
             PreparedStatement statement = connection.prepareStatement("INSERT INTO courses (course_name, course_description) VALUES (?, ?)" , Statement.RETURN_GENERATED_KEYS);
             statement.setString(1,course.courseName());
             statement.setString(2,course.courseDescription());
@@ -81,8 +81,8 @@ public class CourseDAOImpl implements CourseDAO{
     }
 
     @Override
-    public void updateCourse(Course course) {
-        try {
+    public void update(Course course) {
+        try (Connection connection = dataSource.getConnection()){
             PreparedStatement statement = connection.prepareStatement("UPDATE courses SET course_name = ?, course_description = ? WHERE course_id = ?");
             statement.setString(1,course.courseName());
             statement.setString(2,course.courseDescription());
@@ -96,8 +96,8 @@ public class CourseDAOImpl implements CourseDAO{
     }
 
     @Override
-    public void deleteCourse(Course course) {
-        try {
+    public void delete(Course course) {
+        try (Connection connection = dataSource.getConnection()){
             PreparedStatement statement = connection.prepareStatement("DELETE FROM courses WHERE course_id = ?");
             statement.setInt(1,course.courseId());
             statement.executeUpdate();
@@ -111,7 +111,7 @@ public class CourseDAOImpl implements CourseDAO{
     @Override
     public Course findByCourseName(String courseName) {
         Course course = null;
-        try {
+        try (Connection connection = dataSource.getConnection()){
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM courses WHERE course_name = ?");
             statement.setString(1, courseName);
             ResultSet resultSet = statement.executeQuery();
@@ -136,7 +136,7 @@ public class CourseDAOImpl implements CourseDAO{
     public int getNextCourseId() {
         int nextCourseId = 0;
 
-        try {
+        try (Connection connection = dataSource.getConnection()){
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT MAX(course_id) FROM courses");
 

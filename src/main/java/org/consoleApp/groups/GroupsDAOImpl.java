@@ -2,23 +2,24 @@ package org.consoleApp.groups;
 
 import org.consoleApp.dataBaseSettings.DBConnector;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class GroupsDAOImpl implements GroupDAO{
 
-    private Connection connection;
+    private DataSource dataSource;
 
-    public GroupsDAOImpl(DBConnector dbConnector) {
-        connection = dbConnector.getConnection();
+    public GroupsDAOImpl(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override
     public List<Group> findAll() {
         List<Group> groups = new ArrayList<>();
 
-        try {
+        try (Connection connection = dataSource.getConnection()){
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT * FROM groups");
 
@@ -32,10 +33,10 @@ public class GroupsDAOImpl implements GroupDAO{
     }
 
     @Override
-    public Group findGroupById(int id) {
+    public Group findById(int id) {
         Group group = null;
 
-        try {
+        try (Connection connection = dataSource.getConnection()){
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM groups WHERE group_id = ?");
             statement.setInt(1,id);
             ResultSet resultSet = statement.executeQuery();
@@ -55,8 +56,8 @@ public class GroupsDAOImpl implements GroupDAO{
     }
 
     @Override
-    public void insertNewGroup(Group group) {
-        try {
+    public void insert(Group group) {
+        try (Connection connection = dataSource.getConnection()){
             PreparedStatement statement = connection.prepareStatement("INSERT INTO groups (group_name) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
             statement.setString(1, group.groupName());
             statement.executeUpdate();
@@ -69,7 +70,7 @@ public class GroupsDAOImpl implements GroupDAO{
 
     @Override
     public void updateGroup(Group group) {
-        try {
+        try (Connection connection = dataSource.getConnection()){
             PreparedStatement statement = connection.prepareStatement("UPDATE groups SET group_name = ? WHERE group_id = ?");
             statement.setString(1, group.groupName());
             statement.setInt(2, group.groupId());
@@ -83,7 +84,7 @@ public class GroupsDAOImpl implements GroupDAO{
 
     @Override
     public void deleteGroup(Group group) {
-        try {
+        try (Connection connection = dataSource.getConnection()){
             PreparedStatement statement = connection.prepareStatement("DELETE FROM groups WHERE group_id = ?");
             statement.setInt(1, group.groupId());
             statement.executeUpdate();
@@ -97,7 +98,7 @@ public class GroupsDAOImpl implements GroupDAO{
     @Override
     public List<Group> findGroupsWithLessOrEqualStudents(int maxStudents) {
         List<Group> groups = new ArrayList<>();
-        try {
+        try (Connection connection = dataSource.getConnection()){
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM groups WHERE (SELECT COUNT(*) FROM students WHERE students.group_id = groups.group_id) <= ?");
             statement.setInt(1, maxStudents);
             ResultSet resultSet = statement.executeQuery();
@@ -112,7 +113,7 @@ public class GroupsDAOImpl implements GroupDAO{
     @Override
     public Group findGroupIdByName(String groupName) {
         Group group = null;
-        try {
+        try (Connection connection = dataSource.getConnection()){
             PreparedStatement statement = connection.prepareStatement("SELECT group_id FROM groups WHERE group_name = ?");
             statement.setString(1, groupName);
             ResultSet resultSet = statement.executeQuery();
@@ -135,7 +136,7 @@ public class GroupsDAOImpl implements GroupDAO{
     public int getNextGroupId() {
         int nextGroupId = 0;
 
-        try {
+        try (Connection connection = dataSource.getConnection()){
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT MAX(group_id) FROM groups");
 

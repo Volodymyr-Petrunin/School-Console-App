@@ -1,5 +1,9 @@
 package org.consoleApp.dataBaseSettings;
 
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
+import javax.sql.DataSource;
 import java.sql.*;
 public class DBConnector {
     private final String HOST = "localhost";
@@ -7,31 +11,31 @@ public class DBConnector {
     private final String DB_NAME = "school-console-app";
     private final String LOGIN = "postgres";
     private final String PASSWORD = "0403";
-    private Connection connection;
+    private int maxPoolSize;
+    private DataSource dataSource;
 
-    private Connection getDBConnection() throws ClassNotFoundException, SQLException {
-        String DB_URL = "jdbc:postgresql://" + HOST + ":" + PORT + "/" + DB_NAME;
-        Class.forName("org.postgresql.Driver");
-
-        return DriverManager.getConnection(DB_URL,LOGIN,PASSWORD);
+    public DBConnector(int maxPoolSize) {
+        this.maxPoolSize = maxPoolSize;
     }
 
-    public void isConnected() throws SQLException, ClassNotFoundException {
-        connection = getDBConnection();
-        System.out.println(connection.isValid(1000));
+    private DataSource getDBConnection() throws ClassNotFoundException, SQLException {
+        HikariConfig config = new HikariConfig();
+
+        config.setJdbcUrl("jdbc:postgresql://" + HOST + ":" + PORT + "/" + DB_NAME);
+        config.setUsername(LOGIN);
+        config.setPassword(PASSWORD);
+        config.setMaximumPoolSize(maxPoolSize);
+
+        HikariDataSource dataSource = new HikariDataSource(config);
+        return dataSource;
     }
 
-    public Connection getConnection() {
+    public DataSource getConnection() {
         try {
-            return connection = getDBConnection();
+            return dataSource = getDBConnection();
 
         } catch (ClassNotFoundException | SQLException e) {
             throw new RuntimeException(e);
-        }
-    }
-    public void closeConnection() throws SQLException {
-        if (connection != null) {
-            connection.close();
         }
     }
 }

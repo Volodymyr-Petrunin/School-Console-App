@@ -1,23 +1,23 @@
 package org.consoleApp.students;
 
-import org.consoleApp.dataBaseSettings.DBConnector;
 
+import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class StudentsDAOImpl implements StudentsDAO{
-    private Connection connection;
+    private DataSource dataSource;
 
-    public StudentsDAOImpl(DBConnector dbConnector) {
-        connection = dbConnector.getConnection();
+    public StudentsDAOImpl(DataSource dataSource) {
+        this.dataSource = dataSource;
     }
 
     @Override
     public List<Student> findAll() {
         List<Student> students = new ArrayList<>();
 
-        try {
+        try (Connection connection = dataSource.getConnection()){
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT * FROM students");
 
@@ -44,7 +44,7 @@ public class StudentsDAOImpl implements StudentsDAO{
     public Student findById(int studentId) {
         Student student = null;
 
-        try {
+        try (Connection connection = dataSource.getConnection()){
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM students WHERE student_id = ?");
             statement.setInt(1,studentId);
             ResultSet resultSet = statement.executeQuery();
@@ -67,8 +67,8 @@ public class StudentsDAOImpl implements StudentsDAO{
     }
 
     @Override
-    public boolean insertNewStudent(Student student) {
-        try {
+    public boolean insert(Student student) {
+        try (Connection connection = dataSource.getConnection()){
             PreparedStatement statement = connection.prepareStatement("INSERT INTO students (group_id, first_name, last_name) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
             statement.setInt(1,student.group_id());
             statement.setString(2,student.first_name());
@@ -85,7 +85,7 @@ public class StudentsDAOImpl implements StudentsDAO{
 
     @Override
     public void updateStudent(Student student) {
-        try {
+        try (Connection connection = dataSource.getConnection()){
             PreparedStatement statement = connection.prepareStatement("UPDATE students SET group_id = ?, first_name = ?, last_name = ? WHERE student_id = ?");
             statement.setInt(1, student.group_id());
             statement.setString(2, student.first_name());
@@ -100,7 +100,7 @@ public class StudentsDAOImpl implements StudentsDAO{
 
     @Override
     public boolean deleteStudentById(int studentId) {
-        try {
+        try (Connection connection = dataSource.getConnection()){
             PreparedStatement statement = connection.prepareStatement("DELETE FROM students WHERE student_id = ?");
             statement.setInt(1, studentId);
             int rowsAffected = statement.executeUpdate();
@@ -115,7 +115,7 @@ public class StudentsDAOImpl implements StudentsDAO{
 
     @Override
     public int getGroupSize(int groupId) {
-        try {
+        try (Connection connection = dataSource.getConnection()){
             PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) FROM students WHERE group_id = ?");
             statement.setInt(1,groupId);
             ResultSet resultSet = statement.executeQuery();
@@ -136,7 +136,7 @@ public class StudentsDAOImpl implements StudentsDAO{
     public int getNextStudentId() {
         int nextStudentId = 0;
 
-        try {
+        try (Connection connection = dataSource.getConnection()){
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery("SELECT MAX(student_id) FROM students");
 
@@ -156,7 +156,7 @@ public class StudentsDAOImpl implements StudentsDAO{
     @Override
     public List<Student> findByFirstName(String firstName) {
         List<Student> students = new ArrayList<>();
-        try {
+        try (Connection connection = dataSource.getConnection()){
             PreparedStatement statement = connection.prepareStatement("SELECT * FROM students WHERE first_name = ?");
             statement.setString(1, firstName);
             ResultSet resultSet = statement.executeQuery();

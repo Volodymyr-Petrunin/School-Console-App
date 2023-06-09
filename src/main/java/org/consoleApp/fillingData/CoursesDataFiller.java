@@ -7,6 +7,7 @@ import org.consoleApp.parser.CourseParser;
 import org.consoleApp.readers.ResourcesFileReader;
 import org.consoleApp.records.CourseInfo;
 
+import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -17,8 +18,9 @@ public class CoursesDataFiller implements DataFiller{
     private final List<CourseInfo> coursesList = parsedList(readerCourses.read());
     private final List<String> courseNameList = getCourseInfo(coursesList, CourseInfo::name);
     private final List<String> courseDescriptionList = getCourseInfo(coursesList, CourseInfo::description);
-    private final DBConnector dbConnector = new DBConnector();
-    private final CourseDAOImpl courseImpl = new CourseDAOImpl(dbConnector);
+    private final DBConnector dbConnector = new DBConnector(10);
+    private final DataSource dataSource = dbConnector.getConnection();
+    private final CourseDAOImpl courseImpl = new CourseDAOImpl(dataSource);
 
     @Override
     public void fillData() {
@@ -29,7 +31,7 @@ public class CoursesDataFiller implements DataFiller{
                 int nextCourseId = courseImpl.getNextCourseId();
 
                 Course course = new Course(nextCourseId, name, description);
-                courseImpl.insertNewCourse(course);
+                courseImpl.insert(course);
             }
         }
     }

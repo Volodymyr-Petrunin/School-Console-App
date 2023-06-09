@@ -14,7 +14,7 @@ import org.consoleApp.groups.GroupsDAOImpl;
 import org.consoleApp.students.Student;
 import org.consoleApp.students.StudentsDAOImpl;
 
-import java.sql.SQLException;
+import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -22,13 +22,14 @@ import java.util.StringJoiner;
 import java.util.function.Function;
 
 public class LaunchApp {
-    private final DBConnector dbConnector = new DBConnector();
+    private final DBConnector dbConnector = new DBConnector(25);
+    private final DataSource dataSource = dbConnector.getConnection();
     private final String scriptCreateTables = "src\\main\\resources\\SQLScript\\create_tables.sql";
-    private final ScriptRunner scriptRunner = new ScriptRunner(dbConnector);
-    private final CourseDAOImpl courseDAO = new CourseDAOImpl(dbConnector);
-    private final GroupsDAOImpl groupsDAO = new GroupsDAOImpl(dbConnector);
-    private final StudentsDAOImpl studentsDAO = new StudentsDAOImpl(dbConnector);
-    private final EnrollmentsDAOImpl enrollmentsDAO = new EnrollmentsDAOImpl(dbConnector);
+    private final ScriptRunner scriptRunner = new ScriptRunner(dataSource);
+    private final CourseDAOImpl courseDAO = new CourseDAOImpl(dataSource);
+    private final GroupsDAOImpl groupsDAO = new GroupsDAOImpl(dataSource);
+    private final StudentsDAOImpl studentsDAO = new StudentsDAOImpl(dataSource);
+    private final EnrollmentsDAOImpl enrollmentsDAO = new EnrollmentsDAOImpl(dataSource);
     private final GroupDataFiller groupDataFiller = new GroupDataFiller(10);
     private final StudentsDataFiller studentsDataFiller = new StudentsDataFiller(200);
     private final CoursesDataFiller coursesDataFiller = new CoursesDataFiller();
@@ -41,12 +42,6 @@ public class LaunchApp {
         while (!exit){
             System.out.println(menu());
             userChooses();
-        }
-
-        try {
-            dbConnector.closeConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -172,7 +167,7 @@ public class LaunchApp {
         int studentId = studentsDAO.getNextStudentId();
 
         Student newStudent = new Student(studentId,groupId,firstName,lastName);
-        boolean operationSuccessful = studentsDAO.insertNewStudent(newStudent);
+        boolean operationSuccessful = studentsDAO.insert(newStudent);
 
         if (operationSuccessful){
             System.out.println("New student added successfully! :)");
@@ -200,7 +195,7 @@ public class LaunchApp {
         List<Course> courses = new ArrayList<>();
 
         for (Integer currentInt : coursesId){
-            courses.add(courseDAO.findCourseById(currentInt));
+            courses.add(courseDAO.findById(currentInt));
         }
 
         System.out.println("Now select the course id you want to remove from your student: ");
@@ -253,7 +248,7 @@ public class LaunchApp {
         int maxLastNameLength = findMaxNameLength(students, Student::last_name);
 
         for (Student student : students){
-            Group group = groupsDAO.findGroupById(student.group_id());
+            Group group = groupsDAO.findById(student.group_id());
             result.add(String.format("ID: %3d Initial: %-" + maxFirstNameLength + "s %-" + maxLastNameLength + "s | Group: %s", student.student_id(), student.first_name(), student.last_name(), group.groupName()));
         }
 

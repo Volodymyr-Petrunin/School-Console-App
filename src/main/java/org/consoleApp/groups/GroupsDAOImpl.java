@@ -132,7 +132,6 @@ public class GroupsDAOImpl implements GroupDAO{
         return group;
     }
 
-    @Override
     public int getNextGroupId() {
         int nextGroupId = 0;
 

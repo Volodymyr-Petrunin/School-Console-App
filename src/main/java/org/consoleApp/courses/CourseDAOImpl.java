@@ -7,19 +7,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CourseDAOImpl implements CourseDAO{
-    private DataSource dataSource;
+    private Connection connection;
+    private PreparedStatement preparedStatement;
+    private ResultSet resultSet;
 
     public CourseDAOImpl(DataSource dataSource) {
-        this.dataSource = dataSource;
+        try {
+            this.connection = dataSource.getConnection();
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to establish a database connection", e);
+        }
     }
 
     @Override
     public List<Course> findAll() {
         List<Course> courses = new ArrayList<>();
 
-        try (Connection connection = dataSource.getConnection()){
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM courses");
+        try {
+            preparedStatement = connection.prepareStatement("SELECT * FROM courses");
+            resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()){
                 int courseId = resultSet.getInt("course_id");
@@ -30,11 +36,10 @@ public class CourseDAOImpl implements CourseDAO{
                 courses.add(currentCourse);
             }
 
-            resultSet.close();
-            statement.close();
-
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Can't fetch courses", e);
+        } finally {
+            closeResources();
         }
 
         return courses;
@@ -44,10 +49,10 @@ public class CourseDAOImpl implements CourseDAO{
     public Course findById(int courseId) {
         Course course = null;
 
-        try (Connection connection = dataSource.getConnection()){
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM courses WHERE course_id = ?");
-            statement.setInt(1,courseId);
-            ResultSet resultSet = statement.executeQuery();
+        try {
+            preparedStatement = connection.prepareStatement("SELECT * FROM courses WHERE course_id = ?");
+            preparedStatement.setInt(1,courseId);
+            resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()){
                 String courseName = resultSet.getString("course_name");
@@ -56,11 +61,10 @@ public class CourseDAOImpl implements CourseDAO{
                 course = new Course(courseId, courseName, courseDescription);
             }
 
-            resultSet.close();
-            statement.close();
-
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Can't fetch courses", e);
+        }finally {
+            closeResources();
         }
 
         return course;
@@ -68,53 +72,58 @@ public class CourseDAOImpl implements CourseDAO{
 
     @Override
     public void insert(Course course) {
-        try (Connection connection = dataSource.getConnection()){
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO courses (course_name, course_description) VALUES (?, ?)" , Statement.RETURN_GENERATED_KEYS);
-            statement.setString(1,course.courseName());
-            statement.setString(2,course.courseDescription());
-            statement.executeUpdate();
+        try {
+            preparedStatement = connection.prepareStatement("INSERT INTO courses (course_name, course_description) VALUES (?, ?)" , Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setString(1,course.courseName());
+            preparedStatement.setString(2,course.courseDescription());
 
-            statement.close();
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Can't insert course", e);
+        }finally {
+            closeResources();
         }
     }
 
     @Override
     public void update(Course course) {
-        try (Connection connection = dataSource.getConnection()){
-            PreparedStatement statement = connection.prepareStatement("UPDATE courses SET course_name = ?, course_description = ? WHERE course_id = ?");
-            statement.setString(1,course.courseName());
-            statement.setString(2,course.courseDescription());
-            statement.setInt(3,course.courseId());
-            statement.executeUpdate();
+        try {
+            preparedStatement = connection.prepareStatement("UPDATE courses SET course_name = ?, course_description = ? WHERE course_id = ?");
+            preparedStatement.setString(1,course.courseName());
+            preparedStatement.setString(2,course.courseDescription());
+            preparedStatement.setInt(3,course.courseId());
 
-            statement.close();
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Can't update courses", e);
+        }finally {
+            closeResources();
         }
     }
 
     @Override
     public void delete(Course course) {
-        try (Connection connection = dataSource.getConnection()){
-            PreparedStatement statement = connection.prepareStatement("DELETE FROM courses WHERE course_id = ?");
-            statement.setInt(1,course.courseId());
-            statement.executeUpdate();
+        try {
+            preparedStatement = connection.prepareStatement("DELETE FROM courses WHERE course_id = ?");
+            preparedStatement.setInt(1,course.courseId());
 
-            statement.close();
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Can't delete courses", e);
+        }finally {
+            closeResources();
         }
     }
 
     @Override
     public Course findByCourseName(String courseName) {
         Course course = null;
-        try (Connection connection = dataSource.getConnection()){
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM courses WHERE course_name = ?");
-            statement.setString(1, courseName);
-            ResultSet resultSet = statement.executeQuery();
+
+        try {
+            preparedStatement = connection.prepareStatement("SELECT * FROM courses WHERE course_name = ?");
+            preparedStatement.setString(1, courseName);
+
+            resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()){
                 int courseId = resultSet.getInt("course_id");
@@ -123,33 +132,52 @@ public class CourseDAOImpl implements CourseDAO{
                 course = new Course(courseId,courseName, courseDescription);
             }
 
-            resultSet.close();
-            statement.close();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Can't find by course name", e);
+        }finally {
+            closeResources();
         }
 
         return course;
     }
 
-    @Override
     public int getNextCourseId() {
         int nextCourseId = 0;
 
-        try (Connection connection = dataSource.getConnection()){
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT MAX(course_id) FROM courses");
+        try {
+            preparedStatement = connection.prepareStatement("SELECT MAX(course_id) FROM courses");
+            resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()){
                 nextCourseId = resultSet.getInt(1) + 1;
             }
 
             resultSet.close();
-            statement.close();
+            preparedStatement.close();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Can't get next course id", e);
+        }finally {
+            closeResources();
         }
 
         return nextCourseId;
+    }
+
+    private void closeResources(){
+        if (resultSet != null) {
+            try {
+                resultSet.close();
+            } catch (SQLException e) {
+                throw new RuntimeException("Something wrong with ResultSet in CourseDAOImpl", e);
+            }
+        }
+
+        if (preparedStatement != null){
+            try {
+                preparedStatement.close();
+            } catch (SQLException e) {
+                throw new RuntimeException("Something wrong with PreparedStatement in CourseDAOImpl", e);
+            }
+        }
     }
 }

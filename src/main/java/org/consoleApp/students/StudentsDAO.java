@@ -9,6 +9,5 @@ public interface StudentsDAO {
     void updateStudent(Student student);
     boolean deleteStudentById(int studentId);
     int getGroupSize(int groupId);
-    int getNextStudentId();
     List<Student> findByFirstName(String firstName);
 }

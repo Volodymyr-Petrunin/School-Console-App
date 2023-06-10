@@ -114,8 +114,8 @@ public class LaunchApp {
         int studentId = scan.nextInt();
 
         if (studentId != 0){
-           boolean deleteFromEnrollSuccessful =  enrollmentsDAO.deleteStudentById(studentId);
-           boolean deleteFromStudentsSuccessful =  studentsDAO.deleteStudentById(studentId);
+           boolean deleteFromEnrollSuccessful = enrollmentsDAO.deleteStudentById(studentId);
+           boolean deleteFromStudentsSuccessful = studentsDAO.deleteStudentById(studentId);
 
            if (deleteFromEnrollSuccessful && deleteFromStudentsSuccessful){
                System.out.println("Delete student successfully!");
@@ -188,30 +188,32 @@ public class LaunchApp {
 
         printStudents(foundedStudents);
 
-        System.out.print("Now choose which one you need and write its id: ");
-        int studentId = scan.nextInt();
+        if (!foundedStudents.isEmpty()) {
+            System.out.print("Now choose which one you need and write its id: ");
+            int studentId = scan.nextInt();
 
-        List<Integer> coursesId = enrollmentsDAO.findAllCourseIdByStudentsId(studentId);
-        List<Course> courses = new ArrayList<>();
+            List<Integer> coursesId = enrollmentsDAO.findAllCourseIdByStudentsId(studentId);
+            List<Course> courses = new ArrayList<>();
 
-        for (Integer currentInt : coursesId){
-            courses.add(courseDAO.findById(currentInt));
-        }
+            for (Integer currentInt : coursesId) {
+                courses.add(courseDAO.findById(currentInt));
+            }
 
-        System.out.println("Now select the course id you want to remove from your student: ");
+            System.out.println("Now select the course id you want to remove from your student: ");
 
-        printCourses(courses);
+            printCourses(courses);
 
-        int courseId = scan.nextInt();
+            int courseId = scan.nextInt();
 
-        boolean deleteFromCourseSuccessful = enrollmentsDAO.removeStudentFromCourse(studentId, courseId);
+            boolean deleteFromCourseSuccessful = enrollmentsDAO.removeStudentFromCourse(studentId, courseId);
 
-        if (deleteFromCourseSuccessful){
-            System.out.println("Delete student successfully!");
-            System.out.println(dash);
-        }else {
-            System.out.println("Something wrong! :(");
-            System.out.println(dash);
+            if (deleteFromCourseSuccessful) {
+                System.out.println("Delete student successfully!");
+                System.out.println(dash);
+            } else {
+                System.out.println("Something wrong! :(");
+                System.out.println(dash);
+            }
         }
     }
 

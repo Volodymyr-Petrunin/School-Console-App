@@ -10,5 +10,4 @@ public interface GroupDAO {
     void deleteGroup(Group group);
     List<Group> findGroupsWithLessOrEqualStudents(int maxStudents);
     Group findGroupIdByName(String groupName);
-    int getNextGroupId();
 }

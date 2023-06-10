@@ -30,7 +30,7 @@ public class GroupsDAOImpl implements GroupDAO{
             preparedStatement = connection.prepareStatement("SELECT * FROM groups");
             resultSet = preparedStatement.executeQuery();
 
-            getCurrentList(groups, preparedStatement, resultSet);
+            getCurrentList(groups, resultSet);
 
         } catch (SQLException e) {
             throw new IllegalStateException("Can't find groups", e);
@@ -115,7 +115,7 @@ public class GroupsDAOImpl implements GroupDAO{
             preparedStatement.setInt(1, maxStudents);
             resultSet = preparedStatement.executeQuery();
 
-            getCurrentList(groups, preparedStatement, resultSet);
+            getCurrentList(groups, resultSet);
         } catch (SQLException e) {
             throw new IllegalStateException("Can't find groups with less or equal students", e);
         } finally {
@@ -167,7 +167,7 @@ public class GroupsDAOImpl implements GroupDAO{
         return nextGroupId;
     }
 
-    private void getCurrentList(List<Group> groups, Statement statement, ResultSet resultSet) throws SQLException {
+    private void getCurrentList(List<Group> groups, ResultSet resultSet) throws SQLException {
         while (resultSet.next()){
             int groupId = resultSet.getInt("group_id");
             String groupName = resultSet.getString("group_name");

@@ -5,21 +5,28 @@ import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class StudentsDAOImpl implements StudentsDAO{
-    private DataSource dataSource;
+    private Connection connection;
+    private PreparedStatement preparedStatement;
+    private ResultSet resultSet;
 
     public StudentsDAOImpl(DataSource dataSource) {
-        this.dataSource = dataSource;
+        try {
+            this.connection = dataSource.getConnection();
+        } catch (SQLException e) {
+            throw new RuntimeException("Failed to establish a database connection", e);
+        }
     }
 
     @Override
     public List<Student> findAll() {
         List<Student> students = new ArrayList<>();
 
-        try (Connection connection = dataSource.getConnection()){
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT * FROM students");
+        try {
+            preparedStatement = connection.prepareStatement("SELECT * FROM students");
+            resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()){
                 int studentId = resultSet.getInt("student_id");
@@ -31,36 +38,36 @@ public class StudentsDAOImpl implements StudentsDAO{
                 students.add(student);
             }
 
-            resultSet.close();
-            statement.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            closeResources();
         }
 
         return students;
     }
 
     @Override
-    public Student findById(int studentId) {
-        Student student = null;
+    public Optional<Student> findById(int studentId) {
+        Optional<Student> student = Optional.empty();
 
-        try (Connection connection = dataSource.getConnection()){
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM students WHERE student_id = ?");
-            statement.setInt(1,studentId);
-            ResultSet resultSet = statement.executeQuery();
+        try {
+            preparedStatement = connection.prepareStatement("SELECT * FROM students WHERE student_id = ?");
+            preparedStatement.setInt(1,studentId);
+            resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()){
                 int groupId = resultSet.getInt("group_id");
                 String firstName = resultSet.getString("first_name");
                 String lastName = resultSet.getString("last_name");
 
-                student = new Student(studentId,groupId,firstName,lastName);
+                student = Optional.of(new Student(studentId,groupId,firstName,lastName));
             }
 
-            resultSet.close();
-            statement.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            closeResources();
         }
 
         return student;
@@ -68,67 +75,69 @@ public class StudentsDAOImpl implements StudentsDAO{
 
     @Override
     public boolean insert(Student student) {
-        try (Connection connection = dataSource.getConnection()){
-            PreparedStatement statement = connection.prepareStatement("INSERT INTO students (group_id, first_name, last_name) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-            statement.setInt(1,student.group_id());
-            statement.setString(2,student.first_name());
-            statement.setString(3,student.last_name());
-            int rowsAffected = statement.executeUpdate();
+        try {
+            preparedStatement = connection.prepareStatement("INSERT INTO students (group_id, first_name, last_name) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            preparedStatement.setInt(1,student.group_id());
+            preparedStatement.setString(2,student.first_name());
+            preparedStatement.setString(3,student.last_name());
 
-
-            statement.close();
+            int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            closeResources();
         }
     }
 
     @Override
     public void updateStudent(Student student) {
-        try (Connection connection = dataSource.getConnection()){
-            PreparedStatement statement = connection.prepareStatement("UPDATE students SET group_id = ?, first_name = ?, last_name = ? WHERE student_id = ?");
-            statement.setInt(1, student.group_id());
-            statement.setString(2, student.first_name());
-            statement.setString(3, student.last_name());
-            statement.executeUpdate();
+        try {
+            preparedStatement = connection.prepareStatement("UPDATE students SET group_id = ?, first_name = ?, last_name = ? WHERE student_id = ?");
+            preparedStatement.setInt(1, student.group_id());
+            preparedStatement.setString(2, student.first_name());
+            preparedStatement.setString(3, student.last_name());
+            preparedStatement.executeUpdate();
 
-            statement.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            closeResources();
         }
     }
 
     @Override
     public boolean deleteStudentById(int studentId) {
-        try (Connection connection = dataSource.getConnection()){
-            PreparedStatement statement = connection.prepareStatement("DELETE FROM students WHERE student_id = ?");
-            statement.setInt(1, studentId);
-            int rowsAffected = statement.executeUpdate();
+        try {
+            preparedStatement = connection.prepareStatement("DELETE FROM students WHERE student_id = ?");
+            preparedStatement.setInt(1, studentId);
 
-            statement.close();
-
+            int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            closeResources();
         }
     }
 
     @Override
     public int getGroupSize(int groupId) {
-        try (Connection connection = dataSource.getConnection()){
-            PreparedStatement statement = connection.prepareStatement("SELECT COUNT(*) FROM students WHERE group_id = ?");
-            statement.setInt(1,groupId);
-            ResultSet resultSet = statement.executeQuery();
+        try {
+            preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM students WHERE group_id = ?");
+            preparedStatement.setInt(1,groupId);
+            resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()){
                 return resultSet.getInt("count");
             }
 
-            resultSet.close();
-            statement.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            closeResources();
         }
+
         return 0;
     }
 
@@ -136,18 +145,18 @@ public class StudentsDAOImpl implements StudentsDAO{
     public int getNextStudentId() {
         int nextStudentId = 0;
 
-        try (Connection connection = dataSource.getConnection()){
-            Statement statement = connection.createStatement();
-            ResultSet resultSet = statement.executeQuery("SELECT MAX(student_id) FROM students");
+        try {
+            preparedStatement = connection.prepareStatement("SELECT MAX(student_id) FROM students");
+            resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()){
                 nextStudentId = resultSet.getInt(1) + 1;
             }
 
-            resultSet.close();
-            statement.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            closeResources();
         }
 
         return nextStudentId;
@@ -156,10 +165,11 @@ public class StudentsDAOImpl implements StudentsDAO{
     @Override
     public List<Student> findByFirstName(String firstName) {
         List<Student> students = new ArrayList<>();
-        try (Connection connection = dataSource.getConnection()){
-            PreparedStatement statement = connection.prepareStatement("SELECT * FROM students WHERE first_name = ?");
-            statement.setString(1, firstName);
-            ResultSet resultSet = statement.executeQuery();
+
+        try {
+            preparedStatement = connection.prepareStatement("SELECT * FROM students WHERE first_name = ?");
+            preparedStatement.setString(1, firstName);
+            resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()){
                 int studentId = resultSet.getInt("student_id");
@@ -170,12 +180,30 @@ public class StudentsDAOImpl implements StudentsDAO{
                 students.add(student);
             }
 
-            resultSet.close();
-            statement.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
+        } finally {
+            closeResources();
         }
 
         return students;
+    }
+
+    private void closeResources(){
+        if (resultSet != null) {
+            try {
+                resultSet.close();
+            } catch (SQLException e) {
+                throw new RuntimeException("Something wrong with ResultSet in StudentsDAOImpl", e);
+            }
+        }
+
+        if (preparedStatement != null){
+            try {
+                preparedStatement.close();
+            } catch (SQLException e) {
+                throw new RuntimeException("Something wrong with PreparedStatement in StudentsDAOImpl", e);
+            }
+        }
     }
 }

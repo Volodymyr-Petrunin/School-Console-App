@@ -135,7 +135,7 @@ public class LaunchApp {
             List<Student> students = new ArrayList<>();
 
             for (Integer currentId : studentsId) {
-                students.add(studentsDAO.findById(currentId));
+                studentsDAO.findById(currentId).ifPresent(students::add);
             }
 
             System.out.println("All Students: ");

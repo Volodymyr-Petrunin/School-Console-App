@@ -128,13 +128,9 @@ public class LaunchApp {
         String courseName = scan.next();
         Optional<Course> optionalCourse = courseDAO.findByCourseName(courseName);
 
-        if (!optionalCourse.isEmpty()) {
-            List<Integer> studentsId = new ArrayList<>();
-
-            if (optionalCourse.isPresent()) {
-                Course course = optionalCourse.get();
-                studentsId = enrollmentsDAO.findAllStudentsIdByCourseId(course.courseId());
-            }
+        if (optionalCourse.isPresent()) {
+            Course course = optionalCourse.get();
+            List<Integer> studentsId = enrollmentsDAO.findAllStudentsIdByCourseId(course.courseId());
 
             List<Student> students = new ArrayList<>();
 
@@ -169,8 +165,9 @@ public class LaunchApp {
         System.out.print("Choose group name: ");
         String groupName = scan.next();
 
-        Group group = groupsDAO.findGroupIdByName(groupName);
-        int groupId = group.groupId();
+        Optional<Group> optionalGroup = groupsDAO.findGroupIdByName(groupName);
+        int groupId = optionalGroup.orElseThrow(()-> new RuntimeException("Can't find group id by group name in LaunchApp")).groupId();
+
         int studentId = studentsDAO.getNextStudentId();
 
         Student newStudent = new Student(studentId,groupId,firstName,lastName);
@@ -257,8 +254,12 @@ public class LaunchApp {
         int maxLastNameLength = findMaxNameLength(students, Student::last_name);
 
         for (Student student : students){
-            Group group = groupsDAO.findById(student.group_id());
-            result.add(String.format("ID: %3d Initial: %-" + maxFirstNameLength + "s %-" + maxLastNameLength + "s | Group: %s", student.student_id(), student.first_name(), student.last_name(), group.groupName()));
+            Optional<Group> optionalGroup = groupsDAO.findById(student.group_id());
+
+            if (optionalGroup.isPresent()) {
+                Group group = optionalGroup.get();
+                result.add(String.format("ID: %3d Initial: %-" + maxFirstNameLength + "s %-" + maxLastNameLength + "s | Group: %s", student.student_id(), student.first_name(), student.last_name(), group.groupName()));
+            }
         }
 
         System.out.println(result);

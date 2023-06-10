@@ -13,11 +13,12 @@ public class EnrollmentsDAOImpl implements EnrollmentsDAO{
     private Connection connection;
     private PreparedStatement preparedStatement;
     private ResultSet resultSet;
+
     public EnrollmentsDAOImpl(DataSource dataSource) {
         try {
             this.connection = dataSource.getConnection();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to establish a database connection", e);
         }
     }
 

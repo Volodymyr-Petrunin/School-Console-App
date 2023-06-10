@@ -15,10 +15,7 @@ import org.consoleApp.students.Student;
 import org.consoleApp.students.StudentsDAOImpl;
 
 import javax.sql.DataSource;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.function.Function;
 
 public class LaunchApp {
@@ -129,19 +126,29 @@ public class LaunchApp {
     private void findAllStudentsRelatedToCourseWithSpecifiedName(){
         System.out.println("Now write the name of course 0_0");
         String courseName = scan.next();
-        Course course = courseDAO.findByCourseName(courseName);
+        Optional<Course> optionalCourse = courseDAO.findByCourseName(courseName);
 
-        List<Integer> studentsId = enrollmentsDAO.findAllStudentsIdByCourseId(course.courseId());
-        List<Student> students = new ArrayList<>();
+        if (!optionalCourse.isEmpty()) {
+            List<Integer> studentsId = new ArrayList<>();
 
-        for (Integer currentId : studentsId){
-            students.add(studentsDAO.findById(currentId));
+            if (optionalCourse.isPresent()) {
+                Course course = optionalCourse.get();
+                studentsId = enrollmentsDAO.findAllStudentsIdByCourseId(course.courseId());
+            }
+
+            List<Student> students = new ArrayList<>();
+
+            for (Integer currentId : studentsId) {
+                students.add(studentsDAO.findById(currentId));
+            }
+
+            System.out.println("All Students: ");
+            printStudents(students);
+
+            System.out.println(dash);
+        } else {
+            System.out.println("Wrong course name :(");
         }
-
-        System.out.println("All Students: ");
-        printStudents(students);
-
-        System.out.println(dash);
     }
 
     private void addNewStudent(){
@@ -196,7 +203,7 @@ public class LaunchApp {
             List<Course> courses = new ArrayList<>();
 
             for (Integer currentInt : coursesId) {
-                courses.add(courseDAO.findById(currentInt));
+                courseDAO.findById(currentInt).ifPresent(courses::add);
             }
 
             System.out.println("Now select the course id you want to remove from your student: ");

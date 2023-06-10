@@ -1,12 +1,13 @@
 package org.consoleApp.courses;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CourseDAO {
     List<Course> findAll();
-    Course findById(int courseId);
+    Optional<Course> findById(int courseId);
     void insert(Course course);
     void update(Course course);
     void delete(Course course);
-    Course findByCourseName(String courseName);
+    Optional<Course> findByCourseName(String courseName);
 }

@@ -1,10 +1,10 @@
 package org.consoleApp.courses;
 
-
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class CourseDAOImpl implements CourseDAO{
     private Connection connection;
@@ -46,8 +46,8 @@ public class CourseDAOImpl implements CourseDAO{
     }
 
     @Override
-    public Course findById(int courseId) {
-        Course course = null;
+    public Optional<Course> findById(int courseId) {
+        Optional<Course> course = Optional.empty();
 
         try {
             preparedStatement = connection.prepareStatement("SELECT * FROM courses WHERE course_id = ?");
@@ -58,7 +58,7 @@ public class CourseDAOImpl implements CourseDAO{
                 String courseName = resultSet.getString("course_name");
                 String courseDescription = resultSet.getString("course_description");
 
-                course = new Course(courseId, courseName, courseDescription);
+                course = Optional.of(new Course(courseId, courseName, courseDescription));
             }
 
         } catch (SQLException e) {
@@ -116,8 +116,8 @@ public class CourseDAOImpl implements CourseDAO{
     }
 
     @Override
-    public Course findByCourseName(String courseName) {
-        Course course = null;
+    public Optional<Course> findByCourseName(String courseName) {
+        Optional<Course> course = Optional.empty();
 
         try {
             preparedStatement = connection.prepareStatement("SELECT * FROM courses WHERE course_name = ?");
@@ -129,7 +129,7 @@ public class CourseDAOImpl implements CourseDAO{
                 int courseId = resultSet.getInt("course_id");
                 String courseDescription = resultSet.getString("course_description");
 
-                course = new Course(courseId,courseName, courseDescription);
+                course = Optional.of(new Course(courseId,courseName, courseDescription));
             }
 
         } catch (SQLException e) {

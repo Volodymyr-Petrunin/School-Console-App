@@ -2,15 +2,22 @@ package org.consoleApp.dataBaseSettings;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.consoleApp.parser.DBSettingsParser;
+import org.consoleApp.readers.ResourcesFileReader;
+import org.consoleApp.records.DBSettings;
 
 import javax.sql.DataSource;
 import java.sql.*;
+
 public class DBConnector {
-    private final String HOST = "localhost";
-    private final String PORT = "5432";
-    private final String DB_NAME = "school-console-app";
-    private final String LOGIN = "postgres";
-    private final String PASSWORD = "0403";
+    private final ResourcesFileReader reader = new ResourcesFileReader("DBsettings.txt");
+    private final DBSettingsParser parser = new DBSettingsParser();
+    private final DBSettings settings = parser.parse(reader.read().get(0)); // get 0 because only one line in DBsettings file.
+    private final String HOST = settings.host();
+    private final String PORT = settings.port();
+    private final String DB_NAME = settings.dbName();
+    private final String LOGIN = settings.login();
+    private final String PASSWORD = settings.password();
     private int maxPoolSize;
     private DataSource dataSource;
 

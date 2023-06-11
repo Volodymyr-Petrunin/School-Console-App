@@ -12,9 +12,10 @@ import java.util.Random;
 
 public class EnrollmentsDataFiller implements DataFiller {
     private final Random random = new Random();
-    int numberOfStudentInOneCourse;
+    private int numberOfStudentInOneCourse;
     private StudentsDAOImpl studentsDAO;
     private CourseDAOImpl courseDAO;
+
     public EnrollmentsDataFiller(int numberOfStudentInOneCourse, DataSource dataSource) {
         this.numberOfStudentInOneCourse = numberOfStudentInOneCourse;
         this.studentsDAO = new StudentsDAOImpl(dataSource);

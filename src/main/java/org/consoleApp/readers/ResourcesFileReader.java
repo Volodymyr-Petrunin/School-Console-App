@@ -5,7 +5,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class ResourcesFileReader implements Reader{
-    String fileName;
+    private String fileName;
     public ResourcesFileReader(String fileName) {
         this.fileName = fileName;
     }

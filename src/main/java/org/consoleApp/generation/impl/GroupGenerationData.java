@@ -21,7 +21,7 @@ public class GroupGenerationData implements GenerationData {
     }
 
     @Override
-    public List<String> generationData() {
+    public List<String> generateData() {
         StringBuilder resultBuilder = new StringBuilder();
 
         List<String> result = new ArrayList<>();

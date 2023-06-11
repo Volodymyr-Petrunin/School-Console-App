@@ -15,7 +15,7 @@ public class GenerationDataInitial implements GenerationData {
     }
 
     @Override
-    public List<String> generationData(){
+    public List<String> generateData(){
         List<String> resultData = new ArrayList<>();
 
         for (int currentIndex = 0; currentIndex < quantity; currentIndex++){

@@ -23,7 +23,7 @@ public class GroupDataFiller implements DataFiller {
     @Override
     public void fillData() {
         GroupGenerationData generationData = new GroupGenerationData(quantityGenerations,amountOfLetters,amountOfNumbers);
-        List<String> result = generationData.generationData();
+        List<String> result = generationData.generateData();
 
         for (int currentIndex = 0; currentIndex < quantityGenerations; currentIndex++){
             int nextGroupId = groupsDAO.getNextId();

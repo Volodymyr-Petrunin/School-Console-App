@@ -33,8 +33,8 @@ public class StudentsDataFiller implements DataFiller {
         GenerationDataInitial firstName = new GenerationDataInitial(readerFirstName.read(),quantityGenerations);
         GenerationDataInitial secondName = new GenerationDataInitial(readerSecondName.read(),quantityGenerations);
 
-        List<String> firstNameList = firstName.generationData();
-        List<String> secondNameList = secondName.generationData();
+        List<String> firstNameList = firstName.generateData();
+        List<String> secondNameList = secondName.generateData();
 
         for (int currentIndex = 0; currentIndex < quantityGenerations; currentIndex++){
             int randomGroup = choseGroup();

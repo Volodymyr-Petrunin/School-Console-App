@@ -1,4 +1,27 @@
 package org.consoleApp.domin;
 
-public record Group(int groupId, String groupName) {
+public class Group {
+    private int groupId;
+    private String groupName;
+
+    public Group(int groupId, String groupName) {
+        this.groupId = groupId;
+        this.groupName = groupName;
+    }
+
+    public int getGroupId() {
+        return groupId;
+    }
+
+    public String getGroupName() {
+        return groupName;
+    }
+
+    public void setGroupId(int groupId) {
+        this.groupId = groupId;
+    }
+
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
+    }
 }

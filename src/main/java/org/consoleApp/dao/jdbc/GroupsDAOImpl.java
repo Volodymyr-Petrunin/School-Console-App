@@ -71,7 +71,7 @@ public class GroupsDAOImpl implements GroupDAO {
     public void insert(Group group) {
         try {
             preparedStatement = connection.prepareStatement("INSERT INTO groups (group_name) VALUES (?)");
-            preparedStatement.setString(1, group.groupName());
+            preparedStatement.setString(1, group.getGroupName());
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
@@ -82,11 +82,54 @@ public class GroupsDAOImpl implements GroupDAO {
     }
 
     @Override
+    public void insertBatch(List<Group> groups) {
+        try {
+            connection.setAutoCommit(false);
+
+            preparedStatement = connection.prepareStatement("INSERT INTO groups (group_name) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
+
+            for (Group group : groups) {
+                preparedStatement.setString(1, group.getGroupName());
+
+                preparedStatement.addBatch();
+            }
+
+            preparedStatement.executeBatch();
+
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            int index = 0;
+
+            while (generatedKeys.next()){
+                int groupId = generatedKeys.getInt(1);
+                groups.get(index).setGroupId(groupId);
+                index++;
+            }
+
+            connection.commit();
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException rollbackException) {
+                throw new IllegalStateException("Can't insert batch of groups", e);
+            }
+            throw new IllegalStateException("Can't insert batch of groups", e);
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                throw new RuntimeException("Can't set auto commit", e);
+            } finally {
+                closeResources();
+            }
+        }
+    }
+
+    @Override
     public void updateGroup(Group group) {
         try {
             preparedStatement = connection.prepareStatement("UPDATE groups SET group_name = ? WHERE group_id = ?");
-            preparedStatement.setString(1, group.groupName());
-            preparedStatement.setInt(2, group.groupId());
+            preparedStatement.setString(1, group.getGroupName());
+            preparedStatement.setInt(2, group.getGroupId());
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -100,7 +143,7 @@ public class GroupsDAOImpl implements GroupDAO {
     public void deleteGroup(Group group) {
         try {
             preparedStatement = connection.prepareStatement("DELETE FROM groups WHERE group_id = ?");
-            preparedStatement.setInt(1, group.groupId());
+            preparedStatement.setInt(1, group.getGroupId());
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {

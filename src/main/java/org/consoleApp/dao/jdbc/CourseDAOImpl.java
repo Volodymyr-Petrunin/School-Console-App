@@ -113,8 +113,6 @@ public class CourseDAOImpl implements CourseDAO {
                 index++;
             }
 
-            generatedKeys.close();
-
             connection.commit();
         } catch (SQLException e) {
             try {

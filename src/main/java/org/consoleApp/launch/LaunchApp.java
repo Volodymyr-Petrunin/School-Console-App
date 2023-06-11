@@ -99,7 +99,7 @@ public class LaunchApp {
         if (!allCourses.isEmpty()) {
             System.out.println("All Group:");
             for (Group group : allCourses) {
-                System.out.println("Group name: " + group.groupName() + " and group id " + group.groupId());
+                System.out.println("Group name: " + group.getGroupName() + " and group id " + group.getGroupId());
             }
             System.out.println(dash);
         }else {
@@ -161,14 +161,14 @@ public class LaunchApp {
         List<Group> allGroups = groupsDAO.findAll();
 
         for (Group group : allGroups){
-            System.out.println("Group name: " + group.groupName());
+            System.out.println("Group name: " + group.getGroupName());
         }
 
         System.out.print("Choose group name: ");
         String groupName = scan.next();
 
         Optional<Group> optionalGroup = groupsDAO.findGroupIdByName(groupName);
-        int groupId = optionalGroup.orElseThrow(()-> new RuntimeException("Can't find group id by group name in LaunchApp")).groupId();
+        int groupId = optionalGroup.orElseThrow(()-> new RuntimeException("Can't find group id by group name in LaunchApp")).getGroupId();
 
         int studentId = studentsDAO.getNextId();
 
@@ -260,7 +260,7 @@ public class LaunchApp {
 
             if (optionalGroup.isPresent()) {
                 Group group = optionalGroup.get();
-                result.add(String.format("ID: %3d Initial: %-" + maxFirstNameLength + "s %-" + maxLastNameLength + "s | Group: %s", student.student_id(), student.first_name(), student.last_name(), group.groupName()));
+                result.add(String.format("ID: %3d Initial: %-" + maxFirstNameLength + "s %-" + maxLastNameLength + "s | Group: %s", student.student_id(), student.first_name(), student.last_name(), group.getGroupName()));
             }
         }
 

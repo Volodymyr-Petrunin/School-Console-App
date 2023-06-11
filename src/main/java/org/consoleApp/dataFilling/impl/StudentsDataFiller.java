@@ -51,7 +51,7 @@ public class StudentsDataFiller implements DataFiller {
         List<Group> eligibleGroups = new ArrayList<>();
 
         for (Group group : allGroups){
-            int groupSize = studentsDAO.getGroupSize(group.groupId());
+            int groupSize = studentsDAO.getGroupSize(group.getGroupId());
             if (groupSize <= maxGroupSize){
                 eligibleGroups.add(group);
             }
@@ -63,6 +63,6 @@ public class StudentsDataFiller implements DataFiller {
 
         int groupIndex = random.nextInt(eligibleGroups.size());
         Group group = eligibleGroups.get(groupIndex);
-        return group.groupId();
+        return group.getGroupId();
     }
 }

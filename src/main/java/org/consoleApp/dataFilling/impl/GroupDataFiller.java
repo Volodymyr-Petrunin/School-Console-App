@@ -6,6 +6,7 @@ import org.consoleApp.domin.Group;
 import org.consoleApp.dao.jdbc.GroupsDAOImpl;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GroupDataFiller implements DataFiller {
@@ -24,10 +25,13 @@ public class GroupDataFiller implements DataFiller {
     public void fillData() {
         GroupGenerationData generationData = new GroupGenerationData(quantityGenerations,amountOfLetters,amountOfNumbers);
         List<String> result = generationData.generateData();
+        List<Group> groups = new ArrayList<>();
 
-        for (int currentIndex = 0; currentIndex < quantityGenerations; currentIndex++){
+        for (String line : result){
             int nextGroupId = groupsDAO.getNextId();
-            groupsDAO.insert(new Group(nextGroupId, result.get(currentIndex)));
+            groups.add(new Group(nextGroupId, line));
         }
+
+        groupsDAO.insertBatch(groups);
     }
 }

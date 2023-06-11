@@ -9,6 +9,7 @@ public interface GroupDAO {
     List<Group> findAll();
     Optional<Group> findById(int id);
     void insert(Group group);
+    void insertBatch(List<Group> groups);
     void updateGroup(Group group);
     void deleteGroup(Group group);
     List<Group> findGroupsWithLessOrEqualStudents(int maxStudents);

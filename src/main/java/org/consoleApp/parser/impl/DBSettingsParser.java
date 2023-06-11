@@ -1,7 +1,7 @@
 package org.consoleApp.parser.impl;
 
 import org.consoleApp.parser.Parser;
-import org.consoleApp.records.DBSettings;
+import org.consoleApp.dataBaseSettings.DBSettings;
 
 public class DBSettingsParser implements Parser<DBSettings> {
     @Override

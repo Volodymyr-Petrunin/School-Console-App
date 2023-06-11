@@ -13,4 +13,5 @@ public interface StudentsDAO {
     boolean deleteStudentById(int studentId);
     int getGroupSize(int groupId);
     List<Student> findByFirstName(String firstName);
+    boolean enrollStudentInCourse(int studentId, int courseId);
 }

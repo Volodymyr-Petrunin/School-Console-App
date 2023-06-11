@@ -192,6 +192,22 @@ public class StudentsDAOImpl implements StudentsDAO {
         return students;
     }
 
+    @Override
+    public boolean enrollStudentInCourse(int studentId, int courseId) {
+        try {
+            preparedStatement = connection.prepareStatement("INSERT INTO enrollments (student_id,course_id) VALUES (?,?)");
+            preparedStatement.setInt(1,studentId);
+            preparedStatement.setInt(2,courseId);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            throw new IllegalStateException("Can't register", e);
+        }finally {
+            closeResources();
+        }
+    }
+
     private void closeResources(){
         if (resultSet != null) {
             try {

@@ -35,7 +35,7 @@ public class EnrollmentsDataFiller implements DataFiller {
             for (int currentIndex = 0; currentIndex < numberOfCourse; currentIndex++){
                 Course course = getRandomCourse(courses);
 
-                enrollmentsDAO.enrollStudentInCourse(student.student_id(), course.courseId());
+                studentsDAO.enrollStudentInCourse(student.student_id(), course.courseId());
             }
         }
     }

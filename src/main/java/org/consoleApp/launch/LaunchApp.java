@@ -237,7 +237,7 @@ public class LaunchApp {
         System.out.print("Now choose courses id: ");
         int coursesId = scan.nextInt();
 
-        boolean addStudentSuccess = enrollmentsDAO.enrollStudentInCourse(studentId, coursesId);
+        boolean addStudentSuccess = studentsDAO.enrollStudentInCourse(studentId, coursesId);
 
         if (addStudentSuccess){
             System.out.println("Add student successfully!");

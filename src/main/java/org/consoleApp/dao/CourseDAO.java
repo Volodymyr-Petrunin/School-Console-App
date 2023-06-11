@@ -9,6 +9,7 @@ public interface CourseDAO {
     List<Course> findAll();
     Optional<Course> findById(int courseId);
     void insert(Course course);
+    void insertBatch(List<Course> courses);
     void update(Course course);
     void delete(Course course);
     Optional<Course> findByCourseName(String courseName);

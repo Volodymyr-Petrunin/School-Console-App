@@ -25,16 +25,19 @@ public class CoursesDataFiller implements DataFiller {
     public void fillData() {
         List<String> courseNameList = getCourseInfo(coursesList, CourseInfo::name);
         List<String> courseDescriptionList = getCourseInfo(coursesList, CourseInfo::description);
+        List<Course> batchCourses  = new ArrayList<>();
 
         if (courseNameList.size() == courseDescriptionList.size()) {
             for (int currentIndex = 0; currentIndex < courseNameList.size(); currentIndex++) {
+
                 String name = courseNameList.get(currentIndex);
                 String description = courseDescriptionList.get(currentIndex);
                 int nextCourseId = courseImpl.getNextId();
 
                 Course course = new Course(nextCourseId, name, description);
-                courseImpl.insert(course);
+               batchCourses.add(course);
             }
+            courseImpl.insertBatch(batchCourses);
         }
     }
 

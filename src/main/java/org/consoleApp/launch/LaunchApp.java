@@ -132,7 +132,7 @@ public class LaunchApp {
 
         if (optionalCourse.isPresent()) {
             Course course = optionalCourse.get();
-            List<Integer> studentsId = enrollmentsDAO.findAllStudentsIdByCourseId(course.courseId());
+            List<Integer> studentsId = enrollmentsDAO.findAllStudentsIdByCourseId(course.getCourseId());
 
             List<Student> students = new ArrayList<>();
 
@@ -269,11 +269,11 @@ public class LaunchApp {
 
     private void printCourses(List<Course> courses){
         StringJoiner result = new StringJoiner(System.lineSeparator());
-        int maxCourseNameLength = findMaxNameLength(courses, Course::courseName);
-        int maxCourseDescriptionLength = findMaxNameLength(courses, Course::courseDescription);
+        int maxCourseNameLength = findMaxNameLength(courses, Course::getCourseName);
+        int maxCourseDescriptionLength = findMaxNameLength(courses, Course::getCourseDescription);
 
         for (Course course : courses){
-            result.add(String.format("ID: %d Course name: %-" + maxCourseNameLength + "s Course description: %-" + maxCourseDescriptionLength + "s", course.courseId(), course.courseName(), course.courseDescription()));
+            result.add(String.format("ID: %d Course name: %-" + maxCourseNameLength + "s Course description: %-" + maxCourseDescriptionLength + "s", course.getCourseId(), course.getCourseName(), course.getCourseDescription()));
         }
 
         System.out.println(result);

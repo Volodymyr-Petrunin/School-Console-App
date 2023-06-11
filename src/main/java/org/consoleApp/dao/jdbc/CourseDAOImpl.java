@@ -77,8 +77,8 @@ public class CourseDAOImpl implements CourseDAO {
     public void insert(Course course) {
         try {
             preparedStatement = connection.prepareStatement("INSERT INTO courses (course_name, course_description) VALUES (?, ?)");
-            preparedStatement.setString(1,course.courseName());
-            preparedStatement.setString(2,course.courseDescription());
+            preparedStatement.setString(1,course.getCourseName());
+            preparedStatement.setString(2,course.getCourseDescription());
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -89,12 +89,58 @@ public class CourseDAOImpl implements CourseDAO {
     }
 
     @Override
+    public void insertBatch(List<Course> courses) {
+        try {
+            connection.setAutoCommit(false);
+
+            preparedStatement = connection.prepareStatement("INSERT INTO courses (course_name, course_description) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
+
+            for (Course course : courses){
+                preparedStatement.setString(1, course.getCourseName());
+                preparedStatement.setString(2, course.getCourseDescription());
+
+                preparedStatement.addBatch();
+            }
+
+            preparedStatement.executeBatch();
+
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            int index = 0;
+
+            while (generatedKeys.next()) {
+                int courseId = generatedKeys.getInt(1);
+                courses.get(index).setCourseId(courseId);
+                index++;
+            }
+
+            generatedKeys.close();
+
+            connection.commit();
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException rollbackException) {
+                throw new IllegalStateException("Can't insert batch of courses", e);
+            }
+            throw new IllegalStateException("Can't insert batch of courses", e);
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                throw new RuntimeException("Can't set auto commit", e);
+            } finally {
+                closeResources();
+            }
+        }
+    }
+
+    @Override
     public void update(Course course) {
         try {
             preparedStatement = connection.prepareStatement("UPDATE courses SET course_name = ?, course_description = ? WHERE course_id = ?");
-            preparedStatement.setString(1,course.courseName());
-            preparedStatement.setString(2,course.courseDescription());
-            preparedStatement.setInt(3,course.courseId());
+            preparedStatement.setString(1,course.getCourseName());
+            preparedStatement.setString(2,course.getCourseDescription());
+            preparedStatement.setInt(3,course.getCourseId());
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
@@ -108,7 +154,7 @@ public class CourseDAOImpl implements CourseDAO {
     public void delete(Course course) {
         try {
             preparedStatement = connection.prepareStatement("DELETE FROM courses WHERE course_id = ?");
-            preparedStatement.setInt(1,course.courseId());
+            preparedStatement.setInt(1,course.getCourseId());
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {

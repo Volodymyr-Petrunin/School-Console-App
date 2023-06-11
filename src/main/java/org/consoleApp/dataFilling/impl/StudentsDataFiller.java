@@ -3,7 +3,6 @@ package org.consoleApp.dataFilling.impl;
 
 import org.consoleApp.dataFilling.DataFiller;
 import org.consoleApp.generation.impl.GenerationDataInitial;
-import org.consoleApp.dataBaseSettings.DBConnector;
 import org.consoleApp.domin.Group;
 import org.consoleApp.dao.jdbc.GroupsDAOImpl;
 import org.consoleApp.readers.ResourcesFileReader;
@@ -16,16 +15,19 @@ import java.util.List;
 import java.util.Random;
 
 public class StudentsDataFiller implements DataFiller {
-    private int quantityGenerations;
     private final Random random = new Random();
-    private final DBConnector dbConnector = new DBConnector(10);
-    private final DataSource dataSource = dbConnector.getConnection();
     private final ResourcesFileReader readerFirstName = new ResourcesFileReader("firstName.txt");
     private final ResourcesFileReader readerSecondName = new ResourcesFileReader("secondName.txt");
-    private final StudentsDAOImpl studentsDAO = new StudentsDAOImpl(dataSource);
-    private final GroupsDAOImpl groupsDAO = new GroupsDAOImpl(dataSource);
-    public StudentsDataFiller(int quantityGenerations) {
+    private int quantityGenerations;
+    private int maxGroupSize;
+    private StudentsDAOImpl studentsDAO;
+    private GroupsDAOImpl groupsDAO;
+
+    public StudentsDataFiller(int quantityGenerations, int maxGroupSize,DataSource dataSource) {
         this.quantityGenerations = quantityGenerations;
+        this.maxGroupSize = maxGroupSize;
+        this.studentsDAO = new StudentsDAOImpl(dataSource);
+        this.groupsDAO = new GroupsDAOImpl(dataSource);
     }
 
     @Override
@@ -50,7 +52,7 @@ public class StudentsDataFiller implements DataFiller {
 
         for (Group group : allGroups){
             int groupSize = studentsDAO.getGroupSize(group.groupId());
-            if (groupSize <= 30){
+            if (groupSize <= maxGroupSize){
                 eligibleGroups.add(group);
             }
         }

@@ -20,7 +20,7 @@ import java.util.*;
 import java.util.function.Function;
 
 public class LaunchApp {
-    private final DBConnector dbConnector = new DBConnector(10);
+    private final DBConnector dbConnector = new DBConnector(70);
     private final DataSource dataSource = dbConnector.getConnection();
     private final String scriptCreateTables = "src\\main\\resources\\SQLScript\\create_tables.sql";
     private final ScriptRunner scriptRunner = new ScriptRunner(dataSource);
@@ -30,7 +30,7 @@ public class LaunchApp {
     private final StudentsDAOImpl studentsDAO = new StudentsDAOImpl(dataSource);
     private final EnrollmentsDAOImpl enrollmentsDAO = new EnrollmentsDAOImpl(dataSource);
     private final GroupDataFiller groupDataFiller = new GroupDataFiller(10,2,2, dataSource);
-    private final StudentsDataFiller studentsDataFiller = new StudentsDataFiller(200);
+    private final StudentsDataFiller studentsDataFiller = new StudentsDataFiller(200, 30,dataSource);
     private final CoursesDataFiller coursesDataFiller = new CoursesDataFiller(readerCourses.read(),dataSource);
     private final EnrollmentsDataFiller enrollmentsDataFiller = new EnrollmentsDataFiller(3, dataSource);
     private final Scanner scan = new Scanner(System.in);

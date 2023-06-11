@@ -3,9 +3,7 @@ package org.consoleApp.dataFilling.impl;
 import org.consoleApp.dataFilling.DataFiller;
 import org.consoleApp.domin.Course;
 import org.consoleApp.dao.jdbc.CourseDAOImpl;
-import org.consoleApp.dataBaseSettings.DBConnector;
 import org.consoleApp.parser.impl.CourseParser;
-import org.consoleApp.readers.ResourcesFileReader;
 import org.consoleApp.records.CourseInfo;
 
 import javax.sql.DataSource;
@@ -14,17 +12,20 @@ import java.util.List;
 import java.util.function.Function;
 
 public class CoursesDataFiller implements DataFiller {
-    private final ResourcesFileReader readerCourses = new ResourcesFileReader("courses.txt");
     private final CourseParser parser = new CourseParser();
-    private final List<CourseInfo> coursesList = parsedList(readerCourses.read());
-    private final List<String> courseNameList = getCourseInfo(coursesList, CourseInfo::name);
-    private final List<String> courseDescriptionList = getCourseInfo(coursesList, CourseInfo::description);
-    private final DBConnector dbConnector = new DBConnector(10);
-    private final DataSource dataSource = dbConnector.getConnection();
-    private final CourseDAOImpl courseImpl = new CourseDAOImpl(dataSource);
+    private List<CourseInfo> coursesList;
+    private CourseDAOImpl courseImpl;
+
+    public CoursesDataFiller(List<String> coursesList, DataSource dataSource) {
+        this.coursesList = parsedList(coursesList);
+        this.courseImpl = new CourseDAOImpl(dataSource);
+    }
 
     @Override
     public void fillData() {
+        List<String> courseNameList = getCourseInfo(coursesList, CourseInfo::name);
+        List<String> courseDescriptionList = getCourseInfo(coursesList, CourseInfo::description);
+
         if (courseNameList.size() == courseDescriptionList.size()) {
             for (int currentIndex = 0; currentIndex < courseNameList.size(); currentIndex++) {
                 String name = courseNameList.get(currentIndex);

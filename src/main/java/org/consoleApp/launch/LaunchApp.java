@@ -13,24 +13,26 @@ import org.consoleApp.domin.Group;
 import org.consoleApp.dao.jdbc.GroupsDAOImpl;
 import org.consoleApp.domin.Student;
 import org.consoleApp.dao.jdbc.StudentsDAOImpl;
+import org.consoleApp.readers.ResourcesFileReader;
 
 import javax.sql.DataSource;
 import java.util.*;
 import java.util.function.Function;
 
 public class LaunchApp {
-    private final DBConnector dbConnector = new DBConnector(25);
+    private final DBConnector dbConnector = new DBConnector(10);
     private final DataSource dataSource = dbConnector.getConnection();
     private final String scriptCreateTables = "src\\main\\resources\\SQLScript\\create_tables.sql";
     private final ScriptRunner scriptRunner = new ScriptRunner(dataSource);
+    private final ResourcesFileReader readerCourses = new ResourcesFileReader("courses.txt");
     private final CourseDAOImpl courseDAO = new CourseDAOImpl(dataSource);
     private final GroupsDAOImpl groupsDAO = new GroupsDAOImpl(dataSource);
     private final StudentsDAOImpl studentsDAO = new StudentsDAOImpl(dataSource);
     private final EnrollmentsDAOImpl enrollmentsDAO = new EnrollmentsDAOImpl(dataSource);
-    private final GroupDataFiller groupDataFiller = new GroupDataFiller(10);
+    private final GroupDataFiller groupDataFiller = new GroupDataFiller(10, dataSource);
     private final StudentsDataFiller studentsDataFiller = new StudentsDataFiller(200);
-    private final CoursesDataFiller coursesDataFiller = new CoursesDataFiller();
-    private final EnrollmentsDataFiller enrollmentsDataFiller = new EnrollmentsDataFiller(3);
+    private final CoursesDataFiller coursesDataFiller = new CoursesDataFiller(readerCourses.read(),dataSource);
+    private final EnrollmentsDataFiller enrollmentsDataFiller = new EnrollmentsDataFiller(3, dataSource);
     private final Scanner scan = new Scanner(System.in);
     private final String dash = "-".repeat(50); // yes magic number. But it doesn't affect anything
     private boolean exit = false;

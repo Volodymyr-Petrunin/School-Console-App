@@ -9,16 +9,17 @@ import org.consoleApp.readers.ResourcesFileReader;
 
 import javax.sql.DataSource;
 import java.util.List;
+import java.util.Random;
 
 public class GroupDataFiller implements DataFiller {
+    private final Random random = new Random();
     private int quantityGenerations;
-    private final DBConnector dbConnector = new DBConnector(10);
-    private final DataSource dataSource = dbConnector.getConnection();
-    private final GroupsDAOImpl groupsDAO = new GroupsDAOImpl(dataSource);
+    private GroupsDAOImpl groupsDAO;
     private final ResourcesFileReader readCharacters = new ResourcesFileReader("characters.txt");
     private final ResourcesFileReader readNumbers = new ResourcesFileReader("numbers.txt");
-    public GroupDataFiller(int quantityGenerations) {
+    public GroupDataFiller(int quantityGenerations, DataSource dataSource) {
         this.quantityGenerations = quantityGenerations;
+        this.groupsDAO = new GroupsDAOImpl(dataSource);
     }
 
     @Override

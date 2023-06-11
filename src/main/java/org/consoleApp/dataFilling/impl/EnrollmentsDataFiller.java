@@ -3,8 +3,6 @@ package org.consoleApp.dataFilling.impl;
 import org.consoleApp.dataFilling.DataFiller;
 import org.consoleApp.domin.Course;
 import org.consoleApp.dao.jdbc.CourseDAOImpl;
-import org.consoleApp.dataBaseSettings.DBConnector;
-import org.consoleApp.dao.jdbc.EnrollmentsDAOImpl;
 import org.consoleApp.domin.Student;
 import org.consoleApp.dao.jdbc.StudentsDAOImpl;
 
@@ -14,14 +12,13 @@ import java.util.Random;
 
 public class EnrollmentsDataFiller implements DataFiller {
     private final Random random = new Random();
-    private final DBConnector dbConnector = new DBConnector(10);
-    private final DataSource dataSource = dbConnector.getConnection();
-    private final EnrollmentsDAOImpl enrollmentsDAO = new EnrollmentsDAOImpl(dataSource);
-    private final StudentsDAOImpl studentsDAO = new StudentsDAOImpl(dataSource);
-    private final CourseDAOImpl courseDAO = new CourseDAOImpl(dataSource);
     int numberOfStudentInOneCourse;
-    public EnrollmentsDataFiller(int numberOfStudentInOneCourse) {
+    private StudentsDAOImpl studentsDAO;
+    private CourseDAOImpl courseDAO;
+    public EnrollmentsDataFiller(int numberOfStudentInOneCourse, DataSource dataSource) {
         this.numberOfStudentInOneCourse = numberOfStudentInOneCourse;
+        this.studentsDAO = new StudentsDAOImpl(dataSource);
+        this.courseDAO = new CourseDAOImpl(dataSource);
     }
 
     @Override

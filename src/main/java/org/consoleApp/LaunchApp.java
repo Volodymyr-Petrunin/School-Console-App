@@ -168,7 +168,7 @@ public class LaunchApp {
         Optional<Group> optionalGroup = groupsDAO.findGroupIdByName(groupName);
         int groupId = optionalGroup.orElseThrow(()-> new RuntimeException("Can't find group id by group name in LaunchApp")).groupId();
 
-        int studentId = studentsDAO.getNextStudentId();
+        int studentId = studentsDAO.getNextId();
 
         Student newStudent = new Student(studentId,groupId,firstName,lastName);
         boolean operationSuccessful = studentsDAO.insert(newStudent);

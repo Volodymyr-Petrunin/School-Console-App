@@ -29,7 +29,7 @@ public class GroupDataFiller implements DataFiller {
         List<String> result = generationData.generationData();
 
         for (int currentIndex = 0; currentIndex < quantityGenerations; currentIndex++){
-            int nextGroupId = groupsDAO.getNextGroupId();
+            int nextGroupId = groupsDAO.getNextId();
             groupsDAO.insert(new Group(nextGroupId, result.get(currentIndex)));
         }
     }

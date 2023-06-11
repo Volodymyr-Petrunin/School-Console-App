@@ -28,7 +28,7 @@ public class CoursesDataFiller implements DataFiller{
             for (int currentIndex = 0; currentIndex < courseNameList.size(); currentIndex++) {
                 String name = courseNameList.get(currentIndex);
                 String description = courseDescriptionList.get(currentIndex);
-                int nextCourseId = courseImpl.getNextCourseId();
+                int nextCourseId = courseImpl.getNextId();
 
                 Course course = new Course(nextCourseId, name, description);
                 courseImpl.insert(course);

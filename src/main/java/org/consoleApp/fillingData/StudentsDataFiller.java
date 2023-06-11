@@ -37,7 +37,7 @@ public class StudentsDataFiller implements DataFiller{
 
         for (int currentIndex = 0; currentIndex < quantityGenerations; currentIndex++){
             int randomGroup = choseGroup();
-            int nextStudentId = studentsDAO.getNextStudentId();
+            int nextStudentId = studentsDAO.getNextId();
             Student student = new Student(nextStudentId,randomGroup,firstNameList.get(currentIndex),secondNameList.get(currentIndex));
             studentsDAO.insert(student);
         }

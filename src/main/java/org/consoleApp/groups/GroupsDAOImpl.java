@@ -147,7 +147,7 @@ public class GroupsDAOImpl implements GroupDAO{
         return group;
     }
 
-    public int getNextGroupId() {
+    public int getNextId() {
         int nextGroupId = 0;
 
         try {

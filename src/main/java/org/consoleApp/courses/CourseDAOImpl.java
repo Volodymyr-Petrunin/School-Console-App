@@ -73,7 +73,7 @@ public class CourseDAOImpl implements CourseDAO{
     @Override
     public void insert(Course course) {
         try {
-            preparedStatement = connection.prepareStatement("INSERT INTO courses (course_name, course_description) VALUES (?, ?)" , Statement.RETURN_GENERATED_KEYS);
+            preparedStatement = connection.prepareStatement("INSERT INTO courses (course_name, course_description) VALUES (?, ?)");
             preparedStatement.setString(1,course.courseName());
             preparedStatement.setString(2,course.courseDescription());
 
@@ -141,7 +141,7 @@ public class CourseDAOImpl implements CourseDAO{
         return course;
     }
 
-    public int getNextCourseId() {
+    public int getNextId() {
         int nextCourseId = 0;
 
         try {

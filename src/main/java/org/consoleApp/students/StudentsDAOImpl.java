@@ -39,7 +39,7 @@ public class StudentsDAOImpl implements StudentsDAO{
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Can't fetch students", e);
         } finally {
             closeResources();
         }
@@ -65,7 +65,7 @@ public class StudentsDAOImpl implements StudentsDAO{
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Can't fetch students by id", e);
         } finally {
             closeResources();
         }
@@ -76,7 +76,7 @@ public class StudentsDAOImpl implements StudentsDAO{
     @Override
     public boolean insert(Student student) {
         try {
-            preparedStatement = connection.prepareStatement("INSERT INTO students (group_id, first_name, last_name) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+            preparedStatement = connection.prepareStatement("INSERT INTO students (group_id, first_name, last_name) VALUES (?, ?, ?)");
             preparedStatement.setInt(1,student.group_id());
             preparedStatement.setString(2,student.first_name());
             preparedStatement.setString(3,student.last_name());
@@ -84,7 +84,7 @@ public class StudentsDAOImpl implements StudentsDAO{
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Can't insert students", e);
         } finally {
             closeResources();
         }
@@ -115,7 +115,7 @@ public class StudentsDAOImpl implements StudentsDAO{
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Can't delete students", e);
         } finally {
             closeResources();
         }
@@ -133,7 +133,7 @@ public class StudentsDAOImpl implements StudentsDAO{
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Can't get group size", e);
         } finally {
             closeResources();
         }
@@ -142,7 +142,7 @@ public class StudentsDAOImpl implements StudentsDAO{
     }
 
 
-    public int getNextStudentId() {
+    public int getNextId() {
         int nextStudentId = 0;
 
         try {
@@ -154,7 +154,7 @@ public class StudentsDAOImpl implements StudentsDAO{
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Can't get next student id", e);
         } finally {
             closeResources();
         }
@@ -181,7 +181,7 @@ public class StudentsDAOImpl implements StudentsDAO{
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Can't find by student firs name", e);
         } finally {
             closeResources();
         }

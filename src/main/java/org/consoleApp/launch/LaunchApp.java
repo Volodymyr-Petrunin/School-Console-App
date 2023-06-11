@@ -25,12 +25,14 @@ public class LaunchApp {
     private final String scriptCreateTables = "src\\main\\resources\\SQLScript\\create_tables.sql";
     private final ScriptRunner scriptRunner = new ScriptRunner(dataSource);
     private final ResourcesFileReader readerCourses = new ResourcesFileReader("courses.txt");
+    private final ResourcesFileReader readerFirstName = new ResourcesFileReader("firstName.txt");
+    private final ResourcesFileReader readerSecondName = new ResourcesFileReader("secondName.txt");
     private final CourseDAOImpl courseDAO = new CourseDAOImpl(dataSource);
     private final GroupsDAOImpl groupsDAO = new GroupsDAOImpl(dataSource);
     private final StudentsDAOImpl studentsDAO = new StudentsDAOImpl(dataSource);
     private final EnrollmentsDAOImpl enrollmentsDAO = new EnrollmentsDAOImpl(dataSource);
     private final GroupDataFiller groupDataFiller = new GroupDataFiller(10,2,2, dataSource);
-    private final StudentsDataFiller studentsDataFiller = new StudentsDataFiller(200, 30,dataSource);
+    private final StudentsDataFiller studentsDataFiller = new StudentsDataFiller(readerFirstName.read(),readerSecondName.read(),200, 30,dataSource);
     private final CoursesDataFiller coursesDataFiller = new CoursesDataFiller(readerCourses.read(),dataSource);
     private final EnrollmentsDataFiller enrollmentsDataFiller = new EnrollmentsDataFiller(3, dataSource);
     private final Scanner scan = new Scanner(System.in);
@@ -252,15 +254,15 @@ public class LaunchApp {
 
     private void printStudents(List<Student> students) {
         StringJoiner result = new StringJoiner(System.lineSeparator());
-        int maxFirstNameLength = findMaxNameLength(students, Student::first_name);
-        int maxLastNameLength = findMaxNameLength(students, Student::last_name);
+        int maxFirstNameLength = findMaxNameLength(students, Student::getFirstName);
+        int maxLastNameLength = findMaxNameLength(students, Student::getLastName);
 
         for (Student student : students){
-            Optional<Group> optionalGroup = groupsDAO.findById(student.group_id());
+            Optional<Group> optionalGroup = groupsDAO.findById(student.getGroupId());
 
             if (optionalGroup.isPresent()) {
                 Group group = optionalGroup.get();
-                result.add(String.format("ID: %3d Initial: %-" + maxFirstNameLength + "s %-" + maxLastNameLength + "s | Group: %s", student.student_id(), student.first_name(), student.last_name(), group.getGroupName()));
+                result.add(String.format("ID: %3d Initial: %-" + maxFirstNameLength + "s %-" + maxLastNameLength + "s | Group: %s", student.getStudentId(), student.getFirstName(), student.getLastName(), group.getGroupName()));
             }
         }
 

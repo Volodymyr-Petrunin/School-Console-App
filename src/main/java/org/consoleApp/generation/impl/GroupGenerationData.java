@@ -1,37 +1,43 @@
 package org.consoleApp.generation.impl;
 
+import org.consoleApp.dao.jdbc.GroupsDAOImpl;
+import org.consoleApp.domin.Group;
 import org.consoleApp.generation.GenerationData;
 
+import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class GroupGenerationData implements GenerationData {
+public class GroupGenerationData implements GenerationData<Group> {
     private final Random random = new Random();
     private static final int ALPHABET_SIZE = 26;
     private static final int DIGITS_SIZE = 10;
+    private GroupsDAOImpl groupsDAO;
     private int quantity;
     private int amountOfLetters;
     private int amountOfNumbers;
 
-    public GroupGenerationData( int quantity, int amountOfLetters, int amountOfNumbers) {
+    public GroupGenerationData(int quantity, int amountOfLetters, int amountOfNumbers, DataSource dataSource) {
         this.quantity = quantity;
         this.amountOfLetters = amountOfLetters;
         this.amountOfNumbers = amountOfNumbers;
+        this.groupsDAO = new GroupsDAOImpl(dataSource);
     }
 
     @Override
-    public List<String> generateData() {
+    public List<Group> generateData() {
         StringBuilder resultBuilder = new StringBuilder();
 
-        List<String> result = new ArrayList<>();
+        List<Group> result = new ArrayList<>();
 
         for (int index = 0; index < quantity; index++){
             resultBuilder.append(generateRandomChars(amountOfLetters, true));
             resultBuilder.append("-");
             resultBuilder.append(generateRandomChars(amountOfNumbers, false));
 
-            result.add(resultBuilder.toString());
+            int id = groupsDAO.getNextId();
+            result.add(new Group(id, resultBuilder.toString()));
             resultBuilder.setLength(0);
         }
         return result;

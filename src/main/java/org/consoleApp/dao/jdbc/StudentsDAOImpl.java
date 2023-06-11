@@ -80,9 +80,9 @@ public class StudentsDAOImpl implements StudentsDAO {
     public boolean insert(Student student) {
         try {
             preparedStatement = connection.prepareStatement("INSERT INTO students (group_id, first_name, last_name) VALUES (?, ?, ?)");
-            preparedStatement.setInt(1,student.group_id());
-            preparedStatement.setString(2,student.first_name());
-            preparedStatement.setString(3,student.last_name());
+            preparedStatement.setInt(1,student.getGroupId());
+            preparedStatement.setString(2,student.getFirstName());
+            preparedStatement.setString(3,student.getLastName());
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
@@ -94,12 +94,57 @@ public class StudentsDAOImpl implements StudentsDAO {
     }
 
     @Override
+    public void insertBatch(List<Student> students) {
+        try {
+            connection.setAutoCommit(false);
+
+            preparedStatement = connection.prepareStatement("INSERT INTO students (group_id, first_name, last_name) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+
+            for (Student student : students){
+                preparedStatement.setInt(1, student.getGroupId());
+                preparedStatement.setString(2, student.getFirstName());
+                preparedStatement.setString(3, student.getLastName());
+
+                preparedStatement.addBatch();
+            }
+
+            preparedStatement.executeBatch();
+
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
+            int index = 0;
+
+            while (generatedKeys.next()){
+                int courseId = generatedKeys.getInt(1);
+                students.get(index).setStudentId(courseId);
+                index++;
+            }
+
+            connection.commit();
+        } catch (SQLException e) {
+            try {
+                connection.rollback();
+            } catch (SQLException rollbackException) {
+                throw new IllegalStateException("Can't insert batch of courses", e);
+            }
+            throw new IllegalStateException("Can't insert batch of courses", e);
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {
+                throw new RuntimeException("Can't set auto commit", e);
+            } finally {
+                closeResources();
+            }
+        }
+    }
+
+    @Override
     public void updateStudent(Student student) {
         try {
             preparedStatement = connection.prepareStatement("UPDATE students SET group_id = ?, first_name = ?, last_name = ? WHERE student_id = ?");
-            preparedStatement.setInt(1, student.group_id());
-            preparedStatement.setString(2, student.first_name());
-            preparedStatement.setString(3, student.last_name());
+            preparedStatement.setInt(1, student.getGroupId());
+            preparedStatement.setString(2, student.getFirstName());
+            preparedStatement.setString(3, student.getLastName());
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {

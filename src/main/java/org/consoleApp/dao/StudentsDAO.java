@@ -9,6 +9,7 @@ public interface StudentsDAO {
     List<Student> findAll();
     Optional<Student> findById(int studentId);
     boolean insert(Student student);
+    void insertBatch(List<Student> students);
     void updateStudent(Student student);
     boolean deleteStudentById(int studentId);
     int getGroupSize(int groupId);

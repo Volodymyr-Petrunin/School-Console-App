@@ -4,58 +4,33 @@ import org.consoleApp.dataFilling.DataFiller;
 import org.consoleApp.domin.Course;
 import org.consoleApp.dao.jdbc.CourseDAOImpl;
 import org.consoleApp.parser.impl.CourseParser;
-import org.consoleApp.records.CourseInfo;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 public class CoursesDataFiller implements DataFiller {
-    private final CourseParser parser = new CourseParser();
-    private List<CourseInfo> coursesList;
+    private CourseParser parser;
+    private List<Course> coursesList;
     private CourseDAOImpl courseImpl;
 
     public CoursesDataFiller(List<String> coursesList, DataSource dataSource) {
+        this.parser = new CourseParser(dataSource);
         this.coursesList = parsedList(coursesList);
         this.courseImpl = new CourseDAOImpl(dataSource);
     }
 
     @Override
     public void fillData() {
-        List<String> courseNameList = getCourseInfo(coursesList, CourseInfo::name);
-        List<String> courseDescriptionList = getCourseInfo(coursesList, CourseInfo::description);
-        List<Course> batchCourses  = new ArrayList<>();
-
-        if (courseNameList.size() == courseDescriptionList.size()) {
-            for (int currentIndex = 0; currentIndex < courseNameList.size(); currentIndex++) {
-
-                String name = courseNameList.get(currentIndex);
-                String description = courseDescriptionList.get(currentIndex);
-                int nextCourseId = courseImpl.getNextId();
-
-                Course course = new Course(nextCourseId, name, description);
-               batchCourses.add(course);
-            }
-            courseImpl.insertBatch(batchCourses);
-        }
+        courseImpl.insertBatch(coursesList);
     }
 
-    private List<CourseInfo> parsedList(List<String> list){
-        List<CourseInfo> result = new ArrayList<>();
-        for (String currentLine : list){
-            CourseInfo currentObj = parser.parse(currentLine);
-            result.add(new CourseInfo(currentObj.name(),currentObj.description()));
+    private List<Course> parsedList(List<String> list) {
+        List<Course> result = new ArrayList<>();
+        for (String currentLine : list) {
+            Course course = parser.parse(currentLine);
+            result.add(course);
         }
         return result;
-    }
-
-    private List<String> getCourseInfo(List<CourseInfo> currentObject, Function<CourseInfo, String> getInfo){
-        List<String> currentList = new ArrayList<>();
-        for (CourseInfo currentLine : currentObject){
-            String value = getInfo.apply(currentLine);
-            currentList.add(value);
-        }
-        return currentList;
     }
 }

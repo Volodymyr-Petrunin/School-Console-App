@@ -1,4 +1,4 @@
-package org.consoleApp.groups;
+package org.consoleApp.domin;
 
 public record Group(int groupId, String groupName) {
 }

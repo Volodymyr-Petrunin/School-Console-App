@@ -1,5 +1,8 @@
-package org.consoleApp.students;
+package org.consoleApp.dao.jdbc;
 
+
+import org.consoleApp.dao.StudentsDAO;
+import org.consoleApp.domin.Student;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -7,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class StudentsDAOImpl implements StudentsDAO{
+public class StudentsDAOImpl implements StudentsDAO {
     private Connection connection;
     private PreparedStatement preparedStatement;
     private ResultSet resultSet;

@@ -1,9 +1,10 @@
-package org.consoleApp.fillingData;
+package org.consoleApp.dataFilling.impl;
 
 import org.consoleApp.dataBaseSettings.DBConnector;
-import org.consoleApp.generationData.GroupGenerationData;
-import org.consoleApp.groups.Group;
-import org.consoleApp.groups.GroupsDAOImpl;
+import org.consoleApp.dataFilling.DataFiller;
+import org.consoleApp.generation.impl.GroupGenerationData;
+import org.consoleApp.domin.Group;
+import org.consoleApp.dao.jdbc.GroupsDAOImpl;
 import org.consoleApp.readers.ResourcesFileReader;
 
 import javax.sql.DataSource;

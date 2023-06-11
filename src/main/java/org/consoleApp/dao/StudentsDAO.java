@@ -1,4 +1,6 @@
-package org.consoleApp.students;
+package org.consoleApp.dao;
+
+import org.consoleApp.domin.Student;
 
 import java.util.List;
 import java.util.Optional;

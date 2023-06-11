@@ -1,18 +1,18 @@
-package org.consoleApp;
+package org.consoleApp.launch;
 
-import org.consoleApp.courses.Course;
-import org.consoleApp.courses.CourseDAOImpl;
+import org.consoleApp.domin.Course;
+import org.consoleApp.dao.jdbc.CourseDAOImpl;
 import org.consoleApp.dataBaseSettings.DBConnector;
 import org.consoleApp.dataBaseSettings.ScriptRunner;
-import org.consoleApp.enrollments.EnrollmentsDAOImpl;
-import org.consoleApp.fillingData.CoursesDataFiller;
-import org.consoleApp.fillingData.EnrollmentsDataFiller;
-import org.consoleApp.fillingData.GroupDataFiller;
-import org.consoleApp.fillingData.StudentsDataFiller;
-import org.consoleApp.groups.Group;
-import org.consoleApp.groups.GroupsDAOImpl;
-import org.consoleApp.students.Student;
-import org.consoleApp.students.StudentsDAOImpl;
+import org.consoleApp.dao.jdbc.EnrollmentsDAOImpl;
+import org.consoleApp.dataFilling.impl.CoursesDataFiller;
+import org.consoleApp.dataFilling.impl.EnrollmentsDataFiller;
+import org.consoleApp.dataFilling.impl.GroupDataFiller;
+import org.consoleApp.dataFilling.impl.StudentsDataFiller;
+import org.consoleApp.domin.Group;
+import org.consoleApp.dao.jdbc.GroupsDAOImpl;
+import org.consoleApp.domin.Student;
+import org.consoleApp.dao.jdbc.StudentsDAOImpl;
 
 import javax.sql.DataSource;
 import java.util.*;

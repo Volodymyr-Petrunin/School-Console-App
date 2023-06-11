@@ -1,5 +1,7 @@
-package org.consoleApp.enrollments;
+package org.consoleApp.dao.jdbc;
 
+
+import org.consoleApp.dao.EnrollmentsDAO;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -9,7 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EnrollmentsDAOImpl implements EnrollmentsDAO{
+public class EnrollmentsDAOImpl implements EnrollmentsDAO {
     private Connection connection;
     private PreparedStatement preparedStatement;
     private ResultSet resultSet;

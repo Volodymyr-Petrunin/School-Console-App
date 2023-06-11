@@ -1,8 +1,9 @@
-package org.consoleApp.parser;
+package org.consoleApp.parser.impl;
 
+import org.consoleApp.parser.Parser;
 import org.consoleApp.records.CourseInfo;
 
-public class CourseParser implements Parser<CourseInfo>{
+public class CourseParser implements Parser<CourseInfo> {
     @Override
     public CourseInfo parse(String input) {
        if (!input.contains("_")){

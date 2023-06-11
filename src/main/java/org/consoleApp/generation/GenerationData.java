@@ -1,4 +1,4 @@
-package org.consoleApp.generationData;
+package org.consoleApp.generation;
 
 import java.util.List;
 

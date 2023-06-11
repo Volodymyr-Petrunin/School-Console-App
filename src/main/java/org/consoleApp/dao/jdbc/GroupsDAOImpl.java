@@ -1,4 +1,7 @@
-package org.consoleApp.groups;
+package org.consoleApp.dao.jdbc;
+
+import org.consoleApp.dao.GroupDAO;
+import org.consoleApp.domin.Group;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -6,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class GroupsDAOImpl implements GroupDAO{
+public class GroupsDAOImpl implements GroupDAO {
 
     private Connection connection;
     private PreparedStatement preparedStatement;

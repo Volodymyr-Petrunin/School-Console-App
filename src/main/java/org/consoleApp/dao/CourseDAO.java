@@ -1,4 +1,6 @@
-package org.consoleApp.courses;
+package org.consoleApp.dao;
+
+import org.consoleApp.domin.Course;
 
 import java.util.List;
 import java.util.Optional;

@@ -1,8 +1,9 @@
-package org.consoleApp.parser;
+package org.consoleApp.parser.impl;
 
+import org.consoleApp.parser.Parser;
 import org.consoleApp.records.DBSettings;
 
-public class DBSettingsParser implements Parser<DBSettings>{
+public class DBSettingsParser implements Parser<DBSettings> {
     @Override
     public DBSettings parse(String input) {
         String[] settings = input.split("_");

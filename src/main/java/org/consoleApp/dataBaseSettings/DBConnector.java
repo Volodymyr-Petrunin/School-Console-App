@@ -2,7 +2,7 @@ package org.consoleApp.dataBaseSettings;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import org.consoleApp.parser.DBSettingsParser;
+import org.consoleApp.parser.impl.DBSettingsParser;
 import org.consoleApp.readers.ResourcesFileReader;
 import org.consoleApp.records.DBSettings;
 

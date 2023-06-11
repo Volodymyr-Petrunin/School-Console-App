@@ -1,4 +1,4 @@
-package org.consoleApp.enrollments;
+package org.consoleApp.dao;
 
 import java.util.List;
 

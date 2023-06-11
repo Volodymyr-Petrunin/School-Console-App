@@ -1,8 +1,10 @@
-package org.consoleApp.generationData;
+package org.consoleApp.generation.impl;
+
+import org.consoleApp.generation.GenerationData;
 
 import java.util.*;
 
-public class GenerationDataInitial implements GenerationData{
+public class GenerationDataInitial implements GenerationData {
     private final Random random = new Random();
     private List<String> dataList;
     private int quantity;

@@ -1,4 +1,7 @@
-package org.consoleApp.courses;
+package org.consoleApp.dao.jdbc;
+
+import org.consoleApp.dao.CourseDAO;
+import org.consoleApp.domin.Course;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -6,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class CourseDAOImpl implements CourseDAO{
+public class CourseDAOImpl implements CourseDAO {
     private Connection connection;
     private PreparedStatement preparedStatement;
     private ResultSet resultSet;

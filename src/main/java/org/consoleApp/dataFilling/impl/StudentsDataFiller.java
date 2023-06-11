@@ -1,20 +1,21 @@
-package org.consoleApp.fillingData;
+package org.consoleApp.dataFilling.impl;
 
 
-import org.consoleApp.generationData.GenerationDataInitial;
+import org.consoleApp.dataFilling.DataFiller;
+import org.consoleApp.generation.impl.GenerationDataInitial;
 import org.consoleApp.dataBaseSettings.DBConnector;
-import org.consoleApp.groups.Group;
-import org.consoleApp.groups.GroupsDAOImpl;
+import org.consoleApp.domin.Group;
+import org.consoleApp.dao.jdbc.GroupsDAOImpl;
 import org.consoleApp.readers.ResourcesFileReader;
-import org.consoleApp.students.Student;
-import org.consoleApp.students.StudentsDAOImpl;
+import org.consoleApp.domin.Student;
+import org.consoleApp.dao.jdbc.StudentsDAOImpl;
 
 import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class StudentsDataFiller implements DataFiller{
+public class StudentsDataFiller implements DataFiller {
     private int quantityGenerations;
     private final Random random = new Random();
     private final DBConnector dbConnector = new DBConnector(10);

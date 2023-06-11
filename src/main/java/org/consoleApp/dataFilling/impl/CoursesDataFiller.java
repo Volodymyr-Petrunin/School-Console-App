@@ -1,9 +1,10 @@
-package org.consoleApp.fillingData;
+package org.consoleApp.dataFilling.impl;
 
-import org.consoleApp.courses.Course;
-import org.consoleApp.courses.CourseDAOImpl;
+import org.consoleApp.dataFilling.DataFiller;
+import org.consoleApp.domin.Course;
+import org.consoleApp.dao.jdbc.CourseDAOImpl;
 import org.consoleApp.dataBaseSettings.DBConnector;
-import org.consoleApp.parser.CourseParser;
+import org.consoleApp.parser.impl.CourseParser;
 import org.consoleApp.readers.ResourcesFileReader;
 import org.consoleApp.records.CourseInfo;
 
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 
-public class CoursesDataFiller implements DataFiller{
+public class CoursesDataFiller implements DataFiller {
     private final ResourcesFileReader readerCourses = new ResourcesFileReader("courses.txt");
     private final CourseParser parser = new CourseParser();
     private final List<CourseInfo> coursesList = parsedList(readerCourses.read());

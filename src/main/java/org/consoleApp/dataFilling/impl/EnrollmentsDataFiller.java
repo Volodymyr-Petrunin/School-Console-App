@@ -1,17 +1,18 @@
-package org.consoleApp.fillingData;
+package org.consoleApp.dataFilling.impl;
 
-import org.consoleApp.courses.Course;
-import org.consoleApp.courses.CourseDAOImpl;
+import org.consoleApp.dataFilling.DataFiller;
+import org.consoleApp.domin.Course;
+import org.consoleApp.dao.jdbc.CourseDAOImpl;
 import org.consoleApp.dataBaseSettings.DBConnector;
-import org.consoleApp.enrollments.EnrollmentsDAOImpl;
-import org.consoleApp.students.Student;
-import org.consoleApp.students.StudentsDAOImpl;
+import org.consoleApp.dao.jdbc.EnrollmentsDAOImpl;
+import org.consoleApp.domin.Student;
+import org.consoleApp.dao.jdbc.StudentsDAOImpl;
 
 import javax.sql.DataSource;
 import java.util.List;
 import java.util.Random;
 
-public class EnrollmentsDataFiller implements DataFiller{
+public class EnrollmentsDataFiller implements DataFiller {
     private final Random random = new Random();
     private final DBConnector dbConnector = new DBConnector(10);
     private final DataSource dataSource = dbConnector.getConnection();

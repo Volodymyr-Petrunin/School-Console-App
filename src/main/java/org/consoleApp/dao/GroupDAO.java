@@ -1,4 +1,6 @@
-package org.consoleApp.groups;
+package org.consoleApp.dao;
+
+import org.consoleApp.domin.Group;
 
 import java.util.List;
 import java.util.Optional;

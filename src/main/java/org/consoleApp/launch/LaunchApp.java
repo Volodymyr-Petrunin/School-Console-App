@@ -29,7 +29,7 @@ public class LaunchApp {
     private final GroupsDAOImpl groupsDAO = new GroupsDAOImpl(dataSource);
     private final StudentsDAOImpl studentsDAO = new StudentsDAOImpl(dataSource);
     private final EnrollmentsDAOImpl enrollmentsDAO = new EnrollmentsDAOImpl(dataSource);
-    private final GroupDataFiller groupDataFiller = new GroupDataFiller(10, dataSource);
+    private final GroupDataFiller groupDataFiller = new GroupDataFiller(10,2,2, dataSource);
     private final StudentsDataFiller studentsDataFiller = new StudentsDataFiller(200);
     private final CoursesDataFiller coursesDataFiller = new CoursesDataFiller(readerCourses.read(),dataSource);
     private final EnrollmentsDataFiller enrollmentsDataFiller = new EnrollmentsDataFiller(3, dataSource);

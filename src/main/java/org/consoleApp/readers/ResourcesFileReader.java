@@ -12,10 +12,12 @@ public class ResourcesFileReader implements Reader{
 
     @Override
     public List<String> read() {
-        InputStream inputStream = getClass().getResourceAsStream("/" +  fileName);
+        try (InputStream inputStream = getClass().getResourceAsStream("/" +  fileName);
+        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))){
 
-        assert inputStream != null;
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
-        return reader.lines().toList();
+            return reader.lines().toList();
+        } catch (IOException e) {
+            throw new RuntimeException("Error reading file: " + fileName, e);
+        }
     }
 }

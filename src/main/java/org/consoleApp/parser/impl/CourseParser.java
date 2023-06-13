@@ -22,8 +22,7 @@ public class CourseParser implements Parser<Course> {
        String[] info = input.split("_",2);
        String name = info[0];
        String description = info[1];
-       int courseId = courseDAO.getNextId();
 
-       return new Course(courseId, name, description);
+       return new Course(null, name, description);
     }
 }

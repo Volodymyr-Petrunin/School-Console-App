@@ -1,11 +1,11 @@
 package org.consoleApp.domin;
 
 public class Course {
-    private int courseId;
+    private Integer courseId;
     private String courseName;
     private String courseDescription;
 
-    public Course(int courseId, String courseName, String courseDescription) {
+    public Course(Integer courseId, String courseName, String courseDescription) {
         this.courseId = courseId;
         this.courseName = courseName;
         this.courseDescription = courseDescription;

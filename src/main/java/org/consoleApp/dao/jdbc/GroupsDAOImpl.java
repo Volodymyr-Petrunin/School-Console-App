@@ -125,7 +125,7 @@ public class GroupsDAOImpl implements GroupDAO {
     }
 
     @Override
-    public void updateGroup(Group group) {
+    public void update(Group group) {
         try {
             preparedStatement = connection.prepareStatement("UPDATE groups SET group_name = ? WHERE group_id = ?");
             preparedStatement.setString(1, group.getGroupName());
@@ -140,7 +140,7 @@ public class GroupsDAOImpl implements GroupDAO {
     }
 
     @Override
-    public void deleteGroup(Group group) {
+    public void delete(Group group) {
         try {
             preparedStatement = connection.prepareStatement("DELETE FROM groups WHERE group_id = ?");
             preparedStatement.setInt(1, group.getGroupId());

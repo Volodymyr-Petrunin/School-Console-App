@@ -1,10 +1,8 @@
 package org.consoleApp.generation.impl;
 
-import org.consoleApp.dao.jdbc.GroupsDAOImpl;
 import org.consoleApp.domin.Group;
 import org.consoleApp.generation.GenerationData;
 
-import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -13,16 +11,14 @@ public class GroupGenerationData implements GenerationData<Group> {
     private final Random random = new Random();
     private static final int ALPHABET_SIZE = 26;
     private static final int DIGITS_SIZE = 10;
-    private GroupsDAOImpl groupsDAO;
     private int quantity;
     private int amountOfLetters;
     private int amountOfNumbers;
 
-    public GroupGenerationData(int quantity, int amountOfLetters, int amountOfNumbers, DataSource dataSource) {
+    public GroupGenerationData(int quantity, int amountOfLetters, int amountOfNumbers) {
         this.quantity = quantity;
         this.amountOfLetters = amountOfLetters;
         this.amountOfNumbers = amountOfNumbers;
-        this.groupsDAO = new GroupsDAOImpl(dataSource);
     }
 
     @Override

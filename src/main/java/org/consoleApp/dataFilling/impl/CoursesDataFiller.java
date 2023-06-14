@@ -1,28 +1,26 @@
 package org.consoleApp.dataFilling.impl;
 
+import org.consoleApp.dao.CourseDAO;
 import org.consoleApp.dataFilling.DataFiller;
 import org.consoleApp.domin.Course;
-import org.consoleApp.dao.jdbc.CourseDAOImpl;
 import org.consoleApp.parser.impl.CourseParser;
 
-import javax.sql.DataSource;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CoursesDataFiller implements DataFiller {
-    private CourseParser parser;
+    private final CourseParser parser = new CourseParser();
     private List<Course> coursesList;
-    private CourseDAOImpl courseImpl;
+    private CourseDAO courseDAO;
 
-    public CoursesDataFiller(List<String> coursesList, DataSource dataSource) {
-        this.parser = new CourseParser(dataSource);
+    public CoursesDataFiller(List<String> coursesList, CourseDAO courseDAO) {
         this.coursesList = parsedList(coursesList);
-        this.courseImpl = new CourseDAOImpl(dataSource);
+        this.courseDAO = courseDAO;
     }
 
     @Override
     public void fillData() {
-        courseImpl.insertBatch(coursesList);
+        courseDAO.insertBatch(coursesList);
     }
 
     private List<Course> parsedList(List<String> list) {

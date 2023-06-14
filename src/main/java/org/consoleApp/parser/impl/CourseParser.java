@@ -1,17 +1,9 @@
 package org.consoleApp.parser.impl;
 
-import org.consoleApp.dao.jdbc.CourseDAOImpl;
 import org.consoleApp.domin.Course;
 import org.consoleApp.parser.Parser;
 
-import javax.sql.DataSource;
-
 public class CourseParser implements Parser<Course> {
-    private CourseDAOImpl courseDAO;
-
-    public CourseParser(DataSource dataSource) {
-        this.courseDAO = new CourseDAOImpl(dataSource);
-    }
 
     @Override
     public Course parse(String input) {

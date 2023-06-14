@@ -31,10 +31,10 @@ public class LaunchApp {
     private final GroupsDAOImpl groupsDAO = new GroupsDAOImpl(dataSource);
     private final StudentsDAOImpl studentsDAO = new StudentsDAOImpl(dataSource);
     private final Enrollments enrollmentsDAO = new Enrollments(dataSource);
-    private final GroupDataFiller groupDataFiller = new GroupDataFiller(10,2,2, dataSource);
-    private final StudentsDataFiller studentsDataFiller = new StudentsDataFiller(readerFirstName.read(),readerSecondName.read(),200, 30,dataSource);
-    private final CoursesDataFiller coursesDataFiller = new CoursesDataFiller(readerCourses.read(),dataSource);
-    private final EnrollmentsDataFiller enrollmentsDataFiller = new EnrollmentsDataFiller(3, dataSource);
+    private final GroupDataFiller groupDataFiller = new GroupDataFiller(10,2,2, groupsDAO);
+    private final StudentsDataFiller studentsDataFiller = new StudentsDataFiller(readerFirstName.read(),readerSecondName.read(),200, 30, studentsDAO, groupsDAO);
+    private final CoursesDataFiller coursesDataFiller = new CoursesDataFiller(readerCourses.read(), courseDAO);
+    private final EnrollmentsDataFiller enrollmentsDataFiller = new EnrollmentsDataFiller(3, studentsDAO, courseDAO);
     private final Scanner scan = new Scanner(System.in);
     private final String dash = "-".repeat(50); // yes magic number. But it doesn't affect anything
     private boolean exit = false;

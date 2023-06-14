@@ -1,25 +1,24 @@
 package org.consoleApp.dataFilling.impl;
 
+import org.consoleApp.dao.CourseDAO;
+import org.consoleApp.dao.StudentsDAO;
 import org.consoleApp.dataFilling.DataFiller;
 import org.consoleApp.domin.Course;
-import org.consoleApp.dao.jdbc.CourseDAOImpl;
 import org.consoleApp.domin.Student;
-import org.consoleApp.dao.jdbc.StudentsDAOImpl;
 
-import javax.sql.DataSource;
 import java.util.List;
 import java.util.Random;
 
 public class EnrollmentsDataFiller implements DataFiller {
     private final Random random = new Random();
     private int numberOfStudentInOneCourse;
-    private StudentsDAOImpl studentsDAO;
-    private CourseDAOImpl courseDAO;
+    private StudentsDAO studentsDAO;
+    private CourseDAO courseDAO;
 
-    public EnrollmentsDataFiller(int numberOfStudentInOneCourse, DataSource dataSource) {
+    public EnrollmentsDataFiller(int numberOfStudentInOneCourse, StudentsDAO studentsDAO, CourseDAO courseDAO) {
         this.numberOfStudentInOneCourse = numberOfStudentInOneCourse;
-        this.studentsDAO = new StudentsDAOImpl(dataSource);
-        this.courseDAO = new CourseDAOImpl(dataSource);
+        this.studentsDAO = studentsDAO;
+        this.courseDAO = courseDAO;
     }
 
     @Override

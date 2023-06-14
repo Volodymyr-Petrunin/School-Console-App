@@ -1,30 +1,28 @@
 package org.consoleApp.generation.impl;
 
-import org.consoleApp.dao.jdbc.GroupsDAOImpl;
-import org.consoleApp.dao.jdbc.StudentsDAOImpl;
+import org.consoleApp.dao.StudentsDAO;
 import org.consoleApp.domin.Group;
 import org.consoleApp.domin.Student;
 import org.consoleApp.generation.GenerationData;
 
-import javax.sql.DataSource;
 import java.util.*;
 
 public class GenerationDataInitial implements GenerationData<Student> {
     private final Random random = new Random();
     private List<String> dataName;
     private List<String> dataSurname;
-    private GroupsDAOImpl groupsDAO;
-    private StudentsDAOImpl studentsDAO;
+    private StudentsDAO studentsDAO;
     private int quantity;
     private int maxGroupSize;
+    private List<Group> allGroups;
 
-    public GenerationDataInitial(List<String> dataName, List<String> dataSurname, int maxGroupSize,int quantity, DataSource dataSource) {
+    public GenerationDataInitial(List<String> dataName, List<String> dataSurname, int maxGroupSize,int quantity, StudentsDAO studentsDAO, List<Group> allGroups) {
         this.dataName = dataName;
         this.dataSurname = dataSurname;
         this.quantity = quantity;
         this.maxGroupSize = maxGroupSize;
-        this.groupsDAO = new GroupsDAOImpl(dataSource);
-        this.studentsDAO = new StudentsDAOImpl(dataSource);
+        this.studentsDAO = studentsDAO;
+        this.allGroups = allGroups;
     }
 
     @Override
@@ -49,7 +47,6 @@ public class GenerationDataInitial implements GenerationData<Student> {
     }
 
     private int choseGroup() {
-        List<Group> allGroups = groupsDAO.findAll();
         List<Group> eligibleGroups = new ArrayList<>();
 
         for (Group group : allGroups){

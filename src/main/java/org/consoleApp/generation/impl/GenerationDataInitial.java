@@ -35,10 +35,9 @@ public class GenerationDataInitial implements GenerationData<Student> {
             String currentName = getRandomElement(dataName);
             String currentSurname = getRandomElement(dataSurname);
 
-            int studentId = studentsDAO.getNextId();
             int groupId = choseGroup();
 
-            resultData.add(new Student(studentId,groupId, currentName, currentSurname));
+            resultData.add(new Student(null,groupId, currentName, currentSurname));
         }
 
         return resultData;

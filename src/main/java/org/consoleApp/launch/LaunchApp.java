@@ -172,11 +172,10 @@ public class LaunchApp {
         Optional<Group> optionalGroup = groupsDAO.findGroupIdByName(groupName);
         int groupId = optionalGroup.orElseThrow(()-> new RuntimeException("Can't find group id by group name in LaunchApp")).getGroupId();
 
-        int studentId = studentsDAO.getNextId();
+        Student newStudent = new Student(null,groupId,firstName,lastName);
 
-        Student newStudent = new Student(studentId,groupId,firstName,lastName);
         boolean operationSuccessful = studentsDAO.insert(newStudent);
-        boolean enrollSuccessful = studentsDAO.enrollStudentInCourse(studentId, groupId);
+        boolean enrollSuccessful = studentsDAO.enrollStudentInCourse(newStudent.getStudentId(), groupId);
 
         if (operationSuccessful && enrollSuccessful){
             System.out.println("New student added successfully! :)");

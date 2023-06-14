@@ -176,8 +176,9 @@ public class LaunchApp {
 
         Student newStudent = new Student(studentId,groupId,firstName,lastName);
         boolean operationSuccessful = studentsDAO.insert(newStudent);
+        boolean enrollSuccessful = studentsDAO.enrollStudentInCourse(studentId, groupId);
 
-        if (operationSuccessful){
+        if (operationSuccessful && enrollSuccessful){
             System.out.println("New student added successfully! :)");
             System.out.println(dash);
         }else {

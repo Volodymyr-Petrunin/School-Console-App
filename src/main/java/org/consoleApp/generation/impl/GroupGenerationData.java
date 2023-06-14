@@ -36,8 +36,7 @@ public class GroupGenerationData implements GenerationData<Group> {
             resultBuilder.append("-");
             resultBuilder.append(generateRandomChars(amountOfNumbers, false));
 
-            int id = groupsDAO.getNextId();
-            result.add(new Group(id, resultBuilder.toString()));
+            result.add(new Group(null, resultBuilder.toString()));
             resultBuilder.setLength(0);
         }
         return result;

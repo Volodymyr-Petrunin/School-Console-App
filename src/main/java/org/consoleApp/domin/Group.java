@@ -1,10 +1,10 @@
 package org.consoleApp.domin;
 
 public class Group {
-    private int groupId;
+    private Integer groupId;
     private String groupName;
 
-    public Group(int groupId, String groupName) {
+    public Group(Integer groupId, String groupName) {
         this.groupId = groupId;
         this.groupName = groupName;
     }

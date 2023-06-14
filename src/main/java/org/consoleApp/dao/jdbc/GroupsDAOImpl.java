@@ -10,35 +10,24 @@ import java.util.List;
 import java.util.Optional;
 
 public class GroupsDAOImpl implements GroupDAO {
-
-    private Connection connection;
-    private PreparedStatement preparedStatement;
-    private ResultSet resultSet;
+    private DataSource dataSource;
 
     public GroupsDAOImpl(DataSource dataSource) {
-        try {
-            this.connection = dataSource.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to establish a database connection", e);
-        } finally {
-            closeResources();
-        }
+        this.dataSource = dataSource;
     }
 
     @Override
     public List<Group> findAll() {
         List<Group> groups = new ArrayList<>();
 
-        try {
-            preparedStatement = connection.prepareStatement("SELECT * FROM groups");
-            resultSet = preparedStatement.executeQuery();
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM groups");
+             ResultSet resultSet = preparedStatement.executeQuery()) {
 
             getCurrentList(groups, resultSet);
 
         } catch (SQLException e) {
             throw new IllegalStateException("Can't find groups", e);
-        } finally {
-            closeResources();
         }
 
         return groups;
@@ -48,20 +37,19 @@ public class GroupsDAOImpl implements GroupDAO {
     public Optional<Group> findById(int id) {
         Optional<Group> group = Optional.empty();
 
-        try {
-            preparedStatement = connection.prepareStatement("SELECT * FROM groups WHERE group_id = ?");
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM groups WHERE group_id = ?")) {
             preparedStatement.setInt(1,id);
-            resultSet = preparedStatement.executeQuery();
 
+        try (ResultSet resultSet = preparedStatement.executeQuery()){
             if (resultSet.next()){
                 String groupName = resultSet.getString("group_name");
                 group = Optional.of(new Group(id, groupName));
             }
+        }
 
         } catch (SQLException e) {
             throw new IllegalStateException("Can't find group", e);
-        } finally {
-            closeResources();
         }
 
         return group;
@@ -69,24 +57,28 @@ public class GroupsDAOImpl implements GroupDAO {
 
     @Override
     public void insert(Group group) {
-        try {
-            preparedStatement = connection.prepareStatement("INSERT INTO groups (group_name) VALUES (?)");
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO groups (group_name) VALUES (?)", Statement.RETURN_GENERATED_KEYS)){
             preparedStatement.setString(1, group.getGroupName());
-            preparedStatement.executeUpdate();
+
+        try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()){
+            while (generatedKeys.next()){
+                int groupId = generatedKeys.getInt(1);
+                group.setGroupId(groupId);
+            }
+        }
 
         } catch (SQLException e) {
             throw new IllegalStateException("Can't insert group", e);
-        } finally {
-            closeResources();
         }
     }
 
     @Override
     public void insertBatch(List<Group> groups) {
-        try {
-            connection.setAutoCommit(false);
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO groups (group_name) VALUES (?)", Statement.RETURN_GENERATED_KEYS)) {
 
-            preparedStatement = connection.prepareStatement("INSERT INTO groups (group_name) VALUES (?)", Statement.RETURN_GENERATED_KEYS);
+            connection.setAutoCommit(false);
 
             for (Group group : groups) {
                 preparedStatement.setString(1, group.getGroupName());
@@ -96,76 +88,72 @@ public class GroupsDAOImpl implements GroupDAO {
 
             preparedStatement.executeBatch();
 
-            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-            int index = 0;
+            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys();){
+                int index = 0;
 
-            while (generatedKeys.next()){
-                int groupId = generatedKeys.getInt(1);
-                groups.get(index).setGroupId(groupId);
-                index++;
+                while (generatedKeys.next()){
+                    int groupId = generatedKeys.getInt(1);
+                    groups.get(index).setGroupId(groupId);
+                    index++;
+                }
             }
 
             connection.commit();
         } catch (SQLException e) {
-            try {
+            try (Connection connection = dataSource.getConnection()){
                 connection.rollback();
             } catch (SQLException rollbackException) {
                 throw new IllegalStateException("Can't insert batch of groups", e);
             }
             throw new IllegalStateException("Can't insert batch of groups", e);
         } finally {
-            try {
+            try (Connection connection = dataSource.getConnection()){
                 connection.setAutoCommit(true);
             } catch (SQLException e) {
                 throw new RuntimeException("Can't set auto commit", e);
-            } finally {
-                closeResources();
             }
         }
     }
 
     @Override
     public void update(Group group) {
-        try {
-            preparedStatement = connection.prepareStatement("UPDATE groups SET group_name = ? WHERE group_id = ?");
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("UPDATE groups SET group_name = ? WHERE group_id = ?")) {
             preparedStatement.setString(1, group.getGroupName());
             preparedStatement.setInt(2, group.getGroupId());
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new IllegalStateException("Can't update group", e);
-        } finally {
-            closeResources();
         }
     }
 
     @Override
     public void delete(Group group) {
-        try {
-            preparedStatement = connection.prepareStatement("DELETE FROM groups WHERE group_id = ?");
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM groups WHERE group_id = ?")) {
             preparedStatement.setInt(1, group.getGroupId());
 
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new IllegalStateException("Can't delete group", e);
-        }  finally {
-            closeResources();
         }
     }
 
     @Override
     public List<Group> findGroupsWithLessOrEqualStudents(int maxStudents) {
         List<Group> groups = new ArrayList<>();
-        try {
-            preparedStatement = connection.prepareStatement("SELECT * FROM groups WHERE (SELECT COUNT(*) FROM students WHERE students.group_id = groups.group_id) <= ?");
-            preparedStatement.setInt(1, maxStudents);
-            resultSet = preparedStatement.executeQuery();
 
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM groups WHERE (SELECT COUNT(*) FROM students WHERE students.group_id = groups.group_id) <= ?")){
+            preparedStatement.setInt(1, maxStudents);
+
+        try (ResultSet resultSet = preparedStatement.executeQuery()){
             getCurrentList(groups, resultSet);
+        }
+
         } catch (SQLException e) {
             throw new IllegalStateException("Can't find groups with less or equal students", e);
-        } finally {
-            closeResources();
         }
 
         return groups;
@@ -174,43 +162,23 @@ public class GroupsDAOImpl implements GroupDAO {
     @Override
     public Optional<Group> findGroupIdByName(String groupName) {
         Optional<Group> group = Optional.empty();
-        try {
-            preparedStatement = connection.prepareStatement("SELECT group_id FROM groups WHERE group_name = ?");
-            preparedStatement.setString(1, groupName);
-            resultSet = preparedStatement.executeQuery();
 
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT group_id FROM groups WHERE group_name = ?")) {
+            preparedStatement.setString(1, groupName);
+
+        try (ResultSet resultSet = preparedStatement.executeQuery()){
             while (resultSet.next()){
                 int groupId = resultSet.getInt("group_id");
                 group = Optional.of(new Group(groupId, groupName));
             }
+        }
 
         } catch (SQLException e) {
             throw new IllegalStateException("Can't find groups id by name", e);
-        } finally {
-            closeResources();
         }
 
         return group;
-    }
-
-    public int getNextId() {
-        int nextGroupId = 0;
-
-        try {
-            preparedStatement = connection.prepareStatement("SELECT MAX(group_id) FROM groups");
-            resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next()){
-                nextGroupId = resultSet.getInt(1) + 1;
-            }
-
-        } catch (SQLException e) {
-            throw new IllegalStateException("Can't find next id", e);
-        } finally {
-            closeResources();
-        }
-
-        return nextGroupId;
     }
 
     private void getCurrentList(List<Group> groups, ResultSet resultSet) throws SQLException {
@@ -220,24 +188,6 @@ public class GroupsDAOImpl implements GroupDAO {
 
             Group group = new Group(groupId, groupName);
             groups.add(group);
-        }
-    }
-
-    private void closeResources(){
-        if (resultSet != null) {
-            try {
-                resultSet.close();
-            } catch (SQLException e) {
-                throw new RuntimeException("Something wrong with ResultSet in GroupsDAOImpl", e);
-            }
-        }
-
-        if (preparedStatement != null){
-            try {
-                preparedStatement.close();
-            } catch (SQLException e) {
-                throw new RuntimeException("Something wrong with PreparedStatement in GroupsDAOImpl", e);
-            }
         }
     }
 }

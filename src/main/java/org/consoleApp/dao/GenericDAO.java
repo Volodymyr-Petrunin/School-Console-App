@@ -7,7 +7,7 @@ public interface GenericDAO<T> {
     Optional<T> findById(int id);
     List<T> findAll();
     void insertBatch(List<T> obj);
-    void insert(T entity);
-    void update(T entity);
-    void delete(T entity);
+    boolean insert(T entity);
+    boolean update(T entity);
+    boolean delete(T entity);
 }

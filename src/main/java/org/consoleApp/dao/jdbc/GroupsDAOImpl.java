@@ -56,10 +56,12 @@ public class GroupsDAOImpl implements GroupDAO {
     }
 
     @Override
-    public void insert(Group group) {
+    public boolean insert(Group group) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO groups (group_name) VALUES (?)", Statement.RETURN_GENERATED_KEYS)){
             preparedStatement.setString(1, group.getGroupName());
+
+            int rowsAffected = preparedStatement.executeUpdate();
 
         try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()){
             while (generatedKeys.next()){
@@ -68,6 +70,7 @@ public class GroupsDAOImpl implements GroupDAO {
             }
         }
 
+        return rowsAffected > 0;
         } catch (SQLException e) {
             throw new IllegalStateException("Can't insert group", e);
         }
@@ -116,25 +119,27 @@ public class GroupsDAOImpl implements GroupDAO {
     }
 
     @Override
-    public void update(Group group) {
+    public boolean update(Group group) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("UPDATE groups SET group_name = ? WHERE group_id = ?")) {
             preparedStatement.setString(1, group.getGroupName());
             preparedStatement.setInt(2, group.getGroupId());
 
-            preparedStatement.executeUpdate();
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
         } catch (SQLException e) {
             throw new IllegalStateException("Can't update group", e);
         }
     }
 
     @Override
-    public void delete(Group group) {
+    public boolean delete(Group group) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM groups WHERE group_id = ?")) {
             preparedStatement.setInt(1, group.getGroupId());
 
-            preparedStatement.executeUpdate();
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
         } catch (SQLException e) {
             throw new IllegalStateException("Can't delete group", e);
         }

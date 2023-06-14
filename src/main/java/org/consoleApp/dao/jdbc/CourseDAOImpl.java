@@ -66,14 +66,14 @@ public class CourseDAOImpl implements CourseDAO {
     }
 
     @Override
-    public void insert(Course course) {
+    public boolean insert(Course course) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO courses (course_name, course_description) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS)) {
 
             preparedStatement.setString(1,course.getCourseName());
             preparedStatement.setString(2,course.getCourseDescription());
 
-            preparedStatement.executeUpdate();
+            int rowsAffected = preparedStatement.executeUpdate();
 
         try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()){
 
@@ -82,7 +82,7 @@ public class CourseDAOImpl implements CourseDAO {
                 course.setCourseId(courseId);
             }
         }
-
+          return rowsAffected > 0;
         } catch (SQLException e) {
             throw new IllegalStateException("Can't insert course", e);
         }
@@ -133,7 +133,7 @@ public class CourseDAOImpl implements CourseDAO {
     }
 
     @Override
-    public void update(Course course) {
+    public boolean update(Course course) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("UPDATE courses SET course_name = ?, course_description = ? WHERE course_id = ?")) {
 
@@ -141,19 +141,21 @@ public class CourseDAOImpl implements CourseDAO {
             preparedStatement.setString(2,course.getCourseDescription());
             preparedStatement.setInt(3,course.getCourseId());
 
-            preparedStatement.executeUpdate();
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
         } catch (SQLException e) {
             throw new IllegalStateException("Can't update courses", e);
         }
     }
 
     @Override
-    public void delete(Course course) {
+    public boolean delete(Course course) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM courses WHERE course_id = ?")) {
             preparedStatement.setInt(1,course.getCourseId());
 
-            preparedStatement.executeUpdate();
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
         } catch (SQLException e) {
             throw new IllegalStateException("Can't delete courses", e);
         }

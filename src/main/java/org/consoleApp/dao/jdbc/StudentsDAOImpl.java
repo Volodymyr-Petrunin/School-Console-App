@@ -14,13 +14,10 @@ public class StudentsDAOImpl implements StudentsDAO {
     private Connection connection;
     private PreparedStatement preparedStatement;
     private ResultSet resultSet;
+    private DataSource dataSource;
 
     public StudentsDAOImpl(DataSource dataSource) {
-        try {
-            this.connection = dataSource.getConnection();
-        } catch (SQLException e) {
-            throw new RuntimeException("Failed to establish a database connection", e);
-        }
+        this.dataSource = dataSource;
     }
 
     @Override
@@ -139,14 +136,15 @@ public class StudentsDAOImpl implements StudentsDAO {
     }
 
     @Override
-    public void updateStudent(Student student) {
+    public boolean update(Student student) {
         try {
             preparedStatement = connection.prepareStatement("UPDATE students SET group_id = ?, first_name = ?, last_name = ? WHERE student_id = ?");
             preparedStatement.setInt(1, student.getGroupId());
             preparedStatement.setString(2, student.getFirstName());
             preparedStatement.setString(3, student.getLastName());
-            preparedStatement.executeUpdate();
 
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
@@ -155,7 +153,19 @@ public class StudentsDAOImpl implements StudentsDAO {
     }
 
     @Override
-    public boolean deleteStudentById(int studentId) {
+    public boolean delete(Student student) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM students WHERE student_id = ?")){
+            preparedStatement.setInt(1, student.getStudentId());
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            throw new IllegalStateException("Can't delete students", e);
+        }
+    }
+
+    public boolean deleteByStudentId(int studentId) {
         try {
             preparedStatement = connection.prepareStatement("DELETE FROM students WHERE student_id = ?");
             preparedStatement.setInt(1, studentId);

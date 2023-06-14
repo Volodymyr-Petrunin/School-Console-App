@@ -116,7 +116,7 @@ public class LaunchApp {
 
         if (studentId != 0){
            boolean deleteFromEnrollSuccessful = enrollmentsDAO.deleteStudentById(studentId);
-           boolean deleteFromStudentsSuccessful = studentsDAO.deleteStudentById(studentId);
+           boolean deleteFromStudentsSuccessful = studentsDAO.deleteByStudentId(studentId);
 
            if (deleteFromEnrollSuccessful && deleteFromStudentsSuccessful){
                System.out.println("Delete student successfully!");

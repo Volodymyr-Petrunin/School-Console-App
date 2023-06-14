@@ -4,7 +4,7 @@ import org.consoleApp.domin.Course;
 import org.consoleApp.dao.jdbc.CourseDAOImpl;
 import org.consoleApp.dataBaseSettings.DBConnector;
 import org.consoleApp.dataBaseSettings.ScriptRunner;
-import org.consoleApp.dao.jdbc.EnrollmentsDAOImpl;
+import org.consoleApp.dao.jdbc.Enrollments;
 import org.consoleApp.dataFilling.impl.CoursesDataFiller;
 import org.consoleApp.dataFilling.impl.EnrollmentsDataFiller;
 import org.consoleApp.dataFilling.impl.GroupDataFiller;
@@ -30,7 +30,7 @@ public class LaunchApp {
     private final CourseDAOImpl courseDAO = new CourseDAOImpl(dataSource);
     private final GroupsDAOImpl groupsDAO = new GroupsDAOImpl(dataSource);
     private final StudentsDAOImpl studentsDAO = new StudentsDAOImpl(dataSource);
-    private final EnrollmentsDAOImpl enrollmentsDAO = new EnrollmentsDAOImpl(dataSource);
+    private final Enrollments enrollmentsDAO = new Enrollments(dataSource);
     private final GroupDataFiller groupDataFiller = new GroupDataFiller(10,2,2, dataSource);
     private final StudentsDataFiller studentsDataFiller = new StudentsDataFiller(readerFirstName.read(),readerSecondName.read(),200, 30,dataSource);
     private final CoursesDataFiller coursesDataFiller = new CoursesDataFiller(readerCourses.read(),dataSource);

@@ -1,8 +1,6 @@
 package org.consoleApp.dao.jdbc;
 
 
-import org.consoleApp.dao.EnrollmentsDAO;
-
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,14 +9,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EnrollmentsDAOImpl implements EnrollmentsDAO {
+public class Enrollments {
     private DataSource dataSource;
 
-    public EnrollmentsDAOImpl(DataSource dataSource) {
+    public Enrollments(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
-    @Override
     public boolean deleteStudentById(int studentId) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM enrollments WHERE student_id = ?")){
@@ -31,7 +28,6 @@ public class EnrollmentsDAOImpl implements EnrollmentsDAO {
         }
     }
 
-    @Override
     public List<Integer> findAllStudentsIdByCourseId(int courseId) {
         List<Integer> studentsId = new ArrayList<>();
 
@@ -52,7 +48,7 @@ public class EnrollmentsDAOImpl implements EnrollmentsDAO {
 
         return studentsId;
     }
-    @Override
+
     public List<Integer> findAllCourseIdByStudentsId(int studentId) {
         List<Integer> coursesId = new ArrayList<>();
 
@@ -74,7 +70,6 @@ public class EnrollmentsDAOImpl implements EnrollmentsDAO {
         return coursesId;
     }
 
-    @Override
     public boolean removeStudentFromCourse(int studentId, int courseId) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM enrollments WHERE student_id = ? AND course_id = ?")){

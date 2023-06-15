@@ -1,5 +1,6 @@
 package org.consoleApp.generation.impl;
 
+import org.consoleApp.dao.GroupDAO;
 import org.consoleApp.dao.StudentsDAO;
 import org.consoleApp.domin.Group;
 import org.consoleApp.domin.Student;
@@ -11,17 +12,17 @@ public class GenerationDataInitial implements GenerationData<Student> {
     private final Random random = new Random();
     private List<String> dataName;
     private List<String> dataSurname;
-    private StudentsDAO studentsDAO;
+    private GroupDAO groupDAO;
     private int quantity;
     private int maxGroupSize;
     private List<Group> allGroups;
 
-    public GenerationDataInitial(List<String> dataName, List<String> dataSurname, int maxGroupSize,int quantity, StudentsDAO studentsDAO, List<Group> allGroups) {
+    public GenerationDataInitial(List<String> dataName, List<String> dataSurname, int maxGroupSize, int quantity, GroupDAO groupDAO, List<Group> allGroups) {
         this.dataName = dataName;
         this.dataSurname = dataSurname;
         this.quantity = quantity;
         this.maxGroupSize = maxGroupSize;
-        this.studentsDAO = studentsDAO;
+        this.groupDAO = groupDAO;
         this.allGroups = allGroups;
     }
 
@@ -50,7 +51,7 @@ public class GenerationDataInitial implements GenerationData<Student> {
         List<Group> eligibleGroups = new ArrayList<>();
 
         for (Group group : allGroups){
-            int groupSize = studentsDAO.getGroupSize(group.getGroupId());
+            int groupSize = groupDAO.getGroupSize(group.getGroupId());
             if (groupSize <= maxGroupSize){
                 eligibleGroups.add(group);
             }

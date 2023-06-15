@@ -1,6 +1,5 @@
 package org.consoleApp.dao.jdbc;
 
-
 import org.consoleApp.dao.StudentsDAO;
 import org.consoleApp.domin.Student;
 
@@ -161,6 +160,7 @@ public class StudentsDAOImpl implements StudentsDAO {
         }
     }
 
+    @Override
     public boolean deleteByStudentId(int studentId) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM students WHERE student_id = ?")){
@@ -171,25 +171,6 @@ public class StudentsDAOImpl implements StudentsDAO {
         } catch (SQLException e) {
             throw new IllegalStateException("Can't delete students", e);
         }
-    }
-
-    @Override
-    public int getGroupSize(int groupId) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM students WHERE group_id = ?")){
-            preparedStatement.setInt(1,groupId);
-
-        try (ResultSet resultSet = preparedStatement.executeQuery()){
-            if (resultSet.next()){
-                return resultSet.getInt("count");
-            }
-        }
-
-        } catch (SQLException e) {
-            throw new IllegalStateException("Can't get group size", e);
-        }
-
-        return 0;
     }
 
     @Override

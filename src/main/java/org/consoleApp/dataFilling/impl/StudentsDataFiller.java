@@ -15,7 +15,7 @@ public class StudentsDataFiller implements DataFiller {
 
     public StudentsDataFiller(List<String> dataName, List<String> dataSurname,int quantityGenerations, int maxGroupSize,StudentsDAO studentsDAO, GroupDAO groupsDAO) {
         this.studentsDAO = studentsDAO;
-        this.dataInitial = new GenerationDataInitial(dataName, dataSurname,maxGroupSize,quantityGenerations,studentsDAO, groupsDAO.findAll());
+        this.dataInitial = new GenerationDataInitial(dataName, dataSurname,maxGroupSize,quantityGenerations,groupsDAO, groupsDAO.findAll());
     }
 
     @Override

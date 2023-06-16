@@ -4,6 +4,7 @@ import org.consoleApp.dao.GroupDAO;
 import org.consoleApp.domin.Group;
 import org.consoleApp.domin.Student;
 import org.consoleApp.generation.GenerationData;
+import org.consoleApp.generation.records.InitialAmountGeneration;
 
 import java.util.*;
 
@@ -16,11 +17,11 @@ public class GenerationDataInitial implements GenerationData<Student> {
     private int maxGroupSize;
     private List<Group> allGroups;
 
-    public GenerationDataInitial(List<String> dataName, List<String> dataSurname, int maxGroupSize, int quantity, GroupDAO groupDAO, List<Group> allGroups) {
+    public GenerationDataInitial(List<String> dataName, List<String> dataSurname, InitialAmountGeneration amountGeneration, GroupDAO groupDAO, List<Group> allGroups) {
         this.dataName = dataName;
         this.dataSurname = dataSurname;
-        this.quantity = quantity;
-        this.maxGroupSize = maxGroupSize;
+        this.quantity = amountGeneration.quantityGenerations();
+        this.maxGroupSize = amountGeneration.maxGroupSize();
         this.groupDAO = groupDAO;
         this.allGroups = allGroups;
     }

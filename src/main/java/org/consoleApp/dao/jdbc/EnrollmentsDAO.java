@@ -9,10 +9,10 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Enrollments {
+public class EnrollmentsDAO {
     private DataSource dataSource;
 
-    public Enrollments(DataSource dataSource) {
+    public EnrollmentsDAO(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 

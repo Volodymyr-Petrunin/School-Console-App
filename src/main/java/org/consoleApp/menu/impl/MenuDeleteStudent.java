@@ -1,18 +1,18 @@
 package org.consoleApp.menu.impl;
 
 import org.consoleApp.dao.StudentsDAO;
-import org.consoleApp.dao.jdbc.Enrollments;
+import org.consoleApp.dao.jdbc.EnrollmentsDAO;
 import org.consoleApp.menu.MenuItem;
 
 import java.util.Scanner;
 
 public class MenuDeleteStudent implements MenuItem {
     private final Scanner scan = new Scanner(System.in);
-    private Enrollments enrollmentsDAO;
+    private EnrollmentsDAO enrollmentsDAO;
     private StudentsDAO studentsDAO;
     private String dash;
 
-    public MenuDeleteStudent(Enrollments enrollmentsDAO, StudentsDAO studentsDAO , String dash) {
+    public MenuDeleteStudent(EnrollmentsDAO enrollmentsDAO, StudentsDAO studentsDAO , String dash) {
         this.enrollmentsDAO = enrollmentsDAO;
         this.studentsDAO = studentsDAO;
         this.dash = dash;

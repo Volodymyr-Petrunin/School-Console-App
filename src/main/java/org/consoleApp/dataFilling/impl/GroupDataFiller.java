@@ -1,5 +1,6 @@
 package org.consoleApp.dataFilling.impl;
 
+import org.consoleApp.generation.records.GroupAmountGeneration;
 import org.consoleApp.dao.GroupDAO;
 import org.consoleApp.dataFilling.DataFiller;
 import org.consoleApp.generation.impl.GroupGenerationData;
@@ -10,9 +11,9 @@ import java.util.List;
 public class GroupDataFiller implements DataFiller {
     private GroupDAO groupsDAO;
     private GroupGenerationData generationData;
-    public GroupDataFiller(int quantityGenerations,int  amountOfLetters, int amountOfNumbers, GroupDAO groupsDAO) {
+    public GroupDataFiller(GroupAmountGeneration groupAmountGeneration, GroupDAO groupsDAO) {
         this.groupsDAO = groupsDAO;
-        this.generationData = new GroupGenerationData(quantityGenerations,amountOfLetters,amountOfNumbers);
+        this.generationData = new GroupGenerationData(groupAmountGeneration);
     }
 
     @Override

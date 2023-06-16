@@ -3,7 +3,7 @@ package org.consoleApp.menu.impl;
 import org.consoleApp.dao.CourseDAO;
 import org.consoleApp.dao.GroupDAO;
 import org.consoleApp.dao.StudentsDAO;
-import org.consoleApp.dao.jdbc.Enrollments;
+import org.consoleApp.dao.jdbc.EnrollmentsDAO;
 import org.consoleApp.domin.Course;
 import org.consoleApp.domin.Student;
 import org.consoleApp.menu.MenuItem;
@@ -17,12 +17,12 @@ public class MenuRemoveStudentFromOneOfCourses implements MenuItem {
     private final Scanner scan = new Scanner(System.in);
     private final PrintInfo printInfo = new PrintInfo();
     private StudentsDAO studentsDAO;
-    private Enrollments enrollmentsDAO;
+    private EnrollmentsDAO enrollmentsDAO;
     private CourseDAO courseDAO;
     private GroupDAO groupDAO;
     private String dash;
 
-    public MenuRemoveStudentFromOneOfCourses(StudentsDAO studentsDAO, Enrollments enrollmentsDAO, CourseDAO courseDAO, GroupDAO groupDAO, String dash) {
+    public MenuRemoveStudentFromOneOfCourses(StudentsDAO studentsDAO, EnrollmentsDAO enrollmentsDAO, CourseDAO courseDAO, GroupDAO groupDAO, String dash) {
         this.studentsDAO = studentsDAO;
         this.enrollmentsDAO = enrollmentsDAO;
         this.courseDAO = courseDAO;

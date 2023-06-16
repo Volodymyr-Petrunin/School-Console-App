@@ -1,7 +1,6 @@
 package org.consoleApp.dao.jdbc;
 
 import org.consoleApp.dao.GroupDAO;
-import org.consoleApp.domin.Course;
 import org.consoleApp.domin.Group;
 
 import javax.sql.DataSource;

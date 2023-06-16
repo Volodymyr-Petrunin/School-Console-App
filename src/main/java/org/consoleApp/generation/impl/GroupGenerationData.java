@@ -1,5 +1,6 @@
 package org.consoleApp.generation.impl;
 
+import org.consoleApp.generation.records.GroupAmountGeneration;
 import org.consoleApp.domin.Group;
 import org.consoleApp.generation.GenerationData;
 
@@ -15,10 +16,10 @@ public class GroupGenerationData implements GenerationData<Group> {
     private int amountOfLetters;
     private int amountOfNumbers;
 
-    public GroupGenerationData(int quantity, int amountOfLetters, int amountOfNumbers) {
-        this.quantity = quantity;
-        this.amountOfLetters = amountOfLetters;
-        this.amountOfNumbers = amountOfNumbers;
+    public GroupGenerationData(GroupAmountGeneration groupAmountGeneration) {
+        this.quantity = groupAmountGeneration.quantityGenerations();
+        this.amountOfLetters = groupAmountGeneration.amountOfLetters();
+        this.amountOfNumbers = groupAmountGeneration.amountOfNumbers();
     }
 
     @Override

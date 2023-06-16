@@ -1,15 +1,17 @@
 package org.consoleApp.launch;
 
+import org.consoleApp.generation.records.GroupAmountGeneration;
 import org.consoleApp.dao.jdbc.CourseDAOImpl;
 import org.consoleApp.dataBaseSettings.DBConnector;
 import org.consoleApp.dataBaseSettings.ScriptRunner;
-import org.consoleApp.dao.jdbc.Enrollments;
+import org.consoleApp.dao.jdbc.EnrollmentsDAO;
 import org.consoleApp.dataFilling.impl.CoursesDataFiller;
 import org.consoleApp.dataFilling.impl.EnrollmentsDataFiller;
 import org.consoleApp.dataFilling.impl.GroupDataFiller;
 import org.consoleApp.dataFilling.impl.StudentsDataFiller;
 import org.consoleApp.dao.jdbc.GroupsDAOImpl;
 import org.consoleApp.dao.jdbc.StudentsDAOImpl;
+import org.consoleApp.generation.records.InitialAmountGeneration;
 import org.consoleApp.menu.impl.*;
 import org.consoleApp.menu.MenuItem;
 import org.consoleApp.readers.ResourcesFileReader;
@@ -28,9 +30,11 @@ public class LaunchApp {
     private final CourseDAOImpl courseDAO = new CourseDAOImpl(dataSource);
     private final GroupsDAOImpl groupsDAO = new GroupsDAOImpl(dataSource);
     private final StudentsDAOImpl studentsDAO = new StudentsDAOImpl(dataSource);
-    private final Enrollments enrollmentsDAO = new Enrollments(dataSource);
-    private final GroupDataFiller groupDataFiller = new GroupDataFiller(10,2,2, groupsDAO);
-    private final StudentsDataFiller studentsDataFiller = new StudentsDataFiller(readerFirstName.read(),readerSecondName.read(),200, 30, studentsDAO, groupsDAO);
+    private final EnrollmentsDAO enrollmentsDAO = new EnrollmentsDAO(dataSource);
+    private final GroupAmountGeneration groupAmountGeneration = new GroupAmountGeneration(10, 2, 2);
+    private final InitialAmountGeneration amountGeneration = new InitialAmountGeneration(200, 30);
+    private final GroupDataFiller groupDataFiller = new GroupDataFiller(groupAmountGeneration, groupsDAO);
+    private final StudentsDataFiller studentsDataFiller = new StudentsDataFiller(readerFirstName.read(), readerSecondName.read(), amountGeneration, studentsDAO, groupsDAO);
     private final CoursesDataFiller coursesDataFiller = new CoursesDataFiller(readerCourses.read(), courseDAO);
     private final EnrollmentsDataFiller enrollmentsDataFiller = new EnrollmentsDataFiller(3, studentsDAO, courseDAO);
     private final Scanner scan = new Scanner(System.in);

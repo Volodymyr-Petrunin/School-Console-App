@@ -1,6 +1,7 @@
 package org.consoleApp.dao.jdbc;
 
 import org.consoleApp.dao.StudentsDAO;
+import org.consoleApp.domin.Group;
 import org.consoleApp.domin.Student;
 
 import javax.sql.DataSource;
@@ -75,12 +76,17 @@ public class StudentsDAOImpl implements StudentsDAO {
 
             int rowsAffected = preparedStatement.executeUpdate();
 
-        try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()){
-            while (generatedKeys.next()){
-                int studentId = generatedKeys.getInt(1);
-                student.setId(studentId);
+            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()){
+                if (!generatedKeys.next()){
+                    throw new IllegalStateException("Not enough generated keys returned during students insert");
+                }
+
+                student.setId(generatedKeys.getInt(1));
+
+                if (generatedKeys.next()){
+                    throw new IllegalStateException("Too many generated keys returned during students insert");
+                }
             }
-        }
 
             return rowsAffected > 0;
         } catch (SQLException e) {
@@ -93,8 +99,6 @@ public class StudentsDAOImpl implements StudentsDAO {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO students (group_id, first_name, last_name) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS)){
 
-            connection.setAutoCommit(false);
-
             for (Student student : students){
                 preparedStatement.setInt(1, student.getGroupId());
                 preparedStatement.setString(2, student.getFirstName());
@@ -105,29 +109,20 @@ public class StudentsDAOImpl implements StudentsDAO {
 
             preparedStatement.executeBatch();
 
-        try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys();){
-            int index = 0;
+            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()){
+                for (Student student : students){
+                    if (!generatedKeys.next()){
+                        throw new IllegalStateException("Not enough generated keys returned during students batch insert");
+                    }
+                    student.setId(generatedKeys.getInt(1));
+                }
 
-            while (generatedKeys.next()){
-                int courseId = generatedKeys.getInt(1);
-                students.get(index).setId(courseId);
-                index++;
+                if (generatedKeys.next()){
+                    throw new IllegalStateException("Too many generated keys returned during students batch insert");
+                }
             }
-        }
-            connection.commit();
         } catch (SQLException e) {
-            try (Connection connection = dataSource.getConnection()){
-                connection.rollback();
-            } catch (SQLException rollbackException) {
-                throw new IllegalStateException("Can't insert batch of courses", e);
-            }
             throw new IllegalStateException("Can't insert batch of courses", e);
-        } finally {
-            try (Connection connection = dataSource.getConnection()){
-                connection.setAutoCommit(true);
-            } catch (SQLException e) {
-                throw new RuntimeException("Can't set auto commit", e);
-            }
         }
     }
 

@@ -1,6 +1,7 @@
 package org.consoleApp.dao.jdbc;
 
 import org.consoleApp.dao.GroupDAO;
+import org.consoleApp.domin.Course;
 import org.consoleApp.domin.Group;
 
 import javax.sql.DataSource;
@@ -63,13 +64,19 @@ public class GroupsDAOImpl implements GroupDAO {
             int rowsAffected = preparedStatement.executeUpdate();
 
         try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()){
-            while (generatedKeys.next()){
-                int groupId = generatedKeys.getInt(1);
-                group.setId(groupId);
+            if (!generatedKeys.next()){
+                throw new IllegalStateException("Not enough generated keys returned during group insert");
+            }
+
+            group.setId(generatedKeys.getInt(1));
+
+            if (generatedKeys.next()){
+                throw new IllegalStateException("Too many generated keys returned during group insert");
             }
         }
 
         return rowsAffected > 0;
+
         } catch (SQLException e) {
             throw new IllegalStateException("Can't insert group", e);
         }
@@ -80,8 +87,6 @@ public class GroupsDAOImpl implements GroupDAO {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO groups (group_name) VALUES (?)", Statement.RETURN_GENERATED_KEYS)) {
 
-            connection.setAutoCommit(false);
-
             for (Group group : groups) {
                 preparedStatement.setString(1, group.getName());
 
@@ -90,30 +95,20 @@ public class GroupsDAOImpl implements GroupDAO {
 
             preparedStatement.executeBatch();
 
-            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys();){
-                int index = 0;
+            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()){
+                for (Group group : groups){
+                    if (!generatedKeys.next()){
+                        throw new IllegalStateException("Not enough generated keys returned during group batch insert");
+                    }
+                    group.setId(generatedKeys.getInt(1));
+                }
 
-                while (generatedKeys.next()){
-                    int groupId = generatedKeys.getInt(1);
-                    groups.get(index).setId(groupId);
-                    index++;
+                if (generatedKeys.next()){
+                    throw new IllegalStateException("Too many generated keys returned during group batch insert");
                 }
             }
-
-            connection.commit();
         } catch (SQLException e) {
-            try (Connection connection = dataSource.getConnection()){
-                connection.rollback();
-            } catch (SQLException rollbackException) {
-                throw new IllegalStateException("Can't insert batch of groups", e);
-            }
             throw new IllegalStateException("Can't insert batch of groups", e);
-        } finally {
-            try (Connection connection = dataSource.getConnection()){
-                connection.setAutoCommit(true);
-            } catch (SQLException e) {
-                throw new RuntimeException("Can't set auto commit", e);
-            }
         }
     }
 

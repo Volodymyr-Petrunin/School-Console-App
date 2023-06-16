@@ -75,17 +75,18 @@ public class CourseDAOImpl implements CourseDAO {
         try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()){
 
             if (!generatedKeys.next()){
-                throw new IllegalStateException("Not enough generated keys returned during courses batch insert");
+                throw new IllegalStateException("Not enough generated keys returned during courses insert");
             }
 
             course.setId(generatedKeys.getInt(1));
 
             if (generatedKeys.next()){
-                throw new IllegalStateException("Too many generated keys returned during courses batch insert");
+                throw new IllegalStateException("Too many generated keys returned during courses insert");
             }
         }
 
           return rowsAffected > 0;
+
         } catch (SQLException e) {
             throw new IllegalStateException("Can't insert course", e);
         }
@@ -106,18 +107,20 @@ public class CourseDAOImpl implements CourseDAO {
 
             preparedStatement.executeBatch();
 
-            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
-
+            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()){
                 for (Course course : courses){
+
                     if (!generatedKeys.next()){
                         throw new IllegalStateException("Not enough generated keys returned during courses batch insert");
                     }
+
                     course.setId(generatedKeys.getInt(1));
                 }
 
                 if (generatedKeys.next()){
                     throw new IllegalStateException("Too many generated keys returned during courses batch insert");
                 }
+            }
 
         } catch (SQLException e) {
             throw new IllegalStateException("Can't insert batch of courses", e);

@@ -4,7 +4,7 @@ import org.consoleApp.dao.GroupDAO;
 import org.consoleApp.dao.StudentsDAO;
 import org.consoleApp.dataFilling.DataFiller;
 import org.consoleApp.domin.Group;
-import org.consoleApp.generation.impl.GenerationDataInitial;
+import org.consoleApp.generation.impl.StudentsGenerationData;
 import org.consoleApp.domin.Student;
 import org.consoleApp.generation.records.InitialAmountGeneration;
 
@@ -12,11 +12,11 @@ import java.util.List;
 
 public class StudentsDataFiller implements DataFiller {
     private StudentsDAO studentsDAO;
-    private GenerationDataInitial dataInitial;
+    private StudentsGenerationData dataInitial;
 
     public StudentsDataFiller(List<String> dataName, List<String> dataSurname, InitialAmountGeneration amountGeneration, StudentsDAO studentsDAO, GroupDAO groupsDAO) {
         this.studentsDAO = studentsDAO;
-        this.dataInitial = new GenerationDataInitial(dataName, dataSurname, amountGeneration, findAllGroups(groupsDAO));
+        this.dataInitial = new StudentsGenerationData(dataName, dataSurname, amountGeneration, findAllGroups(groupsDAO));
     }
 
     @Override

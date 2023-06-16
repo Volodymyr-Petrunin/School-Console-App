@@ -7,7 +7,7 @@ import org.consoleApp.generation.records.InitialAmountGeneration;
 
 import java.util.*;
 
-public class GenerationDataInitial implements GenerationData<Student> {
+public class StudentsGenerationData implements GenerationData<Student> {
     private final Random random = new Random();
     private List<String> dataName;
     private List<String> dataSurname;
@@ -15,7 +15,7 @@ public class GenerationDataInitial implements GenerationData<Student> {
     private int maxGroupSize;
     private List<Group> allGroups;
 
-    public GenerationDataInitial(List<String> dataName, List<String> dataSurname, InitialAmountGeneration amountGeneration, List<Group> allGroups) {
+    public StudentsGenerationData(List<String> dataName, List<String> dataSurname, InitialAmountGeneration amountGeneration, List<Group> allGroups) {
         this.dataName = dataName;
         this.dataSurname = dataSurname;
         this.quantity = amountGeneration.quantityGenerations();

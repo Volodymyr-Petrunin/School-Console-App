@@ -22,7 +22,7 @@ public class PrintInfo {
 
             if (optionalGroup.isPresent()) {
                 Group group = optionalGroup.get();
-                result.add(String.format("ID: %3d Initial: %-" + maxFirstNameLength + "s %-" + maxLastNameLength + "s | Group: %s", student.getStudentId(), student.getFirstName(), student.getLastName(), group.getGroupName()));
+                result.add(String.format("ID: %3d Initial: %-" + maxFirstNameLength + "s %-" + maxLastNameLength + "s | Group: %s", student.getId(), student.getFirstName(), student.getLastName(), group.getName()));
             }
         }
 
@@ -31,11 +31,11 @@ public class PrintInfo {
 
     public void printCourses(List<Course> courses){
         StringJoiner result = new StringJoiner(System.lineSeparator());
-        int maxCourseNameLength = findMaxNameLength(courses, Course::getCourseName);
-        int maxCourseDescriptionLength = findMaxNameLength(courses, Course::getCourseDescription);
+        int maxCourseNameLength = findMaxNameLength(courses, Course::getName);
+        int maxCourseDescriptionLength = findMaxNameLength(courses, Course::getDescription);
 
         for (Course course : courses){
-            result.add(String.format("ID: %d Course name: %-" + maxCourseNameLength + "s Course description: %-" + maxCourseDescriptionLength + "s", course.getCourseId(), course.getCourseName(), course.getCourseDescription()));
+            result.add(String.format("ID: %d Course name: %-" + maxCourseNameLength + "s Course description: %-" + maxCourseDescriptionLength + "s", course.getId(), course.getName(), course.getDescription()));
         }
 
         System.out.println(result);

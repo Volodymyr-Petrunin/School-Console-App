@@ -44,7 +44,7 @@ public class MenuFindAllStudentsRelatedToCourse implements MenuItem {
 
         if (optionalCourse.isPresent()) {
             Course course = optionalCourse.get();
-            List<Integer> studentsId = enrollmentsDAO.findAllStudentsIdByCourseId(course.getCourseId());
+            List<Integer> studentsId = enrollmentsDAO.findAllStudentsIdByCourseId(course.getId());
 
             List<Student> students = new ArrayList<>();
 

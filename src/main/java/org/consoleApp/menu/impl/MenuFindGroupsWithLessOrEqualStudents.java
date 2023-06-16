@@ -31,7 +31,7 @@ public class MenuFindGroupsWithLessOrEqualStudents implements MenuItem {
         if (!allCourses.isEmpty()) {
             System.out.println("All Group:");
             for (Group group : allCourses) {
-                System.out.println("Group name: " + group.getGroupName() + " and group id " + group.getGroupId());
+                System.out.println("Group name: " + group.getName() + " and group id " + group.getId());
             }
             System.out.println(dash);
         }else {

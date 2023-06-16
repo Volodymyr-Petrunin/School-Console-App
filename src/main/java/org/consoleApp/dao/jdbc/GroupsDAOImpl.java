@@ -58,14 +58,14 @@ public class GroupsDAOImpl implements GroupDAO {
     public boolean insert(Group group) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO groups (group_name) VALUES (?)", Statement.RETURN_GENERATED_KEYS)){
-            preparedStatement.setString(1, group.getGroupName());
+            preparedStatement.setString(1, group.getName());
 
             int rowsAffected = preparedStatement.executeUpdate();
 
         try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()){
             while (generatedKeys.next()){
                 int groupId = generatedKeys.getInt(1);
-                group.setGroupId(groupId);
+                group.setId(groupId);
             }
         }
 
@@ -83,7 +83,7 @@ public class GroupsDAOImpl implements GroupDAO {
             connection.setAutoCommit(false);
 
             for (Group group : groups) {
-                preparedStatement.setString(1, group.getGroupName());
+                preparedStatement.setString(1, group.getName());
 
                 preparedStatement.addBatch();
             }
@@ -95,7 +95,7 @@ public class GroupsDAOImpl implements GroupDAO {
 
                 while (generatedKeys.next()){
                     int groupId = generatedKeys.getInt(1);
-                    groups.get(index).setGroupId(groupId);
+                    groups.get(index).setId(groupId);
                     index++;
                 }
             }
@@ -121,8 +121,8 @@ public class GroupsDAOImpl implements GroupDAO {
     public boolean update(Group group) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("UPDATE groups SET group_name = ? WHERE group_id = ?")) {
-            preparedStatement.setString(1, group.getGroupName());
-            preparedStatement.setInt(2, group.getGroupId());
+            preparedStatement.setString(1, group.getName());
+            preparedStatement.setInt(2, group.getId());
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
@@ -135,7 +135,7 @@ public class GroupsDAOImpl implements GroupDAO {
     public boolean delete(Group group) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM groups WHERE group_id = ?")) {
-            preparedStatement.setInt(1, group.getGroupId());
+            preparedStatement.setInt(1, group.getId());
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;

@@ -5,9 +5,7 @@ import org.consoleApp.domin.Course;
 
 import javax.sql.DataSource;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class CourseDAOImpl implements CourseDAO {
     private DataSource dataSource;
@@ -69,18 +67,24 @@ public class CourseDAOImpl implements CourseDAO {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO courses (course_name, course_description) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS)) {
 
-            preparedStatement.setString(1,course.getCourseName());
-            preparedStatement.setString(2,course.getCourseDescription());
+            preparedStatement.setString(1,course.getName());
+            preparedStatement.setString(2,course.getDescription());
 
             int rowsAffected = preparedStatement.executeUpdate();
 
         try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()){
 
-            while (generatedKeys.next()){
-                int courseId = generatedKeys.getInt(1);
-                course.setCourseId(courseId);
+            if (!generatedKeys.next()){
+                throw new IllegalStateException("Not enough generated keys returned during courses batch insert");
+            }
+
+            course.setId(generatedKeys.getInt(1));
+
+            if (generatedKeys.next()){
+                throw new IllegalStateException("Too many generated keys returned during courses batch insert");
             }
         }
+
           return rowsAffected > 0;
         } catch (SQLException e) {
             throw new IllegalStateException("Can't insert course", e);
@@ -92,42 +96,31 @@ public class CourseDAOImpl implements CourseDAO {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO courses (course_name, course_description) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS)) {
 
-            connection.setAutoCommit(false);
 
             for (Course course : courses){
-                preparedStatement.setString(1, course.getCourseName());
-                preparedStatement.setString(2, course.getCourseDescription());
+                preparedStatement.setString(1, course.getName());
+                preparedStatement.setString(2, course.getDescription());
 
                 preparedStatement.addBatch();
             }
 
             preparedStatement.executeBatch();
 
-            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()){
-                int index = 0;
+            ResultSet generatedKeys = preparedStatement.getGeneratedKeys();
 
-                while (generatedKeys.next()) {
-                    int courseId = generatedKeys.getInt(1);
-                    courses.get(index).setCourseId(courseId);
-                    index++;
+                for (Course course : courses){
+                    if (!generatedKeys.next()){
+                        throw new IllegalStateException("Not enough generated keys returned during courses batch insert");
+                    }
+                    course.setId(generatedKeys.getInt(1));
                 }
-            }
 
-            connection.commit();
+                if (generatedKeys.next()){
+                    throw new IllegalStateException("Too many generated keys returned during courses batch insert");
+                }
+
         } catch (SQLException e) {
-            try (Connection connection = dataSource.getConnection()){
-                connection.rollback();
-            } catch (SQLException rollbackException) {
-                throw new IllegalStateException("Can't insert batch of courses", e);
-            }
-
             throw new IllegalStateException("Can't insert batch of courses", e);
-        } finally {
-            try (Connection connection = dataSource.getConnection()){
-                connection.setAutoCommit(true);
-            } catch (SQLException e) {
-                throw new RuntimeException("Can't set auto commit", e);
-            }
         }
     }
 
@@ -136,9 +129,9 @@ public class CourseDAOImpl implements CourseDAO {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("UPDATE courses SET course_name = ?, course_description = ? WHERE course_id = ?")) {
 
-            preparedStatement.setString(1,course.getCourseName());
-            preparedStatement.setString(2,course.getCourseDescription());
-            preparedStatement.setInt(3,course.getCourseId());
+            preparedStatement.setString(1,course.getName());
+            preparedStatement.setString(2,course.getDescription());
+            preparedStatement.setInt(3,course.getId());
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;
@@ -151,7 +144,7 @@ public class CourseDAOImpl implements CourseDAO {
     public boolean delete(Course course) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM courses WHERE course_id = ?")) {
-            preparedStatement.setInt(1,course.getCourseId());
+            preparedStatement.setInt(1,course.getId());
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;

@@ -40,19 +40,19 @@ public class MenuAddNewStudent implements MenuItem {
         List<Group> allGroups = groupDAO.findAll();
 
         for (Group group : allGroups){
-            System.out.println("Group name: " + group.getGroupName());
+            System.out.println("Group name: " + group.getName());
         }
 
         System.out.print("Choose group name: ");
         String groupName = scan.next();
 
         Optional<Group> optionalGroup = groupDAO.findGroupIdByName(groupName);
-        int groupId = optionalGroup.orElseThrow(()-> new RuntimeException("Can't find group id by group name in LaunchApp")).getGroupId();
+        int groupId = optionalGroup.orElseThrow(()-> new RuntimeException("Can't find group id by group name in LaunchApp")).getId();
 
         Student newStudent = new Student(null,groupId,firstName,lastName);
 
         boolean operationSuccessful = studentsDAO.insert(newStudent);
-        boolean enrollSuccessful = studentsDAO.enrollStudentInCourse(newStudent.getStudentId(), groupId);
+        boolean enrollSuccessful = studentsDAO.enrollStudentInCourse(newStudent.getId(), groupId);
 
         if (operationSuccessful && enrollSuccessful){
             System.out.println("New student added successfully! :)");

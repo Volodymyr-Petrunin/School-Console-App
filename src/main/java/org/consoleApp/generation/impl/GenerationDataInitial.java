@@ -1,7 +1,6 @@
 package org.consoleApp.generation.impl;
 
 import org.consoleApp.dao.GroupDAO;
-import org.consoleApp.dao.StudentsDAO;
 import org.consoleApp.domin.Group;
 import org.consoleApp.domin.Student;
 import org.consoleApp.generation.GenerationData;
@@ -51,7 +50,7 @@ public class GenerationDataInitial implements GenerationData<Student> {
         List<Group> eligibleGroups = new ArrayList<>();
 
         for (Group group : allGroups){
-            int groupSize = groupDAO.getGroupSize(group.getGroupId());
+            int groupSize = groupDAO.getGroupSize(group.getId());
             if (groupSize <= maxGroupSize){
                 eligibleGroups.add(group);
             }
@@ -63,6 +62,6 @@ public class GenerationDataInitial implements GenerationData<Student> {
 
         int groupIndex = random.nextInt(eligibleGroups.size());
         Group group = eligibleGroups.get(groupIndex);
-        return group.getGroupId();
+        return group.getId();
     }
 }

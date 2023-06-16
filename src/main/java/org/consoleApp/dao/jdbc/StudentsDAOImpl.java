@@ -78,7 +78,7 @@ public class StudentsDAOImpl implements StudentsDAO {
         try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()){
             while (generatedKeys.next()){
                 int studentId = generatedKeys.getInt(1);
-                student.setStudentId(studentId);
+                student.setId(studentId);
             }
         }
 
@@ -110,7 +110,7 @@ public class StudentsDAOImpl implements StudentsDAO {
 
             while (generatedKeys.next()){
                 int courseId = generatedKeys.getInt(1);
-                students.get(index).setStudentId(courseId);
+                students.get(index).setId(courseId);
                 index++;
             }
         }
@@ -150,7 +150,7 @@ public class StudentsDAOImpl implements StudentsDAO {
     public boolean delete(Student student) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM students WHERE student_id = ?")){
-            preparedStatement.setInt(1, student.getStudentId());
+            preparedStatement.setInt(1, student.getId());
 
             int rowsAffected = preparedStatement.executeUpdate();
             return rowsAffected > 0;

@@ -1,29 +1,29 @@
 package org.consoleApp.domin;
 
 public class Course {
-    private Integer courseId;
-    private String courseName;
-    private String courseDescription;
+    private Integer id;
+    private String name;
+    private String description;
 
-    public Course(Integer courseId, String courseName, String courseDescription) {
-        this.courseId = courseId;
-        this.courseName = courseName;
-        this.courseDescription = courseDescription;
+    public Course(Integer id, String name, String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
     }
 
-    public int getCourseId() {
-        return courseId;
+    public int getId() {
+        return id;
     }
 
-    public void setCourseId(int courseId) {
-        this.courseId = courseId;
+    public void setId(int courseId) {
+        this.id = courseId;
     }
 
-    public String getCourseName() {
-        return courseName;
+    public String getName() {
+        return name;
     }
 
-    public String getCourseDescription() {
-        return courseDescription;
+    public String getDescription() {
+        return description;
     }
 }

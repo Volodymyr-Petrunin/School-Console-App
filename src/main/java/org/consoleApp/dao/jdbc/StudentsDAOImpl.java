@@ -43,7 +43,6 @@ public class StudentsDAOImpl implements StudentsDAO {
 
     @Override
     public Optional<Student> findById(int studentId) {
-        Optional<Student> student = Optional.empty();
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM students WHERE student_id = ?")){
@@ -55,7 +54,7 @@ public class StudentsDAOImpl implements StudentsDAO {
                 String firstName = resultSet.getString("first_name");
                 String lastName = resultSet.getString("last_name");
 
-                student = Optional.of(new Student(studentId,groupId,firstName,lastName));
+                return Optional.of(new Student(studentId,groupId,firstName,lastName));
             }
         }
 
@@ -63,7 +62,7 @@ public class StudentsDAOImpl implements StudentsDAO {
             throw new IllegalStateException("Can't fetch students by id", e);
         }
 
-        return student;
+        return Optional.empty();
     }
 
     @Override

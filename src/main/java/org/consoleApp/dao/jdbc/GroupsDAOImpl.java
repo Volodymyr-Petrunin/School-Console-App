@@ -35,7 +35,6 @@ public class GroupsDAOImpl implements GroupDAO {
 
     @Override
     public Optional<Group> findById(int id) {
-        Optional<Group> group = Optional.empty();
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM groups WHERE group_id = ?")) {
@@ -44,7 +43,7 @@ public class GroupsDAOImpl implements GroupDAO {
         try (ResultSet resultSet = preparedStatement.executeQuery()){
             if (resultSet.next()){
                 String groupName = resultSet.getString("group_name");
-                group = Optional.of(new Group(id, groupName));
+                return Optional.of(new Group(id, groupName));
             }
         }
 
@@ -52,7 +51,7 @@ public class GroupsDAOImpl implements GroupDAO {
             throw new IllegalStateException("Can't find group", e);
         }
 
-        return group;
+        return Optional.empty();
     }
 
     @Override
@@ -166,7 +165,6 @@ public class GroupsDAOImpl implements GroupDAO {
 
     @Override
     public Optional<Group> findGroupIdByName(String groupName) {
-        Optional<Group> group = Optional.empty();
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("SELECT group_id FROM groups WHERE group_name = ?")) {
@@ -175,7 +173,7 @@ public class GroupsDAOImpl implements GroupDAO {
         try (ResultSet resultSet = preparedStatement.executeQuery()){
             while (resultSet.next()){
                 int groupId = resultSet.getInt("group_id");
-                group = Optional.of(new Group(groupId, groupName));
+                return Optional.of(new Group(groupId, groupName));
             }
         }
 
@@ -183,7 +181,7 @@ public class GroupsDAOImpl implements GroupDAO {
             throw new IllegalStateException("Can't find groups id by name", e);
         }
 
-        return group;
+        return Optional.empty();
     }
 
     @Override

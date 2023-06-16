@@ -42,7 +42,6 @@ public class CourseDAOImpl implements CourseDAO {
 
     @Override
     public Optional<Course> findById(int courseId) {
-        Optional<Course> course = Optional.empty();
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM courses WHERE course_id = ?")) {
@@ -54,7 +53,7 @@ public class CourseDAOImpl implements CourseDAO {
                 String courseName = resultSet.getString("course_name");
                 String courseDescription = resultSet.getString("course_description");
 
-                course = Optional.of(new Course(courseId, courseName, courseDescription));
+               return Optional.of(new Course(courseId, courseName, courseDescription));
             }
         }
 
@@ -62,7 +61,7 @@ public class CourseDAOImpl implements CourseDAO {
             throw new IllegalStateException("Can't fetch courses", e);
         }
 
-        return course;
+        return Optional.empty();
     }
 
     @Override
@@ -163,7 +162,6 @@ public class CourseDAOImpl implements CourseDAO {
 
     @Override
     public Optional<Course> findByCourseName(String courseName) {
-        Optional<Course> course = Optional.empty();
 
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM courses WHERE course_name = ?")) {
@@ -174,13 +172,13 @@ public class CourseDAOImpl implements CourseDAO {
                     int courseId = resultSet.getInt("course_id");
                     String courseDescription = resultSet.getString("course_description");
 
-                    course = Optional.of(new Course(courseId, courseName, courseDescription));
+                   return Optional.of(new Course(courseId, courseName, courseDescription));
                 }
             }
         } catch (SQLException e) {
             throw new IllegalStateException("Can't find by course name", e);
         }
 
-        return course;
+        return Optional.empty();
     }
 }

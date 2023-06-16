@@ -1,6 +1,5 @@
 package org.consoleApp.generation.impl;
 
-import org.consoleApp.dao.GroupDAO;
 import org.consoleApp.domin.Group;
 import org.consoleApp.domin.Student;
 import org.consoleApp.generation.GenerationData;
@@ -12,57 +11,58 @@ public class GenerationDataInitial implements GenerationData<Student> {
     private final Random random = new Random();
     private List<String> dataName;
     private List<String> dataSurname;
-    private GroupDAO groupDAO;
     private int quantity;
     private int maxGroupSize;
     private List<Group> allGroups;
 
-    public GenerationDataInitial(List<String> dataName, List<String> dataSurname, InitialAmountGeneration amountGeneration, GroupDAO groupDAO, List<Group> allGroups) {
+    public GenerationDataInitial(List<String> dataName, List<String> dataSurname, InitialAmountGeneration amountGeneration, List<Group> allGroups) {
         this.dataName = dataName;
         this.dataSurname = dataSurname;
         this.quantity = amountGeneration.quantityGenerations();
         this.maxGroupSize = amountGeneration.maxGroupSize();
-        this.groupDAO = groupDAO;
         this.allGroups = allGroups;
     }
 
     @Override
     public List<Student> generateData(){
+        List<Student> students = generateStudents();
+
+        return assignStudentToGroup(students);
+    }
+
+    private List<Student> generateStudents(){
         List<Student> resultData = new ArrayList<>();
 
         for (int currentIndex = 0; currentIndex < quantity; currentIndex++){
             String currentName = getRandomElement(dataName);
             String currentSurname = getRandomElement(dataSurname);
 
-            int groupId = choseGroup();
-
-            resultData.add(new Student(null,groupId, currentName, currentSurname));
+            resultData.add(new Student(null,0, currentName, currentSurname));
         }
 
         return resultData;
     }
 
-    private <T> T getRandomElement(List<T> list){
-        int index = random.nextInt(list.size());
-        return list.get(index);
-    }
+    private List<Student> assignStudentToGroup(List<Student> students){
+        HashMap<Group, Integer> groupUsage = new HashMap<>();
 
-    private int choseGroup() {
-        List<Group> eligibleGroups = new ArrayList<>();
+        for (Student student : students) {
+            Group randomGroup = getRandomElement(allGroups);
 
-        for (Group group : allGroups){
-            int groupSize = groupDAO.getGroupSize(group.getId());
-            if (groupSize <= maxGroupSize){
-                eligibleGroups.add(group);
+            student.setGroupId(randomGroup.getId());
+            int currentUsage = groupUsage.getOrDefault(randomGroup, 0);
+            groupUsage.put(randomGroup, currentUsage + 1);
+
+            if (currentUsage + 1 >= maxGroupSize) {
+                groupUsage.remove(randomGroup);
             }
         }
 
-        if (eligibleGroups.isEmpty()){
-            throw new RuntimeException("No eligible groups found with the required number of students.");
-        }
+        return students;
+    }
 
-        int groupIndex = random.nextInt(eligibleGroups.size());
-        Group group = eligibleGroups.get(groupIndex);
-        return group.getId();
+    private <T> T getRandomElement(List<T> list){
+        int index = random.nextInt(list.size());
+        return list.get(index);
     }
 }

@@ -25,6 +25,10 @@ public class Student {
         return groupId;
     }
 
+    public void setGroupId(int groupId) {
+        this.groupId = groupId;
+    }
+
     public String getFirstName() {
         return firstName;
     }

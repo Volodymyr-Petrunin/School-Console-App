@@ -16,17 +16,18 @@ import java.util.Scanner;
 
 public class MenuFindAllStudentsRelatedToCourse implements MenuItem {
     private final Scanner scan = new Scanner(System.in);
+    private final PrintInfo printInfo = new PrintInfo();
     private CourseDAO courseDAO;
     private Enrollments enrollmentsDAO;
     private StudentsDAO studentsDAO;
-    private PrintInfo printInfo;
+    private GroupDAO groupDAO;
     private String dash;
 
     public MenuFindAllStudentsRelatedToCourse(CourseDAO courseDAO, Enrollments enrollmentsDAO, StudentsDAO studentsDAO, GroupDAO groupDAO, String dash) {
         this.courseDAO = courseDAO;
         this.enrollmentsDAO = enrollmentsDAO;
         this.studentsDAO = studentsDAO;
-        this.printInfo = new PrintInfo(groupDAO);
+        this.groupDAO = groupDAO;
         this.dash = dash;
     }
 
@@ -52,7 +53,7 @@ public class MenuFindAllStudentsRelatedToCourse implements MenuItem {
             }
 
             System.out.println("All Students: ");
-            printInfo.printStudents(students);
+            printInfo.printStudents(students, groupDAO);
 
             System.out.println(dash);
         } else {

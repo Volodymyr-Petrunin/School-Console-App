@@ -15,17 +15,18 @@ import java.util.Scanner;
 
 public class MenuRemoveStudentFromOneOfCourses implements MenuItem {
     private final Scanner scan = new Scanner(System.in);
+    private final PrintInfo printInfo = new PrintInfo();
     private StudentsDAO studentsDAO;
     private Enrollments enrollmentsDAO;
     private CourseDAO courseDAO;
-    private PrintInfo printInfo;
+    private GroupDAO groupDAO;
     private String dash;
 
     public MenuRemoveStudentFromOneOfCourses(StudentsDAO studentsDAO, Enrollments enrollmentsDAO, CourseDAO courseDAO, GroupDAO groupDAO, String dash) {
         this.studentsDAO = studentsDAO;
         this.enrollmentsDAO = enrollmentsDAO;
         this.courseDAO = courseDAO;
-        this.printInfo = new PrintInfo(groupDAO);
+        this.groupDAO = groupDAO;
         this.dash = dash;
     }
 
@@ -43,7 +44,7 @@ public class MenuRemoveStudentFromOneOfCourses implements MenuItem {
 
         System.out.println("I find " + foundedStudents.size() + " students:");
 
-        printInfo.printStudents(foundedStudents);
+        printInfo.printStudents(foundedStudents, groupDAO);
 
         if (!foundedStudents.isEmpty()) {
             System.out.print("Now choose which one you need and write its id: ");

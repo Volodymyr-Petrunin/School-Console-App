@@ -18,8 +18,8 @@ import javax.sql.DataSource;
 import java.util.*;
 
 public class LaunchApp {
-    private final DBConnector dbConnector = new DBConnector(70);
-    private final DataSource dataSource = dbConnector.getConnection();
+    private final DBConnector dbConnector = new DBConnector();
+    private final DataSource dataSource = dbConnector.getDBConnection();
     private final String scriptCreateTables = "src\\main\\resources\\SQLScript\\create_tables.sql";
     private final ScriptRunner scriptRunner = new ScriptRunner(dataSource);
     private final ResourcesFileReader readerCourses = new ResourcesFileReader("courses.txt");

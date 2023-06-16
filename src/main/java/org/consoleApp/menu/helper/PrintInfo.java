@@ -11,13 +11,8 @@ import java.util.StringJoiner;
 import java.util.function.Function;
 
 public class PrintInfo {
-    private GroupDAO groupDAO;
 
-    public PrintInfo(GroupDAO groupDAO) {
-        this.groupDAO = groupDAO;
-    }
-
-    public void printStudents(List<Student> students) {
+    public void printStudents(List<Student> students, GroupDAO groupDAO) {
         StringJoiner result = new StringJoiner(System.lineSeparator());
         int maxFirstNameLength = findMaxNameLength(students, Student::getFirstName);
         int maxLastNameLength = findMaxNameLength(students, Student::getLastName);

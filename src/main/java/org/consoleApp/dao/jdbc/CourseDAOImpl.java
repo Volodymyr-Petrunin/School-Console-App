@@ -183,22 +183,4 @@ public class CourseDAOImpl implements CourseDAO {
 
         return course;
     }
-
-    public int getNextId() {
-        int nextCourseId = 0;
-
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("SELECT MAX(course_id) FROM courses");
-             ResultSet resultSet = preparedStatement.executeQuery()){
-
-            while (resultSet.next()){
-                nextCourseId = resultSet.getInt(1) + 1;
-            }
-
-        } catch (SQLException e) {
-            throw new IllegalStateException("Can't get next course id", e);
-        }
-
-        return nextCourseId;
-    }
 }

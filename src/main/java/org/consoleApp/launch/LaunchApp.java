@@ -1,5 +1,6 @@
 package org.consoleApp.launch;
 
+import org.consoleApp.dataFilling.leaf.DataFillerOption;
 import org.consoleApp.generation.records.GroupAmountGeneration;
 import org.consoleApp.dao.jdbc.CourseDAOImpl;
 import org.consoleApp.dataBaseSettings.DBConnector;
@@ -40,11 +41,13 @@ public class LaunchApp {
     private final EnrollmentsDataFiller enrollmentsDataFiller = new EnrollmentsDataFiller(3, studentsDAO, courseDAO);
     private final Scanner scan = new Scanner(System.in);
     private final String dash = "-".repeat(50); // yes magic number. But it doesn't affect anything
-    private MenuItem menuItem;
-    private List<MenuItem> menuItems = createMenuItems();
-    private MenuOption menuOption = new MenuOption(menuItems, dash);
+    private final List<MenuItem> menuItems = createMenuItems();
+    private final MenuOption menuOption = new MenuOption(menuItems, dash);
+    private final DataFillerOption fillerOption = new DataFillerOption(coursesDataFiller, groupDataFiller, studentsDataFiller, enrollmentsDataFiller);
     private boolean exit = false;
     public void launch(){
+        scriptRunner.runScript(scriptCreateTables);
+        fillerOption.fillData();
 
         while (!exit){
             menuOption.execute();
@@ -56,8 +59,6 @@ public class LaunchApp {
         System.out.print("Yor choice: ");
         int currentChoice = scan.nextInt();
 
-        List<MenuItem> menuItems = createMenuItems();
-
         if (currentChoice >= 1 && currentChoice <= menuItems.size()) {
             menuItems.get(currentChoice - 1).execute();
         } else if (currentChoice == 0) {
@@ -65,24 +66,15 @@ public class LaunchApp {
         }
     }
 
-    public void fillData(){
-        scriptRunner.runScript(scriptCreateTables);
-
-        coursesDataFiller.fillData();
-        groupDataFiller.fillData();
-        studentsDataFiller.fillData();
-        enrollmentsDataFiller.fillData();
-    }
-
     private List<MenuItem> createMenuItems(){
-        List<MenuItem> menuItems = new ArrayList<>();
-        menuItems.add(new MenuFindGroupsWithLessOrEqualStudents(groupsDAO, dash));
-        menuItems.add(new MenuFindAllStudentsRelatedToCourse(courseDAO, enrollmentsDAO, studentsDAO, groupsDAO, dash));
-        menuItems.add(new MenuAddNewStudent(groupsDAO, studentsDAO, dash));
-        menuItems.add(new MenuDeleteStudent(enrollmentsDAO, studentsDAO, dash));
-        menuItems.add(new MenuAddStudentToCourse(studentsDAO, courseDAO, groupsDAO, dash));
-        menuItems.add(new MenuRemoveStudentFromOneOfCourses(studentsDAO, enrollmentsDAO, courseDAO, groupsDAO, dash));
+        List<MenuItem> menu = new ArrayList<>();
+        menu.add(new MenuFindGroupsWithLessOrEqualStudents(groupsDAO, dash));
+        menu.add(new MenuFindAllStudentsRelatedToCourse(courseDAO, enrollmentsDAO, studentsDAO, groupsDAO, dash));
+        menu.add(new MenuAddNewStudent(groupsDAO, studentsDAO, dash));
+        menu.add(new MenuDeleteStudent(enrollmentsDAO, studentsDAO, dash));
+        menu.add(new MenuAddStudentToCourse(studentsDAO, courseDAO, groupsDAO, dash));
+        menu.add(new MenuRemoveStudentFromOneOfCourses(studentsDAO, enrollmentsDAO, courseDAO, groupsDAO, dash));
 
-        return menuItems;
+        return menu;
     }
 }

@@ -16,6 +16,7 @@ import org.consoleApp.generation.records.InitialAmountGeneration;
 import org.consoleApp.menu.impl.*;
 import org.consoleApp.menu.MenuItem;
 import org.consoleApp.menu.leaf.MenuOption;
+import org.consoleApp.parser.impl.CourseParser;
 import org.consoleApp.readers.ResourcesFileReader;
 
 import javax.sql.DataSource;
@@ -33,11 +34,12 @@ public class LaunchApp {
     private final GroupsDAOImpl groupsDAO = new GroupsDAOImpl(dataSource);
     private final StudentsDAOImpl studentsDAO = new StudentsDAOImpl(dataSource);
     private final EnrollmentsDAO enrollmentsDAO = new EnrollmentsDAO(dataSource);
+    private final CourseParser courseParser = new CourseParser();
     private final GroupAmountGeneration groupAmountGeneration = new GroupAmountGeneration(10, 2, 2);
     private final InitialAmountGeneration amountGeneration = new InitialAmountGeneration(200, 30);
     private final GroupDataFiller groupDataFiller = new GroupDataFiller(groupAmountGeneration, groupsDAO);
     private final StudentsDataFiller studentsDataFiller = new StudentsDataFiller(readerFirstName.read(), readerSecondName.read(), amountGeneration, studentsDAO, groupsDAO);
-    private final CoursesDataFiller coursesDataFiller = new CoursesDataFiller(readerCourses.read(), courseDAO);
+    private final CoursesDataFiller coursesDataFiller = new CoursesDataFiller(courseParser.parsedList(readerCourses.read()), courseDAO);
     private final EnrollmentsDataFiller enrollmentsDataFiller = new EnrollmentsDataFiller(3, studentsDAO, courseDAO);
     private final Scanner scan = new Scanner(System.in);
     private final String dash = "-".repeat(50); // yes magic number. But it doesn't affect anything

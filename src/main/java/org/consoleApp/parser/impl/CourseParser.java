@@ -3,8 +3,10 @@ package org.consoleApp.parser.impl;
 import org.consoleApp.domin.Course;
 import org.consoleApp.parser.Parser;
 
-public class CourseParser implements Parser<Course> {
+import java.util.ArrayList;
+import java.util.List;
 
+public class CourseParser implements Parser<Course> {
     @Override
     public Course parse(String input) {
        if (!input.contains("_")){
@@ -16,5 +18,15 @@ public class CourseParser implements Parser<Course> {
        String description = info[1];
 
        return new Course(null, name, description);
+    }
+
+    @Override
+    public List<Course> parsedList(List<String> list) {
+        List<Course> result = new ArrayList<>();
+        for (String currentLine : list) {
+            Course course = parse(currentLine);
+            result.add(course);
+        }
+        return result;
     }
 }

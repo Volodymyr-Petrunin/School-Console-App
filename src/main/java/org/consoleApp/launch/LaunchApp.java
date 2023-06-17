@@ -14,6 +14,7 @@ import org.consoleApp.dao.jdbc.StudentsDAOImpl;
 import org.consoleApp.generation.records.InitialAmountGeneration;
 import org.consoleApp.menu.impl.*;
 import org.consoleApp.menu.MenuItem;
+import org.consoleApp.menu.leaf.MenuOption;
 import org.consoleApp.readers.ResourcesFileReader;
 
 import javax.sql.DataSource;
@@ -40,33 +41,15 @@ public class LaunchApp {
     private final Scanner scan = new Scanner(System.in);
     private final String dash = "-".repeat(50); // yes magic number. But it doesn't affect anything
     private MenuItem menuItem;
+    private List<MenuItem> menuItems = createMenuItems();
+    private MenuOption menuOption = new MenuOption(menuItems, dash);
     private boolean exit = false;
     public void launch(){
 
         while (!exit){
-            System.out.println(menu());
+            menuOption.execute();
             userChooses();
         }
-    }
-
-    private String menu(){
-        StringJoiner menu = new StringJoiner(System.lineSeparator());
-
-        menu.add("Please select an option: ");
-
-        List<MenuItem> menuItems = createMenuItems();
-
-        int place = 1;
-        for (MenuItem item : menuItems){
-            menu.add(place++ + ". " + item.getDescription());
-        }
-
-        menu.add("");
-
-        menu.add("0. Exit");
-        menu.add(dash);
-
-        return menu.toString();
     }
 
     private void userChooses(){

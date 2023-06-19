@@ -13,9 +13,9 @@ import org.consoleApp.dataFilling.impl.StudentsDataFiller;
 import org.consoleApp.dao.jdbc.GroupsDAOImpl;
 import org.consoleApp.dao.jdbc.StudentsDAOImpl;
 import org.consoleApp.generation.records.InitialAmountGeneration;
-import org.consoleApp.menu.impl.*;
+import org.consoleApp.menu.leaf.*;
 import org.consoleApp.menu.MenuItem;
-import org.consoleApp.menu.leaf.MenuOption;
+import org.consoleApp.menu.composite.MenuOption;
 import org.consoleApp.parser.impl.CourseParser;
 import org.consoleApp.readers.ResourcesFileReader;
 

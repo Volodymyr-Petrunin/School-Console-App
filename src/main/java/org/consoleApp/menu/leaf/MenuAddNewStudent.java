@@ -1,4 +1,4 @@
-package org.consoleApp.menu.impl;
+package org.consoleApp.menu.leaf;
 
 import org.consoleApp.dao.GroupDAO;
 import org.consoleApp.dao.StudentsDAO;

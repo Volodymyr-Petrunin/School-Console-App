@@ -1,4 +1,4 @@
-package org.consoleApp.menu.leaf;
+package org.consoleApp.menu.composite;
 
 import org.consoleApp.menu.MenuItem;
 

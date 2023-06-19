@@ -1,6 +1,5 @@
 package org.consoleApp.dao.jdbc;
 
-
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;

@@ -12,11 +12,13 @@ import java.util.List;
 
 public class StudentsDataFiller implements DataFiller {
     private StudentsDAO studentsDAO;
+    private List<Group> groups;
     private StudentsGenerationData dataInitial;
 
     public StudentsDataFiller(List<String> dataName, List<String> dataSurname, InitialAmountGeneration amountGeneration, StudentsDAO studentsDAO, GroupDAO groupsDAO) {
         this.studentsDAO = studentsDAO;
-        this.dataInitial = new StudentsGenerationData(dataName, dataSurname, amountGeneration, findAllGroups(groupsDAO));
+        this.groups = findAllGroups(groupsDAO);
+        this.dataInitial = new StudentsGenerationData(dataName, dataSurname, amountGeneration, groups);
     }
 
     @Override

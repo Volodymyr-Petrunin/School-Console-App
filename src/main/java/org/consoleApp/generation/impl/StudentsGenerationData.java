@@ -50,10 +50,9 @@ public class StudentsGenerationData implements GenerationData<Student> {
             Group randomGroup = getRandomElement(allGroups);
 
             student.setGroupId(randomGroup.getId());
-            int currentUsage = groupUsage.getOrDefault(randomGroup, 0);
-            groupUsage.put(randomGroup, currentUsage + 1);
+            groupUsage.merge(randomGroup, 1, Integer::sum);
 
-            if (currentUsage + 1 >= maxGroupSize) {
+            if (groupUsage.get(randomGroup) >= maxGroupSize) {
                 groupUsage.remove(randomGroup);
             }
         }

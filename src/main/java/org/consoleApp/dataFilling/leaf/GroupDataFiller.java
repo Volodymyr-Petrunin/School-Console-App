@@ -1,4 +1,4 @@
-package org.consoleApp.dataFilling.impl;
+package org.consoleApp.dataFilling.leaf;
 
 import org.consoleApp.generation.records.GroupAmountGeneration;
 import org.consoleApp.dao.GroupDAO;

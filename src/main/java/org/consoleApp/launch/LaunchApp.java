@@ -1,15 +1,15 @@
 package org.consoleApp.launch;
 
-import org.consoleApp.dataFilling.leaf.DataFillerOption;
+import org.consoleApp.dataFilling.composite.DataFillerOption;
 import org.consoleApp.generation.records.GroupAmountGeneration;
 import org.consoleApp.dao.jdbc.CourseDAOImpl;
 import org.consoleApp.dataBaseSettings.DBConnector;
 import org.consoleApp.dataBaseSettings.ScriptRunner;
 import org.consoleApp.dao.jdbc.EnrollmentsDAO;
-import org.consoleApp.dataFilling.impl.CoursesDataFiller;
-import org.consoleApp.dataFilling.impl.EnrollmentsDataFiller;
-import org.consoleApp.dataFilling.impl.GroupDataFiller;
-import org.consoleApp.dataFilling.impl.StudentsDataFiller;
+import org.consoleApp.dataFilling.leaf.CoursesDataFiller;
+import org.consoleApp.dataFilling.leaf.EnrollmentsDataFiller;
+import org.consoleApp.dataFilling.leaf.GroupDataFiller;
+import org.consoleApp.dataFilling.leaf.StudentsDataFiller;
 import org.consoleApp.dao.jdbc.GroupsDAOImpl;
 import org.consoleApp.dao.jdbc.StudentsDAOImpl;
 import org.consoleApp.generation.records.InitialAmountGeneration;

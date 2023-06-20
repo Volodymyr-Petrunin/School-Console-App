@@ -1,10 +1,10 @@
-package org.consoleApp.dataFilling.leaf;
+package org.consoleApp.dataFilling.composite;
 
 import org.consoleApp.dataFilling.DataFiller;
-import org.consoleApp.dataFilling.impl.CoursesDataFiller;
-import org.consoleApp.dataFilling.impl.EnrollmentsDataFiller;
-import org.consoleApp.dataFilling.impl.GroupDataFiller;
-import org.consoleApp.dataFilling.impl.StudentsDataFiller;
+import org.consoleApp.dataFilling.leaf.CoursesDataFiller;
+import org.consoleApp.dataFilling.leaf.EnrollmentsDataFiller;
+import org.consoleApp.dataFilling.leaf.GroupDataFiller;
+import org.consoleApp.dataFilling.leaf.StudentsDataFiller;
 
 public class DataFillerOption implements DataFiller {
     private CoursesDataFiller coursesDataFiller;

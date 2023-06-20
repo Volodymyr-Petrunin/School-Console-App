@@ -1,4 +1,4 @@
-package org.consoleApp.dataFilling.impl;
+package org.consoleApp.dataFilling.leaf;
 
 import org.consoleApp.dao.CourseDAO;
 import org.consoleApp.dataFilling.DataFiller;

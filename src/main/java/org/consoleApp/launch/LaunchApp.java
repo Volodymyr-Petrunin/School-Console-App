@@ -1,13 +1,11 @@
 package org.consoleApp.launch;
 
-import org.consoleApp.dao.GenericDAO;
 import org.consoleApp.dataFilling.DataFiller;
 import org.consoleApp.dataFilling.composite.DataFillerComposite;
 import org.consoleApp.generation.records.GroupAmountGeneration;
 import org.consoleApp.dao.jdbc.CourseDAOImpl;
 import org.consoleApp.dataBaseSettings.DBConnector;
 import org.consoleApp.dataBaseSettings.ScriptRunner;
-import org.consoleApp.dao.jdbc.EnrollmentsDAO;
 import org.consoleApp.dataFilling.leaf.CoursesDataFiller;
 import org.consoleApp.dataFilling.leaf.EnrollmentsDataFiller;
 import org.consoleApp.dataFilling.leaf.GroupDataFiller;
@@ -34,7 +32,6 @@ public class LaunchApp {
     private final CourseDAOImpl courseDAO = new CourseDAOImpl(dataSource);
     private final GroupsDAOImpl groupsDAO = new GroupsDAOImpl(dataSource);
     private final StudentsDAOImpl studentsDAO = new StudentsDAOImpl(dataSource);
-    private final EnrollmentsDAO enrollmentsDAO = new EnrollmentsDAO(dataSource);
     private final CourseParser courseParser = new CourseParser();
     private final GroupAmountGeneration groupAmountGeneration = new GroupAmountGeneration(10, 2, 2);
     private final InitialAmountGeneration amountGeneration = new InitialAmountGeneration(200, 30, 10);
@@ -47,7 +44,7 @@ public class LaunchApp {
             coursesDataFiller, groupDataFiller, studentsDataFiller, enrollmentsDataFiller
     );
     private final DataFillerComposite fillerOption = new DataFillerComposite(dataFillers);
-    private final MenuComposite menuComposite = new MenuComposite(groupsDAO, courseDAO, studentsDAO, enrollmentsDAO, dash);
+    private final MenuComposite menuComposite = new MenuComposite(groupsDAO, courseDAO, studentsDAO, dash);
 
     public void launch(){
         scriptRunner.runScript(createTablesStream);

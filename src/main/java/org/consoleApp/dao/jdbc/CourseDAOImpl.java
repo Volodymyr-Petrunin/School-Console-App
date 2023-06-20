@@ -177,4 +177,26 @@ public class CourseDAOImpl implements CourseDAO {
 
         return Optional.empty();
     }
+
+    @Override
+    public List<Integer> findAllCourseIdByStudentsId(int studentId) {
+        List<Integer> coursesId = new ArrayList<>();
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT course_id FROM enrollments WHERE student_id = ?")){
+            preparedStatement.setInt(1, studentId);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()){
+                while (resultSet.next()){
+                    int currentId = resultSet.getInt("course_id");
+                    coursesId.add(currentId);
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new IllegalStateException("Can't find course id by student id", e);
+        }
+
+        return coursesId;
+    }
 }

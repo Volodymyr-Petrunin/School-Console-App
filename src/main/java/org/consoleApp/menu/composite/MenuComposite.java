@@ -3,7 +3,6 @@ package org.consoleApp.menu.composite;
 import org.consoleApp.dao.CourseDAO;
 import org.consoleApp.dao.GroupDAO;
 import org.consoleApp.dao.StudentsDAO;
-import org.consoleApp.dao.jdbc.EnrollmentsDAO;
 import org.consoleApp.menu.MenuItem;
 import org.consoleApp.menu.leaf.*;
 
@@ -19,14 +18,12 @@ public class MenuComposite implements MenuItem {
     private GroupDAO groupsDAO;
     private CourseDAO courseDAO;
     private StudentsDAO studentsDAO;
-    private EnrollmentsDAO enrollmentsDAO;
     private String dash;
 
-    public MenuComposite(GroupDAO groupsDAO, CourseDAO courseDAO, StudentsDAO studentsDAO, EnrollmentsDAO enrollmentsDAO, String dash) {
+    public MenuComposite(GroupDAO groupsDAO, CourseDAO courseDAO, StudentsDAO studentsDAO, String dash) {
         this.groupsDAO = groupsDAO;
         this.courseDAO = courseDAO;
         this.studentsDAO = studentsDAO;
-        this.enrollmentsDAO = enrollmentsDAO;
         this.dash = dash;
         this.exit = false;
         this.menuItems = createMenuItems();
@@ -76,11 +73,11 @@ public class MenuComposite implements MenuItem {
     private List<MenuItem> createMenuItems(){
         List<MenuItem> menu = new ArrayList<>();
         menu.add(new MenuFindGroupsWithLessOrEqualStudents(groupsDAO, dash));
-        menu.add(new MenuFindAllStudentsRelatedToCourse(courseDAO, enrollmentsDAO, studentsDAO, groupsDAO, dash));
+        menu.add(new MenuFindAllStudentsRelatedToCourse(courseDAO, studentsDAO, groupsDAO, dash));
         menu.add(new MenuAddNewStudent(groupsDAO, studentsDAO, dash));
-        menu.add(new MenuDeleteStudent(enrollmentsDAO, studentsDAO, dash));
+        menu.add(new MenuDeleteStudent(studentsDAO, dash));
         menu.add(new MenuAddStudentToCourse(studentsDAO, courseDAO, groupsDAO, dash));
-        menu.add(new MenuRemoveStudentFromOneOfCourses(studentsDAO, enrollmentsDAO, courseDAO, groupsDAO, dash));
+        menu.add(new MenuRemoveStudentFromOneOfCourses(studentsDAO, courseDAO, groupsDAO, dash));
 
         return menu;
     }

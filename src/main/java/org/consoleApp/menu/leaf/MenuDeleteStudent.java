@@ -1,19 +1,16 @@
 package org.consoleApp.menu.leaf;
 
 import org.consoleApp.dao.StudentsDAO;
-import org.consoleApp.dao.jdbc.EnrollmentsDAO;
 import org.consoleApp.menu.MenuItem;
 
 import java.util.Scanner;
 
 public class MenuDeleteStudent implements MenuItem {
     private final Scanner scan = new Scanner(System.in);
-    private EnrollmentsDAO enrollmentsDAO;
     private StudentsDAO studentsDAO;
     private String dash;
 
-    public MenuDeleteStudent(EnrollmentsDAO enrollmentsDAO, StudentsDAO studentsDAO , String dash) {
-        this.enrollmentsDAO = enrollmentsDAO;
+    public MenuDeleteStudent(StudentsDAO studentsDAO , String dash) {
         this.studentsDAO = studentsDAO;
         this.dash = dash;
     }
@@ -29,7 +26,7 @@ public class MenuDeleteStudent implements MenuItem {
         int studentId = scan.nextInt();
 
         if (studentId != 0){
-            boolean deleteFromEnrollSuccessful = enrollmentsDAO.deleteStudentById(studentId);
+            boolean deleteFromEnrollSuccessful = studentsDAO.deleteStudentByIdFromEnrollments(studentId);
             boolean deleteFromStudentsSuccessful = studentsDAO.deleteByStudentId(studentId);
 
             if (deleteFromEnrollSuccessful && deleteFromStudentsSuccessful){

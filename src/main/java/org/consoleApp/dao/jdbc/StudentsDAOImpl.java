@@ -216,4 +216,53 @@ public class StudentsDAOImpl implements StudentsDAO {
             throw new IllegalStateException("Can't register", e);
         }
     }
+
+    @Override
+    public boolean deleteStudentByIdFromEnrollments(int studentId) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM enrollments WHERE student_id = ?")){
+            preparedStatement.setInt(1, studentId);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            throw new IllegalStateException("Can't delete student by id", e);
+        }
+    }
+
+    @Override
+    public List<Integer> findAllStudentsIdByCourseId(int courseId) {
+        List<Integer> studentsId = new ArrayList<>();
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT student_id FROM enrollments WHERE course_id = ?")){
+            preparedStatement.setInt(1, courseId);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()){
+                while (resultSet.next()){
+                    int currentId = resultSet.getInt("student_id");
+                    studentsId.add(currentId);
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new IllegalStateException("Can't find students id by course id", e);
+        }
+
+        return studentsId;
+    }
+
+    @Override
+    public boolean removeStudentFromCourse(int studentId, int courseId) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM enrollments WHERE student_id = ? AND course_id = ?")){
+            preparedStatement.setInt(1, studentId);
+            preparedStatement.setInt(2, courseId);
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            throw new IllegalStateException("Can't remove student from course", e);
+        }
+    }
 }

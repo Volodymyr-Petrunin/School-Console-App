@@ -19,12 +19,13 @@ import org.consoleApp.parser.impl.CourseParser;
 import org.consoleApp.readers.ResourcesFileReader;
 
 import javax.sql.DataSource;
+import java.io.InputStream;
 import java.util.List;
 
 public class LaunchApp {
     private final DBConnector dbConnector = new DBConnector();
     private final DataSource dataSource = dbConnector.getDBConnection();
-    private final String scriptCreateTables = "src\\main\\resources\\SQLScript\\create_tables.sql";
+    private final InputStream createTablesStream = getClass().getResourceAsStream("/SQLScript/create_tables.sql");
     private final ScriptRunner scriptRunner = new ScriptRunner(dataSource);
     private final ResourcesFileReader readerCourses = new ResourcesFileReader("courses.txt");
     private final ResourcesFileReader readerFirstName = new ResourcesFileReader("firstName.txt");
@@ -48,7 +49,7 @@ public class LaunchApp {
     private final MenuOption menuOption = new MenuOption(groupsDAO, courseDAO, studentsDAO, enrollmentsDAO, dash);
 
     public void launch(){
-        scriptRunner.runScript(scriptCreateTables);
+        scriptRunner.runScript(createTablesStream);
         fillerOption.fillData();
 
         menuOption.execute();

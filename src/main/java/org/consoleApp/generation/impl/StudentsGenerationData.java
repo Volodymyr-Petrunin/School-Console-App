@@ -12,16 +12,16 @@ public class StudentsGenerationData implements GenerationData<Student> {
     private List<String> dataName;
     private List<String> dataSurname;
     private int quantity;
-    private int maxGroupSize;
-    private int minGroupSize;
+    private int maxSize;
+    private int minSize;
     private List<Group> allGroups;
 
     public StudentsGenerationData(List<String> dataName, List<String> dataSurname, InitialAmountGeneration amountGeneration, List<Group> allGroups) {
         this.dataName = dataName;
         this.dataSurname = dataSurname;
         this.quantity = amountGeneration.quantityGenerations();
-        this.maxGroupSize = amountGeneration.maxGroupSize();
-        this.minGroupSize = amountGeneration.minGroupSize();
+        this.maxSize = amountGeneration.maxGroupSize();
+        this.minSize = amountGeneration.minGroupSize();
         this.allGroups = allGroups;
     }
 
@@ -46,33 +46,25 @@ public class StudentsGenerationData implements GenerationData<Student> {
     }
 
     private List<Student> assignStudentToGroup(List<Student> students){
-        List<Student> studentList = new ArrayList<>(students);
+        List<Student> studentList = new LinkedList<>(students);
         List<Student> groupStudents = new ArrayList<>();
 
         for (Group group : allGroups){
-            int groupSize = randomRange(minGroupSize, maxGroupSize);
+            int groupSize = Math.min(randomRange(minSize, maxSize), studentList.size());
 
             for (int index = 0; index < groupSize; index++){
-                if (studentList.isEmpty()){
-                    break;
-                }
-
-                Student student = studentList.get(0);
+                Student student = studentList.remove(0);
                 student.setGroupId(group.getId());
                 groupStudents.add(student);
-
-                studentList.remove(0);
             }
 
-            if (studentList.size() < minGroupSize) {
+            if (studentList.size() < minSize) {
                 break;
             }
         }
 
-        if (!studentList.isEmpty()){
-            groupStudents.addAll(studentList);
-        }
 
+        groupStudents.addAll(studentList);
         return groupStudents;
     }
 
@@ -81,7 +73,7 @@ public class StudentsGenerationData implements GenerationData<Student> {
         return list.get(index);
     }
 
-    private int randomRange(int minGroupSize, int maxGroupSize){
-        return random.nextInt(maxGroupSize - minGroupSize) + minGroupSize;
+    private int randomRange(int minSize, int maxSize){
+        return random.nextInt(maxSize - minSize) + minSize;
     }
 }

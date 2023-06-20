@@ -1,9 +1,7 @@
 package org.consoleApp.dataBaseSettings;
 
 import javax.sql.DataSource;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -14,8 +12,8 @@ public class ScriptRunner {
         this.dataSource = dataSource;
     }
 
-    public void runScript(String filePath){
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+    public void runScript(InputStream inputStream){
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             StringBuilder scriptContent = new StringBuilder();
             String line;
 

@@ -4,10 +4,10 @@ import org.consoleApp.dataFilling.DataFiller;
 
 import java.util.List;
 
-public class DataFillerOption implements DataFiller {
+public class DataFillerComposite implements DataFiller {
     private List<DataFiller> dataFillers;
 
-    public DataFillerOption(List<DataFiller> dataFillers) {
+    public DataFillerComposite(List<DataFiller> dataFillers) {
         this.dataFillers = dataFillers;
     }
 

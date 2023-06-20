@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.StringJoiner;
 
-public class MenuOption implements MenuItem {
+public class MenuComposite implements MenuItem {
     private final Scanner scan = new Scanner(System.in);
     private List<MenuItem> menuItems;
     private boolean exit;
@@ -22,7 +22,7 @@ public class MenuOption implements MenuItem {
     private EnrollmentsDAO enrollmentsDAO;
     private String dash;
 
-    public MenuOption(GroupDAO groupsDAO, CourseDAO courseDAO, StudentsDAO studentsDAO, EnrollmentsDAO enrollmentsDAO, String dash) {
+    public MenuComposite(GroupDAO groupsDAO, CourseDAO courseDAO, StudentsDAO studentsDAO, EnrollmentsDAO enrollmentsDAO, String dash) {
         this.groupsDAO = groupsDAO;
         this.courseDAO = courseDAO;
         this.studentsDAO = studentsDAO;

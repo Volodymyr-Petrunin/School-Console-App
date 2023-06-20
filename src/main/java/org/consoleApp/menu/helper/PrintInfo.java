@@ -17,13 +17,14 @@ public class PrintInfo {
         int maxFirstNameLength = findMaxNameLength(students, Student::getFirstName);
         int maxLastNameLength = findMaxNameLength(students, Student::getLastName);
 
-        for (Student student : students){
-            Optional<Group> optionalGroup = groupDAO.findById(student.getGroupId());
+        for (Student student : students) {
+            Optional<Integer> groupIdOptional = student.getGroupId();
 
-            if (optionalGroup.isPresent()) {
-                Group group = optionalGroup.get();
-                result.add(String.format("ID: %3d Initial: %-" + maxFirstNameLength + "s %-" + maxLastNameLength + "s | Group: %s", student.getId(), student.getFirstName(), student.getLastName(), group.getName()));
-            }
+            String groupName = groupIdOptional.flatMap(groupDAO::findById)
+                    .map(Group::getName)
+                    .orElse("No group");
+
+            result.add(String.format("ID: %3d Initial: %-" + maxFirstNameLength + "s %-" + maxLastNameLength + "s | Group: %s", student.getId(), student.getFirstName(), student.getLastName(), groupName));
         }
 
         System.out.println(result);

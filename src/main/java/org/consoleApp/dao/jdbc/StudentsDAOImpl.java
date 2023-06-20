@@ -69,7 +69,11 @@ public class StudentsDAOImpl implements StudentsDAO {
     public boolean insert(Student student) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO students (group_id, first_name, last_name) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS)){
-            preparedStatement.setInt(1,student.getGroupId());
+
+            Optional<Integer> groupIdOptional = student.getGroupId();
+            Integer groupId = groupIdOptional.orElse(null);
+
+            preparedStatement.setObject(1, groupId, java.sql.Types.INTEGER);
             preparedStatement.setString(2,student.getFirstName());
             preparedStatement.setString(3,student.getLastName());
 
@@ -99,7 +103,10 @@ public class StudentsDAOImpl implements StudentsDAO {
              PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO students (group_id, first_name, last_name) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS)){
 
             for (Student student : students){
-                preparedStatement.setInt(1, student.getGroupId());
+                Optional<Integer> groupIdOptional = student.getGroupId();
+                Integer groupId = groupIdOptional.orElse(null);
+
+                preparedStatement.setObject(1, groupId, java.sql.Types.INTEGER);
                 preparedStatement.setString(2, student.getFirstName());
                 preparedStatement.setString(3, student.getLastName());
 
@@ -129,7 +136,11 @@ public class StudentsDAOImpl implements StudentsDAO {
     public boolean update(Student student) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("UPDATE students SET group_id = ?, first_name = ?, last_name = ? WHERE student_id = ?")){
-            preparedStatement.setInt(1, student.getGroupId());
+
+            Optional<Integer> groupIdOptional = student.getGroupId();
+            Integer groupId = groupIdOptional.orElse(null);
+
+            preparedStatement.setObject(1, groupId, java.sql.Types.INTEGER);
             preparedStatement.setString(2, student.getFirstName());
             preparedStatement.setString(3, student.getLastName());
 

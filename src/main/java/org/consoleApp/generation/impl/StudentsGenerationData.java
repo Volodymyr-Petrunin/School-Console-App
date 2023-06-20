@@ -49,8 +49,6 @@ public class StudentsGenerationData implements GenerationData<Student> {
         List<Student> studentList = new ArrayList<>(students);
         List<Student> groupStudents = new ArrayList<>();
 
-        int remainingStudents = studentList.size();
-
         for (Group group : allGroups){
             int groupSize = randomRange(minGroupSize, maxGroupSize);
 
@@ -64,15 +62,14 @@ public class StudentsGenerationData implements GenerationData<Student> {
                 groupStudents.add(student);
 
                 studentList.remove(0);
-                remainingStudents--;
             }
 
-            if (remainingStudents < minGroupSize) {
+            if (studentList.size() < minGroupSize) {
                 break;
             }
         }
 
-        if (remainingStudents != 0){
+        if (!studentList.isEmpty()){
             groupStudents.addAll(studentList);
         }
 

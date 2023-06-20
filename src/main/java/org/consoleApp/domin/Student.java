@@ -1,5 +1,7 @@
 package org.consoleApp.domin;
 
+import java.util.Optional;
+
 public class Student {
     private Integer id;
     private Integer groupId;
@@ -21,8 +23,8 @@ public class Student {
         this.id = id;
     }
 
-    public int getGroupId() {
-        return groupId;
+    public Optional<Integer> getGroupId() {
+        return Optional.ofNullable(groupId);
     }
 
     public void setGroupId(int groupId) {

@@ -1,29 +1,20 @@
 package org.consoleApp.dataFilling.composite;
 
 import org.consoleApp.dataFilling.DataFiller;
-import org.consoleApp.dataFilling.leaf.CoursesDataFiller;
-import org.consoleApp.dataFilling.leaf.EnrollmentsDataFiller;
-import org.consoleApp.dataFilling.leaf.GroupDataFiller;
-import org.consoleApp.dataFilling.leaf.StudentsDataFiller;
+
+import java.util.List;
 
 public class DataFillerOption implements DataFiller {
-    private CoursesDataFiller coursesDataFiller;
-    private GroupDataFiller groupDataFiller;
-    private StudentsDataFiller studentsDataFiller;
-    private EnrollmentsDataFiller enrollmentsDataFiller;
+    private List<DataFiller> dataFillers;
 
-    public DataFillerOption(CoursesDataFiller coursesDataFiller, GroupDataFiller groupDataFiller, StudentsDataFiller studentsDataFiller, EnrollmentsDataFiller enrollmentsDataFiller) {
-        this.coursesDataFiller = coursesDataFiller;
-        this.groupDataFiller = groupDataFiller;
-        this.studentsDataFiller = studentsDataFiller;
-        this.enrollmentsDataFiller = enrollmentsDataFiller;
+    public DataFillerOption(List<DataFiller> dataFillers) {
+        this.dataFillers = dataFillers;
     }
 
     @Override
     public void fillData() {
-        coursesDataFiller.fillData();
-        groupDataFiller.fillData();
-        studentsDataFiller.fillData();
-        enrollmentsDataFiller.fillData();
+        for (DataFiller dataFiller : dataFillers){
+            dataFiller.fillData();
+        }
     }
 }

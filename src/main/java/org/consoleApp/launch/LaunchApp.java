@@ -1,5 +1,6 @@
 package org.consoleApp.launch;
 
+import org.consoleApp.dataFilling.DataFiller;
 import org.consoleApp.dataFilling.composite.DataFillerOption;
 import org.consoleApp.generation.records.GroupAmountGeneration;
 import org.consoleApp.dao.jdbc.CourseDAOImpl;
@@ -18,6 +19,7 @@ import org.consoleApp.parser.impl.CourseParser;
 import org.consoleApp.readers.ResourcesFileReader;
 
 import javax.sql.DataSource;
+import java.util.List;
 
 public class LaunchApp {
     private final DBConnector dbConnector = new DBConnector();
@@ -39,7 +41,10 @@ public class LaunchApp {
     private final CoursesDataFiller coursesDataFiller = new CoursesDataFiller(courseParser.parsedList(readerCourses.read()), courseDAO);
     private final EnrollmentsDataFiller enrollmentsDataFiller = new EnrollmentsDataFiller(3, studentsDAO, courseDAO);
     private final String dash = "-".repeat(50); // yes magic number. But it doesn't affect anything
-    private final DataFillerOption fillerOption = new DataFillerOption(coursesDataFiller, groupDataFiller, studentsDataFiller, enrollmentsDataFiller);
+    private final List<DataFiller> dataFillers = List.of(
+            coursesDataFiller, groupDataFiller, studentsDataFiller, enrollmentsDataFiller
+    );
+    private final DataFillerOption fillerOption = new DataFillerOption(dataFillers);
     private final MenuOption menuOption = new MenuOption(groupsDAO, courseDAO, studentsDAO, enrollmentsDAO, dash);
 
     public void launch(){

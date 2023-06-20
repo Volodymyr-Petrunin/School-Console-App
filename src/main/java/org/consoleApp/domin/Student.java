@@ -2,11 +2,11 @@ package org.consoleApp.domin;
 
 public class Student {
     private Integer id;
-    private int groupId;
+    private Integer groupId;
     private String firstName;
     private String lastName;
 
-    public Student(Integer id, int groupId, String firstName, String lastName) {
+    public Student(Integer id, Integer groupId, String firstName, String lastName) {
         this.id = id;
         this.groupId = groupId;
         this.firstName = firstName;

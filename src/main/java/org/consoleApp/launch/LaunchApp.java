@@ -33,7 +33,7 @@ public class LaunchApp {
     private final EnrollmentsDAO enrollmentsDAO = new EnrollmentsDAO(dataSource);
     private final CourseParser courseParser = new CourseParser();
     private final GroupAmountGeneration groupAmountGeneration = new GroupAmountGeneration(10, 2, 2);
-    private final InitialAmountGeneration amountGeneration = new InitialAmountGeneration(200, 30);
+    private final InitialAmountGeneration amountGeneration = new InitialAmountGeneration(200, 30, 10);
     private final GroupDataFiller groupDataFiller = new GroupDataFiller(groupAmountGeneration, groupsDAO);
     private final StudentsDataFiller studentsDataFiller = new StudentsDataFiller(readerFirstName.read(), readerSecondName.read(), amountGeneration, studentsDAO, groupsDAO);
     private final CoursesDataFiller coursesDataFiller = new CoursesDataFiller(courseParser.parsedList(readerCourses.read()), courseDAO);

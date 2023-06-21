@@ -11,4 +11,5 @@ public interface StudentsDAO extends GenericDAO<Student> {
     boolean deleteStudentByIdFromEnrollments(int studentId);
     List<Integer> findAllStudentsIdByCourseId(int courseId);
     boolean removeStudentFromCourse(int studentId, int courseId);
+    List<Student> findByIdBatch(List<Integer> studentsId);
 }

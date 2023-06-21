@@ -265,4 +265,32 @@ public class StudentsDAOImpl implements StudentsDAO {
             throw new IllegalStateException("Can't remove student from course", e);
         }
     }
+
+    @Override
+    public List<Student> findByIdBatch(List<Integer> studentsId){
+        List<Student> students = new ArrayList<>();
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM students WHERE student_id = ?")) {
+
+            for (Integer id : studentsId) {
+                preparedStatement.setInt(1, id);
+
+                try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                    while (resultSet.next()) {
+                        int groupId = resultSet.getInt("group_id");
+                        String firstName = resultSet.getString("first_name");
+                        String lastName = resultSet.getString("last_name");
+
+                        students.add(new Student(id, groupId, firstName, lastName));
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new IllegalStateException("Can't find batch by student id", e);
+        }
+
+        return students;
+    }
 }

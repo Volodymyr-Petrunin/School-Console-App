@@ -43,11 +43,7 @@ public class MenuFindAllStudentsRelatedToCourse implements MenuItem {
             Course course = optionalCourse.get();
             List<Integer> studentsId = studentsDAO.findAllStudentsIdByCourseId(course.getId());
 
-            List<Student> students = new ArrayList<>();
-
-            for (Integer currentId : studentsId) {
-                studentsDAO.findById(currentId).ifPresent(students::add);
-            }
+            List<Student> students = studentsDAO.findByIdBatch(studentsId);
 
             System.out.println("All Students: ");
             printInfo.printStudents(students, groupDAO);

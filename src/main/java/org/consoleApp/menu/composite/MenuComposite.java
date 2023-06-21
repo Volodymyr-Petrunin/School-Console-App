@@ -1,12 +1,7 @@
 package org.consoleApp.menu.composite;
 
-import org.consoleApp.dao.CourseDAO;
-import org.consoleApp.dao.GroupDAO;
-import org.consoleApp.dao.StudentsDAO;
 import org.consoleApp.menu.MenuItem;
-import org.consoleApp.menu.leaf.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.StringJoiner;
@@ -14,19 +9,12 @@ import java.util.StringJoiner;
 public class MenuComposite implements MenuItem {
     private final Scanner scan = new Scanner(System.in);
     private List<MenuItem> menuItems;
-    private boolean exit;
-    private GroupDAO groupsDAO;
-    private CourseDAO courseDAO;
-    private StudentsDAO studentsDAO;
     private String dash;
+    private boolean exit;
 
-    public MenuComposite(GroupDAO groupsDAO, CourseDAO courseDAO, StudentsDAO studentsDAO, String dash) {
-        this.groupsDAO = groupsDAO;
-        this.courseDAO = courseDAO;
-        this.studentsDAO = studentsDAO;
+    public MenuComposite(List<MenuItem> menuItems, String dash) {
+        this.menuItems = menuItems;
         this.dash = dash;
-        this.exit = false;
-        this.menuItems = createMenuItems();
     }
 
     @Override
@@ -68,17 +56,5 @@ public class MenuComposite implements MenuItem {
         } else if (currentChoice == 0) {
             exit = true;
         }
-    }
-
-    private List<MenuItem> createMenuItems(){
-        List<MenuItem> menu = new ArrayList<>();
-        menu.add(new MenuFindGroupsWithLessOrEqualStudents(groupsDAO, dash));
-        menu.add(new MenuFindAllStudentsRelatedToCourse(courseDAO, studentsDAO, groupsDAO, dash));
-        menu.add(new MenuAddNewStudent(groupsDAO, studentsDAO, dash));
-        menu.add(new MenuDeleteStudent(studentsDAO, dash));
-        menu.add(new MenuAddStudentToCourse(studentsDAO, courseDAO, groupsDAO, dash));
-        menu.add(new MenuRemoveStudentFromOneOfCourses(studentsDAO, courseDAO, groupsDAO, dash));
-
-        return menu;
     }
 }

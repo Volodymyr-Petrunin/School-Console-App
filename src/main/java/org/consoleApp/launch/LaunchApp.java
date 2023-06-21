@@ -13,7 +13,9 @@ import org.consoleApp.dataFilling.leaf.StudentsDataFiller;
 import org.consoleApp.dao.jdbc.GroupsDAOImpl;
 import org.consoleApp.dao.jdbc.StudentsDAOImpl;
 import org.consoleApp.generation.records.InitialAmountGeneration;
+import org.consoleApp.menu.MenuItem;
 import org.consoleApp.menu.composite.MenuComposite;
+import org.consoleApp.menu.leaf.*;
 import org.consoleApp.parser.impl.CourseParser;
 import org.consoleApp.readers.ResourcesFileReader;
 
@@ -40,14 +42,26 @@ public class LaunchApp {
     private final CoursesDataFiller coursesDataFiller = new CoursesDataFiller(courseParser.parsedList(readerCourses.read()), courseDAO);
     private final EnrollmentsDataFiller enrollmentsDataFiller = new EnrollmentsDataFiller(3, studentsDAO, courseDAO);
     private final String dash = "-".repeat(50); // yes magic number. But it doesn't affect anything
-    private final List<DataFiller> dataFillers = List.of(
-            coursesDataFiller, groupDataFiller, studentsDataFiller, enrollmentsDataFiller
-    );
-    private final DataFillerComposite fillerOption = new DataFillerComposite(dataFillers);
-    private final MenuComposite menuComposite = new MenuComposite(groupsDAO, courseDAO, studentsDAO, dash);
 
     public void launch(){
         scriptRunner.runScript(createTablesStream);
+
+        List<DataFiller> dataFillers = List.of(
+                coursesDataFiller, groupDataFiller, studentsDataFiller, enrollmentsDataFiller
+        );
+
+        List<MenuItem> menuItems = List.of(
+                new MenuFindGroupsWithLessOrEqualStudents(groupsDAO, dash),
+                new MenuFindAllStudentsRelatedToCourse(courseDAO, studentsDAO, groupsDAO, dash),
+                new MenuAddNewStudent(groupsDAO, studentsDAO, dash),
+                new MenuDeleteStudent(studentsDAO, dash),
+                new MenuAddStudentToCourse(studentsDAO, courseDAO, groupsDAO, dash),
+                new MenuRemoveStudentFromOneOfCourses(studentsDAO, courseDAO, groupsDAO, dash)
+        );
+
+        DataFillerComposite fillerOption = new DataFillerComposite(dataFillers);
+        MenuComposite menuComposite = new MenuComposite(menuItems, dash);
+
         fillerOption.fillData();
 
         menuComposite.execute();

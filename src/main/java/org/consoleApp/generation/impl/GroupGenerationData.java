@@ -19,7 +19,7 @@ public class GroupGenerationData implements GenerationData<Group> {
     public GroupGenerationData(GroupAmountGeneration groupAmountGeneration) {
         this.quantity = groupAmountGeneration.quantityGenerations();
         this.amountOfLetters = groupAmountGeneration.amountOfLetters();
-        this.amountOfNumbers = groupAmountGeneration.amountOfNumbers();
+        this.amountOfNumbers = groupAmountGeneration.amountOfDigits();
     }
 
     @Override

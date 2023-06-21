@@ -231,28 +231,6 @@ public class StudentsDAOImpl implements StudentsDAO {
     }
 
     @Override
-    public List<Integer> findAllStudentsIdByCourseId(int courseId) {
-        List<Integer> studentsId = new ArrayList<>();
-
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("SELECT student_id FROM enrollments WHERE course_id = ?")){
-            preparedStatement.setInt(1, courseId);
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()){
-                while (resultSet.next()){
-                    int currentId = resultSet.getInt("student_id");
-                    studentsId.add(currentId);
-                }
-            }
-
-        } catch (SQLException e) {
-            throw new IllegalStateException("Can't find students id by course id", e);
-        }
-
-        return studentsId;
-    }
-
-    @Override
     public boolean removeStudentFromCourse(int studentId, int courseId) {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM enrollments WHERE student_id = ? AND course_id = ?")){
@@ -264,33 +242,5 @@ public class StudentsDAOImpl implements StudentsDAO {
         } catch (SQLException e) {
             throw new IllegalStateException("Can't remove student from course", e);
         }
-    }
-
-    @Override
-    public List<Student> findByIdBatch(List<Integer> studentsId){
-        List<Student> students = new ArrayList<>();
-
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM students WHERE student_id = ?")) {
-
-            for (Integer id : studentsId) {
-                preparedStatement.setInt(1, id);
-
-                try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                    while (resultSet.next()) {
-                        int groupId = resultSet.getInt("group_id");
-                        String firstName = resultSet.getString("first_name");
-                        String lastName = resultSet.getString("last_name");
-
-                        students.add(new Student(id, groupId, firstName, lastName));
-                    }
-                }
-            }
-
-        } catch (SQLException e) {
-            throw new IllegalStateException("Can't find batch by student id", e);
-        }
-
-        return students;
     }
 }

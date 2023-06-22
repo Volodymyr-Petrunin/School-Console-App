@@ -52,7 +52,7 @@ public class LaunchApp {
 
         List<MenuItem> menuItems = List.of(
                 new MenuFindGroupsWithLessOrEqualStudents(groupsDAO, dash),
-                new MenuFindAllStudentsRelatedToCourse(courseDAO, groupsDAO, dash),
+                new MenuFindAllStudentsRelatedToCourse(studentsDAO, groupsDAO, dash),
                 new MenuAddNewStudent(groupsDAO, studentsDAO, dash),
                 new MenuDeleteStudent(studentsDAO, dash),
                 new MenuAddStudentToCourse(studentsDAO, courseDAO, groupsDAO, dash),

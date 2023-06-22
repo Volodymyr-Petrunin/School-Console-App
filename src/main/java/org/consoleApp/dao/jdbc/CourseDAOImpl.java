@@ -200,32 +200,4 @@ public class CourseDAOImpl implements CourseDAO {
 
         return coursesId;
     }
-
-    @Override
-    public List<Student> findStudentsByCourseName(String courseName){
-        List<Student> students = new ArrayList<>();
-
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("SELECT s.student_id, s.group_id, s.first_name, s.last_name FROM students s " +
-                     "JOIN enrollments e ON s.student_id = e.student_id JOIN courses c ON e.course_id = c.course_id WHERE c.course_name = ?")) {
-
-            preparedStatement.setString(1, courseName);
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                while (resultSet.next()) {
-                    int id = resultSet.getInt("student_id");
-                    int groupId = resultSet.getInt("group_id");
-                    String firstName = resultSet.getString("first_name");
-                    String lastName = resultSet.getString("last_name");
-
-                    students.add(new Student(id, groupId, firstName, lastName));
-                }
-            }
-
-        } catch (SQLException e) {
-            throw new IllegalStateException("Can't find batch by student id", e);
-        }
-
-        return students;
-    }
 }

@@ -9,5 +9,4 @@ import java.util.Optional;
 public interface CourseDAO extends GenericDAO<Course> {
     Optional<Course> findByCourseName(String courseName);
     List<Integer> findAllCourseIdByStudentsId(int studentId);
-    List<Student> findStudentsByCourseName(String courseName);
 }

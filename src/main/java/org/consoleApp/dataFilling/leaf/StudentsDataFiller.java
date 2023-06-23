@@ -31,7 +31,7 @@ public class StudentsDataFiller implements DataFiller {
         List<Group> groups = groupDAO.findAll();
 
         if (groups.isEmpty()){
-            throw new RuntimeException("Can't get all groups in StudentDataFiller");
+            throw new IllegalStateException("Can't get all groups in StudentDataFiller");
         }
 
         return groups;

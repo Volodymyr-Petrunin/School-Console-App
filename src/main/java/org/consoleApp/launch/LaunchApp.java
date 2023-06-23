@@ -59,10 +59,10 @@ public class LaunchApp {
                 new MenuRemoveStudentFromOneOfCourses(studentsDAO, courseDAO, groupsDAO, dash)
         );
 
-        DataFillerComposite fillerOption = new DataFillerComposite(dataFillers);
+        DataFillerComposite fillerComposite = new DataFillerComposite(dataFillers);
         MenuComposite menuComposite = new MenuComposite(menuItems, dash);
 
-        fillerOption.fillData();
+        fillerComposite.fillData();
 
         menuComposite.execute();
     }

@@ -9,16 +9,16 @@ import java.util.*;
 
 public class StudentsGenerationData implements GenerationData<Student> {
     private final Random random = new Random();
-    private List<String> dataName;
-    private List<String> dataSurname;
+    private List<String> firstName;
+    private List<String> lastName;
     private int quantity;
     private int maxSize;
     private int minSize;
     private List<Group> allGroups;
 
-    public StudentsGenerationData(List<String> dataName, List<String> dataSurname, InitialAmountGeneration amountGeneration, List<Group> allGroups) {
-        this.dataName = dataName;
-        this.dataSurname = dataSurname;
+    public StudentsGenerationData(List<String> firstName, List<String> lastName, InitialAmountGeneration amountGeneration, List<Group> allGroups) {
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.quantity = amountGeneration.quantityGenerations();
         this.maxSize = amountGeneration.maxGroupSize();
         this.minSize = amountGeneration.minGroupSize();
@@ -36,8 +36,8 @@ public class StudentsGenerationData implements GenerationData<Student> {
         List<Student> resultData = new ArrayList<>();
 
         for (int currentIndex = 0; currentIndex < quantity; currentIndex++){
-            String currentName = getRandomElement(dataName);
-            String currentSurname = getRandomElement(dataSurname);
+            String currentName = getRandomElement(firstName);
+            String currentSurname = getRandomElement(lastName);
 
             resultData.add(new Student(null,null, currentName, currentSurname));
         }

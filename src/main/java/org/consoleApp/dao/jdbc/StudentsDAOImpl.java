@@ -144,8 +144,8 @@ public class StudentsDAOImpl implements StudentsDAO {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM students WHERE student_id = ?")){
             preparedStatement.setInt(1, studentId);
-
             int rowsAffected = preparedStatement.executeUpdate();
+
             return rowsAffected > 0;
         } catch (SQLException e) {
             throw new IllegalStateException("Can't delete students", e);
@@ -184,19 +184,6 @@ public class StudentsDAOImpl implements StudentsDAO {
             return rowsAffected > 0;
         } catch (SQLException e) {
             throw new IllegalStateException("Can't register", e);
-        }
-    }
-
-    @Override
-    public boolean deleteStudentByIdFromEnrollments(int studentId) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM enrollments WHERE student_id = ?")){
-            preparedStatement.setInt(1, studentId);
-
-            int rowsAffected = preparedStatement.executeUpdate();
-            return rowsAffected > 0;
-        } catch (SQLException e) {
-            throw new IllegalStateException("Can't delete student by id", e);
         }
     }
 

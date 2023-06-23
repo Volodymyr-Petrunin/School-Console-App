@@ -26,10 +26,9 @@ public class MenuDeleteStudent implements MenuItem {
         int studentId = scan.nextInt();
 
         if (studentId != 0){
-            boolean deleteFromEnrollSuccessful = studentsDAO.deleteStudentByIdFromEnrollments(studentId);
-            boolean deleteFromStudentsSuccessful = studentsDAO.deleteByStudentId(studentId);
+            boolean deleteStudentsSuccessful = studentsDAO.deleteByStudentId(studentId);
 
-            if (deleteFromEnrollSuccessful && deleteFromStudentsSuccessful){
+            if (deleteStudentsSuccessful){
                 System.out.println("Delete student successfully!");
                 System.out.println(dash);
             }else {

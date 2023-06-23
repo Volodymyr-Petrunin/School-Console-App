@@ -21,10 +21,13 @@ public class GroupsDAOImpl implements GroupDAO {
         List<Group> groups = new ArrayList<>();
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM groups");
-             ResultSet resultSet = preparedStatement.executeQuery()) {
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM groups")) {
 
-            getCurrentList(groups, resultSet);
+            try (ResultSet resultSet = preparedStatement.executeQuery()){
+                while (resultSet.next()){
+                    groups.add(mapRow(resultSet));
+                }
+            }
 
         } catch (SQLException e) {
             throw new IllegalStateException("Can't find groups", e);
@@ -42,8 +45,7 @@ public class GroupsDAOImpl implements GroupDAO {
 
         try (ResultSet resultSet = preparedStatement.executeQuery()){
             if (resultSet.next()){
-                String groupName = resultSet.getString("group_name");
-                return Optional.of(new Group(id, groupName));
+                return Optional.of(mapRow(resultSet));
             }
         }
 
@@ -147,7 +149,9 @@ public class GroupsDAOImpl implements GroupDAO {
             preparedStatement.setInt(1, maxStudents);
 
         try (ResultSet resultSet = preparedStatement.executeQuery()){
-            getCurrentList(groups, resultSet);
+            while (resultSet.next()) {
+                groups.add(mapRow(resultSet));
+            }
         }
 
         } catch (SQLException e) {
@@ -161,13 +165,12 @@ public class GroupsDAOImpl implements GroupDAO {
     public Optional<Group> findGroupIdByName(String groupName) {
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("SELECT group_id FROM groups WHERE group_name = ?")) {
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM groups WHERE group_name = ?")) {
             preparedStatement.setString(1, groupName);
 
         try (ResultSet resultSet = preparedStatement.executeQuery()){
-            while (resultSet.next()){
-                int groupId = resultSet.getInt("group_id");
-                return Optional.of(new Group(groupId, groupName));
+            if (resultSet.next()){
+                return Optional.of(mapRow(resultSet));
             }
         }
 
@@ -178,13 +181,10 @@ public class GroupsDAOImpl implements GroupDAO {
         return Optional.empty();
     }
 
-    private void getCurrentList(List<Group> groups, ResultSet resultSet) throws SQLException {
-        while (resultSet.next()){
-            int groupId = resultSet.getInt("group_id");
-            String groupName = resultSet.getString("group_name");
+    private Group mapRow(ResultSet resultSet) throws SQLException {
+        int groupId = resultSet.getInt("group_id");
+        String groupName = resultSet.getString("group_name");
 
-            Group group = new Group(groupId, groupName);
-            groups.add(group);
-        }
+        return new Group(groupId, groupName);
     }
 }

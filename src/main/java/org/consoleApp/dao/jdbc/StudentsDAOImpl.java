@@ -25,13 +25,7 @@ public class StudentsDAOImpl implements StudentsDAO {
              ResultSet resultSet = preparedStatement.executeQuery()){
 
             while (resultSet.next()){
-                int studentId = resultSet.getInt("student_id");
-                int groupId = resultSet.getInt("group_id");
-                String firstName = resultSet.getString("first_name");
-                String lastName = resultSet.getString("last_name");
-
-                Student student = new Student(studentId, groupId, firstName, lastName);
-                students.add(student);
+                students.add(mapRow(resultSet));
             }
 
         } catch (SQLException e) {
@@ -50,11 +44,7 @@ public class StudentsDAOImpl implements StudentsDAO {
 
         try (ResultSet resultSet = preparedStatement.executeQuery()){
             if (resultSet.next()){
-                int groupId = resultSet.getInt("group_id");
-                String firstName = resultSet.getString("first_name");
-                String lastName = resultSet.getString("last_name");
-
-                return Optional.of(new Student(studentId,groupId,firstName,lastName));
+                return Optional.of(mapRow(resultSet));
             }
         }
 
@@ -70,14 +60,7 @@ public class StudentsDAOImpl implements StudentsDAO {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO students (group_id, first_name, last_name) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS)){
 
-            Optional<Integer> groupIdOptional = student.getGroupId();
-            Integer groupId = groupIdOptional.orElse(null);
-
-            preparedStatement.setObject(1, groupId, java.sql.Types.INTEGER);
-            preparedStatement.setString(2,student.getFirstName());
-            preparedStatement.setString(3,student.getLastName());
-
-            int rowsAffected = preparedStatement.executeUpdate();
+            boolean rowsAffected =  optionalRow(student, preparedStatement);
 
             try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()){
                 if (!generatedKeys.next()){
@@ -91,7 +74,7 @@ public class StudentsDAOImpl implements StudentsDAO {
                 }
             }
 
-            return rowsAffected > 0;
+            return rowsAffected;
         } catch (SQLException e) {
             throw new IllegalStateException("Can't insert students", e);
         }
@@ -137,17 +120,9 @@ public class StudentsDAOImpl implements StudentsDAO {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("UPDATE students SET group_id = ?, first_name = ?, last_name = ? WHERE student_id = ?")){
 
-            Optional<Integer> groupIdOptional = student.getGroupId();
-            Integer groupId = groupIdOptional.orElse(null);
-
-            preparedStatement.setObject(1, groupId, java.sql.Types.INTEGER);
-            preparedStatement.setString(2, student.getFirstName());
-            preparedStatement.setString(3, student.getLastName());
-
-            int rowsAffected = preparedStatement.executeUpdate();
-            return rowsAffected > 0;
+            return optionalRow(student, preparedStatement);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Can't update students", e);
         }
     }
 
@@ -187,12 +162,7 @@ public class StudentsDAOImpl implements StudentsDAO {
 
         try (ResultSet resultSet = preparedStatement.executeQuery()){
             while (resultSet.next()){
-                int studentId = resultSet.getInt("student_id");
-                int groupId = resultSet.getInt("group_id");
-                String lastName = resultSet.getString("last_name");
-
-                Student student = new Student(studentId,groupId,firstName,lastName);
-                students.add(student);
+                students.add(mapRow(resultSet));
             }
         }
 
@@ -258,12 +228,7 @@ public class StudentsDAOImpl implements StudentsDAO {
 
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
-                    int id = resultSet.getInt("student_id");
-                    int groupId = resultSet.getInt("group_id");
-                    String firstName = resultSet.getString("first_name");
-                    String lastName = resultSet.getString("last_name");
-
-                    students.add(new Student(id, groupId, firstName, lastName));
+                    students.add(mapRow(resultSet));
                 }
             }
 
@@ -272,5 +237,26 @@ public class StudentsDAOImpl implements StudentsDAO {
         }
 
         return students;
+    }
+
+    private Student mapRow(ResultSet resultSet) throws SQLException {
+        int id = resultSet.getInt("student_id");
+        int groupId = resultSet.getInt("group_id");
+        String firstName = resultSet.getString("first_name");
+        String lastName = resultSet.getString("last_name");
+
+        return new Student(id, groupId, firstName, lastName);
+    }
+
+    private boolean optionalRow(Student student, PreparedStatement preparedStatement) throws SQLException {
+        Optional<Integer> groupIdOptional = student.getGroupId();
+        Integer groupId = groupIdOptional.orElse(null);
+
+        preparedStatement.setObject(1, groupId, Types.INTEGER);
+        preparedStatement.setString(2, student.getFirstName());
+        preparedStatement.setString(3, student.getLastName());
+
+        int rowsAffected = preparedStatement.executeUpdate();
+        return rowsAffected > 0;
     }
 }

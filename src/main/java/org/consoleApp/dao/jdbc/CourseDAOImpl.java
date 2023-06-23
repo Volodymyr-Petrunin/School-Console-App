@@ -23,12 +23,7 @@ public class CourseDAOImpl implements CourseDAO {
              ResultSet resultSet = preparedStatement.executeQuery()) {
 
             while (resultSet.next()){
-                int courseId = resultSet.getInt("course_id");
-                String courseName = resultSet.getString("course_name");
-                String courseDescription = resultSet.getString("course_description");
-
-                Course currentCourse = new Course(courseId,courseName, courseDescription);
-                courses.add(currentCourse);
+                courses.add(mapRow(resultSet));
             }
 
         } catch (SQLException e) {
@@ -48,10 +43,7 @@ public class CourseDAOImpl implements CourseDAO {
 
         try (ResultSet resultSet = preparedStatement.executeQuery()){
             if (resultSet.next()){
-                String courseName = resultSet.getString("course_name");
-                String courseDescription = resultSet.getString("course_description");
-
-               return Optional.of(new Course(courseId, courseName, courseDescription));
+               return Optional.of(mapRow(resultSet));
             }
         }
 
@@ -166,11 +158,7 @@ public class CourseDAOImpl implements CourseDAO {
 
             try (ResultSet resultSet = preparedStatement.executeQuery()){
                 while (resultSet.next()){
-                    int courseId = resultSet.getInt("course_id");
-                    String courseName = resultSet.getString("course_name");
-                    String courseDescription = resultSet.getString("course_description");
-
-                    courses.add(new Course(courseId, courseName, courseDescription));
+                    courses.add(mapRow(resultSet));
                 }
             }
 
@@ -178,5 +166,13 @@ public class CourseDAOImpl implements CourseDAO {
             throw new IllegalStateException("Can't fetch courses", e);
         }
         return courses;
+    }
+
+    private Course mapRow(ResultSet resultSet) throws SQLException {
+        int courseId = resultSet.getInt("course_id");
+        String courseName = resultSet.getString("course_name");
+        String courseDescription = resultSet.getString("course_description");
+
+        return new Course(courseId, courseName, courseDescription);
     }
 }

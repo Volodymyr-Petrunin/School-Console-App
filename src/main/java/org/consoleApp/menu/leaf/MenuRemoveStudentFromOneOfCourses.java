@@ -8,7 +8,6 @@ import org.consoleApp.domin.Student;
 import org.consoleApp.menu.MenuItem;
 import org.consoleApp.menu.helper.PrintInfo;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 

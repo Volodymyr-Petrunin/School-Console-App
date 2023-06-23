@@ -178,25 +178,6 @@ public class GroupsDAOImpl implements GroupDAO {
         return Optional.empty();
     }
 
-    @Override
-    public int getGroupSize(int groupId) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM students WHERE group_id = ?")){
-            preparedStatement.setInt(1,groupId);
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()){
-                if (resultSet.next()){
-                    return resultSet.getInt("count");
-                }
-            }
-
-        } catch (SQLException e) {
-            throw new IllegalStateException("Can't get group size", e);
-        }
-
-        return 0;
-    }
-
     private void getCurrentList(List<Group> groups, ResultSet resultSet) throws SQLException {
         while (resultSet.next()){
             int groupId = resultSet.getInt("group_id");

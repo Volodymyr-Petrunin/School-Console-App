@@ -2,7 +2,6 @@ package org.consoleApp.dao.jdbc;
 
 import org.consoleApp.dao.CourseDAO;
 import org.consoleApp.domin.Course;
-import org.consoleApp.domin.Student;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -158,46 +157,26 @@ public class CourseDAOImpl implements CourseDAO {
     }
 
     @Override
-    public Optional<Course> findByCourseName(String courseName) {
+    public List<Course> findAllCourseByStudentsId(int studentId) {
+        List<Course> courses = new ArrayList<>();
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM courses WHERE course_name = ?")) {
-            preparedStatement.setString(1, courseName);
-
-            try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                if (resultSet.next()) {
-                    int courseId = resultSet.getInt("course_id");
-                    String courseDescription = resultSet.getString("course_description");
-
-                   return Optional.of(new Course(courseId, courseName, courseDescription));
-                }
-            }
-        } catch (SQLException e) {
-            throw new IllegalStateException("Can't find by course name", e);
-        }
-
-        return Optional.empty();
-    }
-
-    @Override
-    public List<Integer> findAllCourseIdByStudentsId(int studentId) {
-        List<Integer> coursesId = new ArrayList<>();
-
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("SELECT course_id FROM enrollments WHERE student_id = ?")){
-            preparedStatement.setInt(1, studentId);
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT c.course_id, c.course_name, c.course_description FROM courses c JOIN enrollments e ON c.course_id = e.course_id WHERE e.student_id = ?")){
+             preparedStatement.setInt(1, studentId);
 
             try (ResultSet resultSet = preparedStatement.executeQuery()){
                 while (resultSet.next()){
-                    int currentId = resultSet.getInt("course_id");
-                    coursesId.add(currentId);
+                    int courseId = resultSet.getInt("course_id");
+                    String courseName = resultSet.getString("course_name");
+                    String courseDescription = resultSet.getString("course_description");
+
+                    courses.add(new Course(courseId, courseName, courseDescription));
                 }
             }
 
         } catch (SQLException e) {
-            throw new IllegalStateException("Can't find course id by student id", e);
+            throw new IllegalStateException("Can't fetch courses", e);
         }
-
-        return coursesId;
+        return courses;
     }
 }

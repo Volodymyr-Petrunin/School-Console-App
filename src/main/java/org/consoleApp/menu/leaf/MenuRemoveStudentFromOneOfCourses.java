@@ -47,12 +47,7 @@ public class MenuRemoveStudentFromOneOfCourses implements MenuItem {
             System.out.print("Now choose which one you need and write its id: ");
             int studentId = scan.nextInt();
 
-            List<Integer> coursesId = courseDAO.findAllCourseIdByStudentsId(studentId);
-            List<Course> courses = new ArrayList<>();
-
-            for (Integer currentInt : coursesId) {
-                courseDAO.findById(currentInt).ifPresent(courses::add);
-            }
+            List<Course> courses = courseDAO.findAllCourseByStudentsId(studentId);
 
             System.out.println("Now select the course id you want to remove from your student: ");
 

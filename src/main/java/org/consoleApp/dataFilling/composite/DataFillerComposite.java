@@ -13,8 +13,6 @@ public class DataFillerComposite implements DataFiller {
 
     @Override
     public void fillData() {
-        for (DataFiller dataFiller : dataFillers){
-            dataFiller.fillData();
-        }
+       dataFillers.forEach(DataFiller::fillData);
     }
 }

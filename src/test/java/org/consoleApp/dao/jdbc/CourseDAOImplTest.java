@@ -1,63 +1,100 @@
 package org.consoleApp.dao.jdbc;
 
-import org.consoleApp.dataBaseSettings.DBConnector;
 import org.consoleApp.dataBaseSettings.ScriptRunner;
 import org.consoleApp.domin.Course;
+import org.junit.After;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.consoleApp.dao.jdbc.abstracts.AbstractContainerBaseTest;
 
 import javax.sql.DataSource;
 import java.io.InputStream;
+import java.sql.*;
 import java.util.List;
+import java.util.Optional;
 
-class CourseDAOImplTest {
-    private static CourseDAOImpl courseDAO;
-    private static PostgreSQLContainer<?> postgreSQLContainer;
-    private static  ScriptRunner scriptRunner;
-    private static InputStream inputStream;
+class CourseDAOImplTest extends AbstractContainerBaseTest{
+    private final static InputStream inputStream = CourseDAOImplTest.class.getResourceAsStream("/SQLScript/create_tables.sql");
+    private final static DataSource dataSource = getDataSource();
+    private final static ScriptRunner scriptRunner = new ScriptRunner(dataSource);
+    private final CourseDAOImpl courseDAO = new CourseDAOImpl(dataSource);
+    private final List<Course> expectedList = List.of(
+            new Course(1, "PE", "PE"),
+            new Course(2, "IT", "IT"),
+            new Course(3, "Music", "Skryabin")
+    );
 
     @BeforeAll
     static void setup(){
-        postgreSQLContainer = new PostgreSQLContainer<>("postgres:latest")
-                .withDatabaseName("school-console-app")
-                .withUsername("postgres")
-                .withPassword("0403");
-
-        postgreSQLContainer.start();
-
-        DBConnector dbConnector = new DBConnector();
-        DataSource dataSource = dbConnector.getDBConnection();
-
-        scriptRunner = new ScriptRunner(dataSource);
-        inputStream = CourseDAOImplTest.class.getResourceAsStream("/SQLScript/create_tables.sql");
-        courseDAO = new CourseDAOImpl(dataSource);
-    }
-
-    @BeforeEach
-    void cleanup() {
         scriptRunner.runScript(inputStream);
     }
 
-    @AfterAll
-    static void teardown(){
-        postgreSQLContainer.stop();
+    @BeforeEach
+    void cleanup(){
+        deleteAll();
+        fillData(expectedList);
     }
 
     @Test
-    void findAll() {
-
-        courseDAO.insert(new Course(null, "PE", "PE"));
-        courseDAO.insert(new Course(null, "IT", "IT"));
-
-        List<Course> expected = List.of(
-                new Course(1, "PE", "PE"),
-                new Course(2, "IT", "IT")
-        );
-
+    void testFindAll() {
         List<Course> actual = courseDAO.findAll();
 
+        assertEquals(expectedList, actual);
+    }
+
+    @Test
+    void testFindById(){
+        Optional<Course> findCourse = courseDAO.findById(4); // 4 because first we add 3 course after first test we delete it, and add new 3 courses, but the ID in DB still 3, I mean RETURN_GENERATED_KEYS does not start with 1 (I hope u understand :) )
+        Course actual = findCourse.orElseThrow(() -> new RuntimeException("Can't find course"));
+
+        Course expected = expectedList.get(0);
+
         assertEquals(expected, actual);
+    }
+
+    private void deleteAll(){
+        try(Connection connection = dataSource.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM courses")){
+
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new IllegalStateException("Can't delete all",e);
+        }
+    }
+
+    private void fillData(List<Course> courses){
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO courses (course_name, course_description) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+
+
+            for (Course course : courses){
+                preparedStatement.setString(1, course.getName());
+                preparedStatement.setString(2, course.getDescription());
+
+                preparedStatement.addBatch();
+            }
+
+            preparedStatement.executeBatch();
+
+            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()){
+                for (Course course : courses){
+
+                    if (!generatedKeys.next()){
+                        throw new IllegalStateException("Not enough generated keys returned during courses batch insert");
+                    }
+
+                    course.setId(generatedKeys.getInt(1));
+                }
+
+                if (generatedKeys.next()){
+                    throw new IllegalStateException("Too many generated keys returned during courses batch insert");
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new IllegalStateException("Can't insert batch of courses", e);
+        }
     }
 }

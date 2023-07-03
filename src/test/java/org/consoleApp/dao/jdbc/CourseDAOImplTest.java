@@ -45,7 +45,7 @@ class CourseDAOImplTest extends AbstractContainerBaseTest{
 
     @Test
     void testFindById(){
-        Optional<Course> findCourse = courseDAO.findById(4); // 4 because first we add 3 course after first test we delete it, and add new 3 courses, but the ID in DB still 3, I mean RETURN_GENERATED_KEYS does not start with 1 (I hope u understand :) )
+        Optional<Course> findCourse = courseDAO.findById(1);
         Course actual = findCourse.orElseThrow(() -> new RuntimeException("Can't find course"));
 
         Course expected = expectedList.get(0);
@@ -55,7 +55,7 @@ class CourseDAOImplTest extends AbstractContainerBaseTest{
 
     private void deleteAll(){
         try(Connection connection = dataSource.getConnection();
-            PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM courses")){
+            PreparedStatement preparedStatement = connection.prepareStatement("TRUNCATE TABLE courses RESTART IDENTITY CASCADE ")){
 
             preparedStatement.executeUpdate();
 

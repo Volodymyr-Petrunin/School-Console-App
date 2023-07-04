@@ -17,7 +17,7 @@ public abstract class AbstractContainerBaseTest {
         postgreSQLContainer.start();
     }
 
-    protected void stopPostgreSQLContainer(){
+    protected static void stopPostgreSQLContainer(){
         postgreSQLContainer.stop();
     }
 

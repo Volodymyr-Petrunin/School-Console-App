@@ -2,6 +2,7 @@ package org.consoleApp.dao.jdbc;
 
 import org.consoleApp.dataBaseSettings.ScriptRunner;
 import org.consoleApp.domin.Course;
+import org.consoleApp.domin.Student;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,6 +22,7 @@ class CourseDAOImplTest extends AbstractContainerBaseTest{
     private final static DataSource dataSource = getDataSource();
     private final static ScriptRunner scriptRunner = new ScriptRunner(dataSource);
     private final CourseDAOImpl courseDAO = new CourseDAOImpl(dataSource);
+    private final StudentsDAOImpl studentsDAO = new StudentsDAOImpl(dataSource);
     private final List<Course> expectedList = List.of(
             new Course(1, "PE", "PE"),
             new Course(2, "IT", "IT"),
@@ -99,6 +101,32 @@ class CourseDAOImplTest extends AbstractContainerBaseTest{
         assertThat(actual, containsInAnyOrder(expected.toArray()));
     }
 
+    @Test
+    void testDelete_ShouldRemoveFirstCourseFromDB(){
+        boolean remove = courseDAO.delete(expectedList.get(0));
+        List<Course> actual = courseDAO.findAll();
+
+        List<Course> expected = new ArrayList<>(expectedList);
+        expected.remove(0);
+
+        assertTrue(remove);
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void testFindAllCourseByStudentsId(){
+        Student student = new Student(1, null, "Vova", "Petro");
+        studentsDAO.insert(student);
+
+        for (Course course : expectedList){
+            studentsDAO.enrollStudentInCourse(1, course.getId());
+        }
+
+        List<Course> actual = courseDAO.findAllCourseByStudentsId(1);
+
+        assertEquals(expectedList, actual);
+    }
+
     @AfterAll
     static void stopSQLContainer(){
         stopPostgreSQLContainer();
@@ -112,40 +140,6 @@ class CourseDAOImplTest extends AbstractContainerBaseTest{
 
         } catch (SQLException e) {
             throw new IllegalStateException("Can't delete all",e);
-        }
-    }
-
-    private void fillData(List<Course> courses){
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO courses (course_name, course_description) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS)) {
-
-
-            for (Course course : courses){
-                preparedStatement.setString(1, course.getName());
-                preparedStatement.setString(2, course.getDescription());
-
-                preparedStatement.addBatch();
-            }
-
-            preparedStatement.executeBatch();
-
-            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()){
-                for (Course course : courses){
-
-                    if (!generatedKeys.next()){
-                        throw new IllegalStateException("Not enough generated keys returned during courses batch insert");
-                    }
-
-                    course.setId(generatedKeys.getInt(1));
-                }
-
-                if (generatedKeys.next()){
-                    throw new IllegalStateException("Too many generated keys returned during courses batch insert");
-                }
-            }
-
-        } catch (SQLException e) {
-            throw new IllegalStateException("Can't insert batch of courses", e);
         }
     }
 }

@@ -1,4 +1,4 @@
-package org.consoleApp.dao.jdbc.abstracts;
+package org.consoleApp.dao.jdbc;
 
 import org.postgresql.ds.PGSimpleDataSource;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -15,10 +15,6 @@ public abstract class AbstractContainerBaseTest {
                 .withPassword("0403");
 
         postgreSQLContainer.start();
-    }
-
-    protected static void stopPostgreSQLContainer(){
-        postgreSQLContainer.stop();
     }
 
     protected static DataSource getDataSource(){

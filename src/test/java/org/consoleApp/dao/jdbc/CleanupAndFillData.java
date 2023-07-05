@@ -6,14 +6,13 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 import java.util.Optional;
 
-public class Cleanup {
+public class CleanupAndFillData {
     private DataSource dataSource;
 
-    public Cleanup(DataSource dataSource) {
+    public CleanupAndFillData(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 

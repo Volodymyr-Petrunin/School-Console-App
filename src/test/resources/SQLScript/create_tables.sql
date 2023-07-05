@@ -28,8 +28,3 @@ CREATE TABLE enrollments(
     FOREIGN KEY (student_id) REFERENCES students(student_id) ON DELETE CASCADE,
     FOREIGN KEY (course_id) REFERENCES courses(course_id) ON DELETE CASCADE
 );
-
-INSERT INTO groups (group_id, group_name) VALUES
-            (1, 'AA-11'),
-            (2, 'BB-22'),
-            (3, 'CC-33');

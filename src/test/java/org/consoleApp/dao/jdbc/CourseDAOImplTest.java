@@ -22,7 +22,7 @@ class CourseDAOImplTest extends AbstractContainerBaseTest{
             new Course(2, "IT", "IT"),
             new Course(3, "Music", "Skryabin")
     );
-    private final Cleanup cleanup = new Cleanup(dataSource);
+    private final CleanupAndFillData cleanupAndFillData = new CleanupAndFillData(dataSource);
     private List<Course> expected;
     private List<Course> actual;
 
@@ -34,7 +34,7 @@ class CourseDAOImplTest extends AbstractContainerBaseTest{
 
     @BeforeEach
     void cleanupAndFillData(){
-        cleanup.deleteAll("courses");
+        cleanupAndFillData.deleteAll("courses");
         courseDAO.insertBatch(expectedCourses);
     }
 

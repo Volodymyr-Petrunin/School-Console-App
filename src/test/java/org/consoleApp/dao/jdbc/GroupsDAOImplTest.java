@@ -1,9 +1,7 @@
 package org.consoleApp.dao.jdbc;
 
-import org.consoleApp.domin.Course;
 import org.consoleApp.domin.Group;
 import org.consoleApp.domin.Student;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -19,29 +17,19 @@ import static org.hamcrest.Matchers.*;
 
 class GroupsDAOImplTest extends AbstractContainerBaseTest {
     private final static DataSource dataSource = getDataSource();
-    private final GroupsDAOImpl groupsDAO = new GroupsDAOImpl(dataSource);
-    private final List<Group> expectedGroup = List.of(
+    private final static GroupsDAOImpl groupsDAO = new GroupsDAOImpl(dataSource);
+    private final static List<Group> expectedGroup = List.of(
       new Group(1, "AA-11"),
       new Group(2, "BB-22"),
       new Group(3, "CC-33")
     );
-    private final  Cleanup cleanup = new Cleanup(dataSource);
+    private final CleanupAndFillData cleanupAndFillData = new CleanupAndFillData(dataSource);
     private List<Group> expected;
     private List<Group> actual;
 
-    @BeforeAll
-    static void setup(){
-        Student student1 = new Student(1, 1, "John", "Doe");
-        Student student2 = new Student(2, 1, "Jane", "Smith");
-        Student student3 = new Student(3, 1, "Michael", "Johnson");
-        Student student4 = new Student(4, 2, "Emily", "Williams");
-        Student student5 = new Student(6, 2, "Daniel", "Brown");
-        Student student6 = new Student(7, 3, "Zak", "Brown");
-    }
-
     @BeforeEach
     void cleanupAndFillData(){
-        cleanup.deleteAll("groups");
+        cleanupAndFillData.deleteAll("groups");
         groupsDAO.insertBatch(expectedGroup);
     }
 
@@ -116,5 +104,43 @@ class GroupsDAOImplTest extends AbstractContainerBaseTest {
 
         assertTrue(delete);
         assertEquals(expected, actual);
+    }
+
+    @Test
+    void testFindGroupsWithLessOrEqualStudents_ShouldReturnGroupsWithMaxStudentsOrLess(){
+        addStudent();
+        int maxStudents = 2;
+
+        expected = new ArrayList<>(expectedGroup);
+        expected.remove(0); //remove group 1 because it has 3 students but max 2
+
+        actual = groupsDAO.findGroupsWithLessOrEqualStudents(maxStudents);
+
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void testFindGroupIdByName_ShouldReturnFirstGroupFromExpectedGroupList(){
+        String name = expectedGroup.get(0).getName();
+
+        Optional<Group> group = groupsDAO.findGroupIdByName(name);
+        Group actual = group.orElseThrow(() -> new RuntimeException("Can't get group"));
+
+        Group expected = expectedGroup.get(0);
+
+        assertEquals(expected, actual);
+    }
+
+    private void addStudent(){ // we need this method because when we clean groups table we use cascade delete so all students removed after test
+        List<Student> students = List.of(
+                new Student(1, 1, "John", "Doe"),
+                new Student(2, 1, "Jane", "Smith"),
+                new Student(3, 1, "Michael", "Johnson"),
+                new Student(4, 2, "Emily", "Williams"),
+                new Student(5, 2, "Daniel", "Brown"),
+                new Student(6, 3, "Zak", "Brown")
+        );
+
+        cleanupAndFillData.addStudentsBatch(students);
     }
 }

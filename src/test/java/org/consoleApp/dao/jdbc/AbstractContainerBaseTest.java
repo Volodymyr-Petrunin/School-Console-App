@@ -12,7 +12,8 @@ public abstract class AbstractContainerBaseTest {
         postgreSQLContainer = new PostgreSQLContainer<>("postgres:latest")
                 .withDatabaseName("school-console-app")
                 .withUsername("postgres")
-                .withPassword("0403");
+                .withPassword("0403")
+                .withInitScript("SQLScript/create_tables.sql");
 
         postgreSQLContainer.start();
     }

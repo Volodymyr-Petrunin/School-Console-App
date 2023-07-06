@@ -16,14 +16,14 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
 class GroupsDAOImplTest extends AbstractContainerBaseTest {
-    private final static DataSource dataSource = getDataSource();
-    private final static GroupsDAOImpl groupsDAO = new GroupsDAOImpl(dataSource);
+    private final DataSource dataSource = getDataSource();
+    private final GroupsDAOImpl groupsDAO = new GroupsDAOImpl(dataSource);
+    private final CleanupAndFillData cleanupAndFillData = new CleanupAndFillData(dataSource);
     private final static List<Group> expectedGroup = List.of(
       new Group(1, "AA-11"),
       new Group(2, "BB-22"),
       new Group(3, "CC-33")
     );
-    private final CleanupAndFillData cleanupAndFillData = new CleanupAndFillData(dataSource);
     private List<Group> expected;
     private List<Group> actual;
 
@@ -131,7 +131,7 @@ class GroupsDAOImplTest extends AbstractContainerBaseTest {
         assertEquals(expected, actual);
     }
 
-    private void addStudent(){ // we need this method because when we clean groups table we use cascade delete so all students removed after test
+    private void addStudent(){ // we need this method because when we clean groups table we use cascade delete so all students removed after first test
         List<Student> students = List.of(
                 new Student(1, 1, "John", "Doe"),
                 new Student(2, 1, "Jane", "Smith"),

@@ -176,7 +176,7 @@ class StudentsDAOImplTest extends AbstractContainerBaseTest {
     }
 
     @Test
-    void soon(){
+    void testFindStudentsByCourseName_ShouldFindCorrectStudentsByCourseName_AndReturnCorrectStudentsList(){
         String courseName = "PE";
 
         expected = new ArrayList<>(expectedStudents);

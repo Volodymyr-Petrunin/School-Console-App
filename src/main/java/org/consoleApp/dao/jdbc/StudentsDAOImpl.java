@@ -120,6 +120,7 @@ public class StudentsDAOImpl implements StudentsDAO {
         try (Connection connection = dataSource.getConnection();
              PreparedStatement preparedStatement = connection.prepareStatement("UPDATE students SET group_id = ?, first_name = ?, last_name = ? WHERE student_id = ?")){
 
+            preparedStatement.setInt(4, student.getId());
             return optionalRow(student, preparedStatement);
         } catch (SQLException e) {
             throw new IllegalStateException("Can't update students", e);

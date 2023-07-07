@@ -131,7 +131,7 @@ class GroupsDAOImplTest extends AbstractContainerBaseTest {
         assertEquals(expected, actual);
     }
 
-    private void addStudent(){ // we need this method because when we clean groups table we use cascade delete so all students removed after first test
+    private void addStudent(){
         List<Student> students = List.of(
                 new Student(1, 1, "John", "Doe"),
                 new Student(2, 1, "Jane", "Smith"),

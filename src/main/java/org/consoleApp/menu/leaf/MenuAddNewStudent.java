@@ -11,7 +11,6 @@ import java.util.Optional;
 import java.util.Scanner;
 
 public class MenuAddNewStudent implements MenuItem {
-    private final Scanner scan = new Scanner(System.in);
     private GroupDAO groupDAO;
     private StudentsDAO studentsDAO;
     private String dash;
@@ -29,12 +28,14 @@ public class MenuAddNewStudent implements MenuItem {
 
     @Override
     public void execute() {
+        Scanner scan = new Scanner(System.in);
         System.out.println("Enter student details =)");
-        System.out.print("First Name: ");
-        String firstName = scan.next();
 
-        System.out.print("Last Name: ");
-        String lastName = scan.next();
+        System.out.println("First Name: ");
+        String firstName = scan.nextLine();
+
+        System.out.println("Last Name: ");
+        String lastName = scan.nextLine();
 
         System.out.println("All groups: ");
         List<Group> allGroups = groupDAO.findAll();
@@ -43,8 +44,8 @@ public class MenuAddNewStudent implements MenuItem {
             System.out.println("Group name: " + group.getName());
         }
 
-        System.out.print("Choose group name: ");
-        String groupName = scan.next();
+        System.out.println("Choose group name: ");
+        String groupName = scan.nextLine();
 
         Optional<Group> optionalGroup = groupDAO.findGroupIdByName(groupName);
         int groupId = optionalGroup.orElseThrow(()-> new RuntimeException("Can't find group id by group name in LaunchApp")).getId();
@@ -56,10 +57,10 @@ public class MenuAddNewStudent implements MenuItem {
 
         if (operationSuccessful && enrollSuccessful){
             System.out.println("New student added successfully! :)");
-            System.out.println(dash);
+            System.out.print(dash);
         }else {
             System.out.println("Something wrong! :(");
-            System.out.println(dash);
+            System.out.print(dash);
         }
     }
 }

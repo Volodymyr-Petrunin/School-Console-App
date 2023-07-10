@@ -4,8 +4,11 @@ import org.consoleApp.dao.jdbc.GroupsDAOImpl;
 import org.consoleApp.dao.jdbc.StudentsDAOImpl;
 import org.consoleApp.domin.Group;
 import org.consoleApp.domin.Student;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.io.*;
 import java.util.Collections;
@@ -20,12 +23,20 @@ class MenuAddNewStudentTest {
     private final static String SURNAME = "Petro";
     private final static String GROUP_NAME = "BB-22";
     private final String dash = "-".repeat(50);
+    @Mock
+    private GroupsDAOImpl groupsDAO;
+    @Mock
+    private StudentsDAOImpl studentsDAO;
+    private MenuAddNewStudent addNewStudent;
+
+    @BeforeEach
+    void setup() {
+        MockitoAnnotations.openMocks(this);
+        addNewStudent = new MenuAddNewStudent(groupsDAO, studentsDAO, dash);
+    }
 
     @Test
-    void testExecute_ShouldInsertNewStudent_AndReturnCorrectListOfStudents_ShouldBeOnlyOne(){
-        GroupsDAOImpl groupsDAO = Mockito.mock(GroupsDAOImpl.class);
-        StudentsDAOImpl studentsDAO = Mockito.mock(StudentsDAOImpl.class);
-
+    void testExecute_ShouldUseCorrectLogic_AddNewStudentInDB(){
         Group group = new Group(1, "BB-22");
 
         InputStream originalIn = System.in;
@@ -50,7 +61,6 @@ class MenuAddNewStudentTest {
             });
             when(studentsDAO.enrollStudentInCourse(anyInt(), anyInt())).thenReturn(true);
 
-            MenuAddNewStudent addNewStudent  = new MenuAddNewStudent(groupsDAO, studentsDAO, dash);
             addNewStudent.execute();
 
             String expectedOutput = new StringJoiner(System.lineSeparator())
@@ -72,5 +82,14 @@ class MenuAddNewStudentTest {
             System.setIn(originalIn);
             System.setOut(originalOut);
         }
+    }
+
+    @Test
+    void testGetDescriptionOfCurrentMenu(){
+        String expected = "Add a new student";
+
+        String actual = addNewStudent.getDescription();
+
+        assertEquals(expected, actual);
     }
 }

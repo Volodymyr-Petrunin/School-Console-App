@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Scanner;
 
 public class MenuFindAllStudentsRelatedToCourse implements MenuItem {
-    private final Scanner scan = new Scanner(System.in);
     private final PrintInfo printInfo = new PrintInfo();
     private StudentsDAO studentsDAO;
     private GroupDAO groupDAO;
@@ -29,17 +28,20 @@ public class MenuFindAllStudentsRelatedToCourse implements MenuItem {
 
     @Override
     public void execute() {
+        Scanner scan = new Scanner(System.in);
+
         System.out.println("Now write the name of course 0_0");
-        String courseName = scan.next();
+        String courseName = scan.nextLine();
 
         List<Student> students = studentsDAO.findStudentsByCourseName(courseName);
         if (!students.isEmpty()) {
             System.out.println("All Students: ");
             printInfo.printStudents(students, groupDAO);
-        } else {
-            System.out.println(dash);
 
+            System.out.print(dash);
+        } else {
             System.out.println("Wrong course name :(");
+            System.out.print(dash);
         }
     }
 }

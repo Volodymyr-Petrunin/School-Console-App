@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Scanner;
 
 public class MenuRemoveStudentFromOneOfCourses implements MenuItem {
-    private final Scanner scan = new Scanner(System.in);
     private final PrintInfo printInfo = new PrintInfo();
     private StudentsDAO studentsDAO;
     private CourseDAO courseDAO;
@@ -33,8 +32,10 @@ public class MenuRemoveStudentFromOneOfCourses implements MenuItem {
 
     @Override
     public void execute() {
-        System.out.print("Enter student name: ");
-        String studentName = scan.next();
+        Scanner scan = new Scanner(System.in);
+
+        System.out.println("Enter student name: ");
+        String studentName = scan.nextLine();
 
         List<Student> foundedStudents = studentsDAO.findByFirstName(studentName);
 
@@ -43,7 +44,7 @@ public class MenuRemoveStudentFromOneOfCourses implements MenuItem {
         printInfo.printStudents(foundedStudents, groupDAO);
 
         if (!foundedStudents.isEmpty()) {
-            System.out.print("Now choose which one you need and write its id: ");
+            System.out.println("Now choose which one you need and write its id: ");
             int studentId = scan.nextInt();
 
             List<Course> courses = courseDAO.findAllCourseByStudentsId(studentId);
@@ -58,10 +59,10 @@ public class MenuRemoveStudentFromOneOfCourses implements MenuItem {
 
             if (deleteFromCourseSuccessful) {
                 System.out.println("Delete student successfully!");
-                System.out.println(dash);
+                System.out.print(dash);
             } else {
                 System.out.println("Something wrong! :(");
-                System.out.println(dash);
+                System.out.print(dash);
             }
         }
     }

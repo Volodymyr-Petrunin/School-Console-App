@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Scanner;
 
 public class MenuFindGroupsWithLessOrEqualStudents implements MenuItem {
-    private final Scanner scan = new Scanner(System.in);
     private GroupDAO groupsDAO;
     private String dash;
 
@@ -24,6 +23,8 @@ public class MenuFindGroupsWithLessOrEqualStudents implements MenuItem {
 
     @Override
     public void execute() {
+        Scanner scan = new Scanner(System.in);
+
         System.out.println("Now write how many students should be in one group at least and I will try to find such groups :)");
         int maxStudentsInGroup = scan.nextInt();
 
@@ -33,10 +34,10 @@ public class MenuFindGroupsWithLessOrEqualStudents implements MenuItem {
             for (Group group : allCourses) {
                 System.out.println("Group name: " + group.getName() + " and group id " + group.getId());
             }
-            System.out.println(dash);
+            System.out.print(dash);
         }else {
             System.out.println("No find groups!");
-            System.out.println(dash);
+            System.out.print(dash);
         }
     }
 }

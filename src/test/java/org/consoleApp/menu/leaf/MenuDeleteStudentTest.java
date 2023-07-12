@@ -4,37 +4,31 @@ import org.consoleApp.dao.jdbc.StudentsDAOImpl;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.StringJoiner;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class MenuDeleteStudentTest {
     private final static int STUDENT_ID = 1;
     private final String dash = "-".repeat(50);
-    private final InputStream originalIn = System.in;
-    private final PrintStream originalOut = System.out;
     @Mock
     private StudentsDAOImpl studentsDAO;
     private MenuDeleteStudent deleteStudent;
 
     @BeforeEach
     void setup() {
-        MockitoAnnotations.openMocks(this);
         deleteStudent = new MenuDeleteStudent(studentsDAO, dash);
     }
 
     @AfterEach
     void after(){
-        System.setIn(originalIn);
-        System.setOut(originalOut);
+        SystemUtils.restoreSystemInputAndOutput();
     }
 
     @Test
@@ -43,12 +37,8 @@ class MenuDeleteStudentTest {
         String input = new StringJoiner(System.lineSeparator())
                 .add(String.valueOf(STUDENT_ID)).toString();
 
-        InputStream inputStream = new ByteArrayInputStream(input.getBytes());
-        ByteArrayOutputStream fakeOutput = new ByteArrayOutputStream();
-        PrintStream printStream = new PrintStream(fakeOutput);
-
-        System.setIn(inputStream);
-        System.setOut(printStream);
+        SystemUtils.setSystemInput(input);
+        SystemUtils.setSystemOutput();
 
         when(studentsDAO.deleteByStudentId(anyInt())).thenReturn(true);
 
@@ -60,7 +50,7 @@ class MenuDeleteStudentTest {
                 .add(dash)
                 .toString();
 
-        assertEquals(expectedOutput, fakeOutput.toString());
+        assertEquals(expectedOutput, SystemUtils.getSystemOutput());
     }
 
     @Test

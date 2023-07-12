@@ -8,25 +8,21 @@ import org.consoleApp.domin.Student;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.Collections;
 import java.util.StringJoiner;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class MenuAddStudentToCourseTest {
     private final static int STUDENT_ID = 1;
     private final static int COURSE_ID = 1;
     private final String dash = "-".repeat(50);
-    private final InputStream originalIn = System.in;
-    private final PrintStream originalOut = System.out;
     @Mock
     private StudentsDAOImpl studentsDAO;
     @Mock
@@ -37,14 +33,12 @@ class MenuAddStudentToCourseTest {
 
     @BeforeEach
     void setup() {
-        MockitoAnnotations.openMocks(this);
         addStudentToCourse = new MenuAddStudentToCourse(studentsDAO, courseDAO, groupsDAO, dash);
     }
 
     @AfterEach
     void after(){
-        System.setIn(originalIn);
-        System.setOut(originalOut);
+        SystemUtils.restoreSystemInputAndOutput();
     }
 
     @Test
@@ -57,12 +51,8 @@ class MenuAddStudentToCourseTest {
                 .add(String.valueOf(STUDENT_ID))
                 .add(String.valueOf(COURSE_ID)).toString();
 
-        InputStream inputStream = new ByteArrayInputStream(input.getBytes());
-        ByteArrayOutputStream fakeOutput = new ByteArrayOutputStream();
-        PrintStream printStream = new PrintStream(fakeOutput);
-
-        System.setIn(inputStream);
-        System.setOut(printStream);
+        SystemUtils.setSystemInput(input);
+        SystemUtils.setSystemOutput();
 
         when(studentsDAO.findAll()).thenReturn(Collections.singletonList(student));
         when(courseDAO.findAll()).thenReturn(Collections.singletonList(course));
@@ -80,7 +70,7 @@ class MenuAddStudentToCourseTest {
                 .add("Add student successfully!")
                 .add(dash).toString();
 
-        assertEquals(expectedOutput, fakeOutput.toString());
+        assertEquals(expectedOutput, SystemUtils.getSystemOutput());
 
         verify(studentsDAO, times(1)).findAll();
         verify(courseDAO, times(1)).findAll();

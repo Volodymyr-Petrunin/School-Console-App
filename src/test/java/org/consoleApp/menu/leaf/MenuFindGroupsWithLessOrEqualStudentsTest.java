@@ -5,38 +5,32 @@ import org.consoleApp.domin.Group;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.PrintStream;
 import java.util.List;
 import java.util.StringJoiner;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class MenuFindGroupsWithLessOrEqualStudentsTest {
     private final static int EQUAL_NUMBER = 13;
     private final String dash = "-".repeat(50);
-    private final InputStream originalIn = System.in;
-    private final PrintStream originalOut = System.out;
     @Mock
     private GroupsDAOImpl groupsDAO;
     private MenuFindGroupsWithLessOrEqualStudents lessOrEqualStudents;
 
     @BeforeEach
     void setup() {
-        MockitoAnnotations.openMocks(this);
         lessOrEqualStudents = new MenuFindGroupsWithLessOrEqualStudents(groupsDAO, dash);
     }
 
     @AfterEach
     void after(){
-        System.setIn(originalIn);
-        System.setOut(originalOut);
+        SystemUtils.restoreSystemInputAndOutput();
     }
 
     @Test
@@ -50,12 +44,8 @@ class MenuFindGroupsWithLessOrEqualStudentsTest {
         String input = new StringJoiner(System.lineSeparator())
                 .add(String.valueOf(EQUAL_NUMBER)).toString();
 
-        InputStream inputStream = new ByteArrayInputStream(input.getBytes());
-        ByteArrayOutputStream fakeOutput = new ByteArrayOutputStream();
-        PrintStream printStream = new PrintStream(fakeOutput);
-
-        System.setIn(inputStream);
-        System.setOut(printStream);
+        SystemUtils.setSystemInput(input);
+        SystemUtils.setSystemOutput();
 
         when(groupsDAO.findGroupsWithLessOrEqualStudents(EQUAL_NUMBER)).thenReturn(expectedGroup);
         lessOrEqualStudents.execute();
@@ -68,7 +58,7 @@ class MenuFindGroupsWithLessOrEqualStudentsTest {
                 .add("Group name: CC-33 and group id 3")
                 .add(dash).toString();
 
-        assertEquals(expectedOutput, fakeOutput.toString());
+        assertEquals(expectedOutput, SystemUtils.getSystemOutput());
 
         verify(groupsDAO, times(1)).findGroupsWithLessOrEqualStudents(anyInt());
     }

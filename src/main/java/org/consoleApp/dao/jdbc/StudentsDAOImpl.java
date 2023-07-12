@@ -21,7 +21,7 @@ public class StudentsDAOImpl implements StudentsDAO {
         List<Student> students = new ArrayList<>();
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM students");
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM students ORDER BY student_id");
              ResultSet resultSet = preparedStatement.executeQuery()){
 
             while (resultSet.next()){

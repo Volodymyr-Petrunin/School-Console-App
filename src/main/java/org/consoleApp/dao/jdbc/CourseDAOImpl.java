@@ -19,7 +19,7 @@ public class CourseDAOImpl implements CourseDAO {
         List<Course> courses = new ArrayList<>();
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM courses");
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM courses ORDER BY course_id");
              ResultSet resultSet = preparedStatement.executeQuery()) {
 
             while (resultSet.next()){

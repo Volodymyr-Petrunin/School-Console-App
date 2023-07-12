@@ -5,8 +5,6 @@ import org.consoleApp.domin.Student;
 import org.junit.jupiter.api.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -96,7 +94,7 @@ class CourseDAOImplTest extends AbstractContainerBaseTest{
         expected.set(0, course);
 
         assertTrue(update);
-        assertThat(actual, containsInAnyOrder(expected.toArray()));
+       assertEquals(expected, actual);
     }
 
     @Test

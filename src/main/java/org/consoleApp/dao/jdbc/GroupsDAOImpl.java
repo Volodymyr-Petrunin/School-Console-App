@@ -21,7 +21,7 @@ public class GroupsDAOImpl implements GroupDAO {
         List<Group> groups = new ArrayList<>();
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM groups")) {
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM groups ORDER BY group_id")) {
 
             try (ResultSet resultSet = preparedStatement.executeQuery()){
                 while (resultSet.next()){

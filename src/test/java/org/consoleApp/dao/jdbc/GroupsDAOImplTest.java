@@ -12,8 +12,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 
 class GroupsDAOImplTest extends AbstractContainerBaseTest {
     private final DataSource dataSource = getDataSource();
@@ -91,7 +89,7 @@ class GroupsDAOImplTest extends AbstractContainerBaseTest {
         expected.set(0, group);
 
         assertTrue(update);
-        assertThat(actual, containsInAnyOrder(expected.toArray()));
+        assertEquals(expected, actual);
     }
 
     @Test

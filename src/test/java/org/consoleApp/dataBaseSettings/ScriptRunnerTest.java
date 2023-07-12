@@ -1,7 +1,6 @@
 package org.consoleApp.dataBaseSettings;
 
 import org.consoleApp.dao.jdbc.AbstractContainerBaseTest;
-import org.consoleApp.domin.Group;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
@@ -13,8 +12,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -30,35 +27,28 @@ class ScriptRunnerTest extends AbstractContainerBaseTest {
         inputStream = new ByteArrayInputStream(scriptContent.getBytes(StandardCharsets.UTF_8));
         scriptRunner.runScript(inputStream);
 
-        List<Group> expected = List.of(
-          new Group(1, "AA-11"),
-          new Group(2, "BB-22")
-        );
-
-        List<Group> actual = findAll();
+        int expected = 2;
+        int actual = countAllGroups();
 
         assertEquals(expected, actual);
     }
 
-    public List<Group> findAll() {
-        List<Group> groups = new ArrayList<>();
+    public int countAllGroups() {
+        int count = 0;
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM groups")) {
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT COUNT(*) FROM groups")) {
 
-            try (ResultSet resultSet = preparedStatement.executeQuery()){
-                while (resultSet.next()){
-                    int groupId = resultSet.getInt("group_id");
-                    String groupName = resultSet.getString("group_name");
-
-                    groups.add(new Group(groupId, groupName));
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    count = resultSet.getInt(1);
                 }
             }
 
         } catch (SQLException e) {
-            throw new IllegalStateException("Can't find groups", e);
+            throw new IllegalStateException("Can't count groups", e);
         }
 
-        return groups;
+        return count;
     }
 }

@@ -98,7 +98,7 @@ class StudentsDAOImplTest extends AbstractContainerBaseTest {
         expected.set(0, student);
 
         assertTrue(update);
-        assertThat(expected, containsInAnyOrder(actual.toArray()));
+        assertEquals(expected, actual);
     }
 
     @Test

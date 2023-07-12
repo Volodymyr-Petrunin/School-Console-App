@@ -5,7 +5,6 @@ import org.consoleApp.domin.Course;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -22,7 +21,7 @@ class CoursesDataFillerTest {
             new Course(2, "IT", "IT"),
             new Course(3, "Music", "Skryabin")
     );
-    @InjectMocks private CoursesDataFiller dataFiller;
+    private CoursesDataFiller dataFiller;
 
     @BeforeEach
     void setup() {
@@ -31,7 +30,7 @@ class CoursesDataFillerTest {
 
 
     @Test
-    void testFillData_ShouldUseCorrectLogic(){
+    void testFillData_ShouldUseCorrectLogic_(){
         dataFiller.fillData();
         verify(courseDAO, times(1)).insertBatch(expected);
     }

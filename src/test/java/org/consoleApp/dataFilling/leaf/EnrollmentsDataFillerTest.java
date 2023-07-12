@@ -1,23 +1,22 @@
 package org.consoleApp.dataFilling.leaf;
 
-import org.consoleApp.dao.jdbc.AbstractContainerBaseTest;
 import org.consoleApp.dao.jdbc.CourseDAOImpl;
 import org.consoleApp.dao.jdbc.StudentsDAOImpl;
 import org.consoleApp.domin.Course;
 import org.consoleApp.domin.Student;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import javax.sql.DataSource;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-class EnrollmentsDataFillerTest extends AbstractContainerBaseTest {
-    private final static DataSource dataSource = getDataSource();
-    private final static StudentsDAOImpl studentsDAO = new StudentsDAOImpl(dataSource);
-    private final static CourseDAOImpl courseDAO = new CourseDAOImpl(dataSource);
+@ExtendWith(MockitoExtension.class)
+class EnrollmentsDataFillerTest {
     private final static List<Student> students = List.of(
             new Student(1, null, "John", "Doe"),
             new Student(2, null, "Jane", "Smith"),
@@ -31,24 +30,24 @@ class EnrollmentsDataFillerTest extends AbstractContainerBaseTest {
             new Course(2, "IT", "IT"),
             new Course(3, "Music", "Skryabin")
     );
-    private final EnrollmentsDataFiller dataFiller = new EnrollmentsDataFiller(2, studentsDAO, courseDAO);
+    @Mock private StudentsDAOImpl studentsDAO;
+    @Mock private CourseDAOImpl courseDAO;
+    private EnrollmentsDataFiller dataFiller;
 
-    @BeforeAll
-    static void before(){
-        courseDAO.insertBatch(courses);
-        studentsDAO.insertBatch(students);
+    @BeforeEach
+    void before(){
+        dataFiller = new EnrollmentsDataFiller(2, studentsDAO, courseDAO);
     }
 
     @Test
     void testFillData_ShouldInsertBatchOfStudentsInDB(){
+        when(studentsDAO.findAll()).thenReturn(students);
+        when(courseDAO.findAll()).thenReturn(courses);
+
         dataFiller.fillData();
-        List<Student> actual = studentsDAO.findAll();
-        assertNotNull(actual);
 
-        for (Student student : actual){
-            List<Course> studentCourse = courseDAO.findAllCourseByStudentsId(student.getId());
-
-            assertTrue(courses.containsAll(studentCourse));
+        for (Student student : students){
+            verify(studentsDAO, atLeastOnce()).enrollStudentInCourse(eq(student.getId()), anyInt());
         }
     }
 }

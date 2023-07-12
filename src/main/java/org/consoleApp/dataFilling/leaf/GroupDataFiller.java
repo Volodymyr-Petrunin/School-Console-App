@@ -11,6 +11,7 @@ import java.util.List;
 public class GroupDataFiller implements DataFiller {
     private GroupDAO groupsDAO;
     private GroupGenerationData generationData;
+
     public GroupDataFiller(GroupAmountGeneration groupAmountGeneration, GroupDAO groupsDAO) {
         this.groupsDAO = groupsDAO;
         this.generationData = new GroupGenerationData(groupAmountGeneration);

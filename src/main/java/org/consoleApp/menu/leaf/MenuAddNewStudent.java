@@ -7,7 +7,6 @@ import org.consoleApp.domin.Student;
 import org.consoleApp.menu.MenuItem;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.Scanner;
 
 public class MenuAddNewStudent implements MenuItem {
@@ -47,8 +46,7 @@ public class MenuAddNewStudent implements MenuItem {
         System.out.println("Choose group name: ");
         String groupName = scan.nextLine();
 
-        Optional<Group> optionalGroup = groupDAO.findGroupIdByName(groupName);
-        int groupId = optionalGroup.orElseThrow(()-> new RuntimeException("Can't find group id by group name in LaunchApp")).getId();
+        int groupId = findGroupIdByName(allGroups, groupName);
 
         Student newStudent = new Student(null,groupId,firstName,lastName);
 
@@ -62,5 +60,14 @@ public class MenuAddNewStudent implements MenuItem {
             System.out.println("Something wrong! :(");
             System.out.print(dash);
         }
+    }
+
+    private int findGroupIdByName(List<Group> groups, String groupName) {
+        for (Group group : groups) {
+            if (group.getName().equals(groupName)) {
+                return group.getId();
+            }
+        }
+        throw new IllegalArgumentException("Can't find group id by group name: " + groupName + "in LaunchApp");
     }
 }

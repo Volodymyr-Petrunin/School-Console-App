@@ -161,26 +161,6 @@ public class GroupsDAOImpl implements GroupDAO {
         return groups;
     }
 
-    @Override
-    public Optional<Group> findGroupIdByName(String groupName) {
-
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM groups WHERE group_name = ?")) {
-            preparedStatement.setString(1, groupName);
-
-        try (ResultSet resultSet = preparedStatement.executeQuery()){
-            if (resultSet.next()){
-                return Optional.of(mapRow(resultSet));
-            }
-        }
-
-        } catch (SQLException e) {
-            throw new IllegalStateException("Can't find groups id by name", e);
-        }
-
-        return Optional.empty();
-    }
-
     private Group mapRow(ResultSet resultSet) throws SQLException {
         int groupId = resultSet.getInt("group_id");
         String groupName = resultSet.getString("group_name");

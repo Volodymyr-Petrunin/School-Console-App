@@ -7,10 +7,10 @@ import org.consoleApp.domin.Student;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.*;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.StringJoiner;
@@ -18,12 +18,11 @@ import java.util.StringJoiner;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class MenuAddNewStudentTest {
     private final static String NAME = "Vova";
     private final static String SURNAME = "Petro";
     private final static String GROUP_NAME = "BB-22";
-    private final InputStream originalIn = System.in;
-    private final PrintStream originalOut = System.out;
     private final String dash = "-".repeat(50);
     @Mock
     private GroupsDAOImpl groupsDAO;
@@ -33,14 +32,12 @@ class MenuAddNewStudentTest {
 
     @BeforeEach
     void setup() {
-        MockitoAnnotations.openMocks(this);
         addNewStudent = new MenuAddNewStudent(groupsDAO, studentsDAO, dash);
     }
 
     @AfterEach
     void after(){
-        System.setIn(originalIn);
-        System.setOut(originalOut);
+        SystemUtils.restoreSystemInputAndOutput();
     }
 
     @Test
@@ -52,16 +49,11 @@ class MenuAddNewStudentTest {
                 .add(SURNAME)
                 .add(GROUP_NAME).toString();
 
-        InputStream inputStream = new ByteArrayInputStream(input.getBytes());
-        ByteArrayOutputStream fakeOutput = new ByteArrayOutputStream();
-        PrintStream printStream = new PrintStream(fakeOutput);
-
-        System.setIn(inputStream);
-        System.setOut(printStream);
+        SystemUtils.setSystemInput(input);
+        SystemUtils.setSystemOutput();
 
 
         when(groupsDAO.findAll()).thenReturn(Collections.singletonList(group));
-        when(groupsDAO.findGroupIdByName("BB-22")).thenReturn(Optional.of(group));
         when(studentsDAO.insert(any(Student.class))).thenAnswer(invocation -> {
             Student student = invocation.getArgument(0);
             student.setId(1);
@@ -81,7 +73,7 @@ class MenuAddNewStudentTest {
                 .add("New student added successfully! :)")
                 .add(dash).toString();
 
-        assertEquals(expectedOutput, fakeOutput.toString());
+        assertEquals(expectedOutput, SystemUtils.getSystemOutput());
 
         verify(studentsDAO, times(1)).insert(any(Student.class));
         verify(studentsDAO, times(1)).enrollStudentInCourse(anyInt(), anyInt());

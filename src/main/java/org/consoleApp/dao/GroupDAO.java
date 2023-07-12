@@ -7,5 +7,4 @@ import java.util.Optional;
 
 public interface GroupDAO extends GenericDAO<Group>{
     List<Group> findGroupsWithLessOrEqualStudents(int maxStudents);
-    Optional<Group> findGroupIdByName(String groupName);
 }

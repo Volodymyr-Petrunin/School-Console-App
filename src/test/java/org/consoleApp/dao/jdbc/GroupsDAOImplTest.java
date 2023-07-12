@@ -117,18 +117,6 @@ class GroupsDAOImplTest extends AbstractContainerBaseTest {
         assertEquals(expected, actual);
     }
 
-    @Test
-    void testFindGroupIdByName_ShouldReturnFirstGroupFromExpectedGroupList(){
-        String name = expectedGroup.get(0).getName();
-
-        Optional<Group> group = groupsDAO.findGroupIdByName(name);
-        Group actual = group.orElseThrow(() -> new RuntimeException("Can't get group"));
-
-        Group expected = expectedGroup.get(0);
-
-        assertEquals(expected, actual);
-    }
-
     private void addStudent(){
         List<Student> students = List.of(
                 new Student(1, 1, "John", "Doe"),

@@ -1,6 +1,7 @@
 package org.consoleApp.menu.leaf;
 
 import org.consoleApp.dao.jdbc.StudentsDAOImpl;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -18,6 +19,8 @@ import static org.mockito.Mockito.*;
 class MenuDeleteStudentTest {
     private final static int STUDENT_ID = 1;
     private final String dash = "-".repeat(50);
+    private final InputStream originalIn = System.in;
+    private final PrintStream originalOut = System.out;
     @Mock
     private StudentsDAOImpl studentsDAO;
     private MenuDeleteStudent deleteStudent;
@@ -28,36 +31,36 @@ class MenuDeleteStudentTest {
         deleteStudent = new MenuDeleteStudent(studentsDAO, dash);
     }
 
+    @AfterEach
+    void after(){
+        System.setIn(originalIn);
+        System.setOut(originalOut);
+    }
+
     @Test
     void testExecute_ShouldUseCorrectLogic_DeleteStudentFromDB(){
-        InputStream originalIn = System.in;
-        PrintStream originalOut = System.out;
 
-        try {
-            String input = String.format("%s%s", STUDENT_ID, System.lineSeparator());
+        String input = new StringJoiner(System.lineSeparator())
+                .add(String.valueOf(STUDENT_ID)).toString();
 
-            InputStream inputStream = new ByteArrayInputStream(input.getBytes());
-            ByteArrayOutputStream fakeOutput = new ByteArrayOutputStream();
-            PrintStream printStream = new PrintStream(fakeOutput);
+        InputStream inputStream = new ByteArrayInputStream(input.getBytes());
+        ByteArrayOutputStream fakeOutput = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(fakeOutput);
 
-            System.setIn(inputStream);
-            System.setOut(printStream);
+        System.setIn(inputStream);
+        System.setOut(printStream);
 
-            when(studentsDAO.deleteByStudentId(anyInt())).thenReturn(true);
+        when(studentsDAO.deleteByStudentId(anyInt())).thenReturn(true);
 
-            deleteStudent.execute();
+        deleteStudent.execute();
 
-            String expectedOutput = new StringJoiner(System.lineSeparator())
-                    .add("Now write the id of the student you wont to delete ;)")
-                    .add("Delete student successfully!")
-                    .add(dash)
-                    .toString();
+        String expectedOutput = new StringJoiner(System.lineSeparator())
+                .add("Now write the id of the student you wont to delete ;)")
+                .add("Delete student successfully!")
+                .add(dash)
+                .toString();
 
-            assertEquals(expectedOutput, fakeOutput.toString());
-        }finally {
-            System.setIn(originalIn);
-            System.setOut(originalOut);
-        }
+        assertEquals(expectedOutput, fakeOutput.toString());
     }
 
     @Test

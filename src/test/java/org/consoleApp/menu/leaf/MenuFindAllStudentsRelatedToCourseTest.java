@@ -3,6 +3,7 @@ package org.consoleApp.menu.leaf;
 import org.consoleApp.dao.jdbc.GroupsDAOImpl;
 import org.consoleApp.dao.jdbc.StudentsDAOImpl;
 import org.consoleApp.domin.Student;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -21,6 +22,8 @@ import static org.mockito.Mockito.*;
 class MenuFindAllStudentsRelatedToCourseTest {
     private final static String NAME_COURSE = "IT";
     private final String dash = "-".repeat(50);
+    private final InputStream originalIn = System.in;
+    private final PrintStream originalOut = System.out;
     @Mock
     private StudentsDAOImpl studentsDAO;
     @Mock
@@ -33,10 +36,14 @@ class MenuFindAllStudentsRelatedToCourseTest {
         menuFindAllStudentsRelatedToCourse = new MenuFindAllStudentsRelatedToCourse(studentsDAO, groupsDAO, dash);
     }
 
+    @AfterEach
+    void after(){
+        System.setIn(originalIn);
+        System.setOut(originalOut);
+    }
+
     @Test
     void testExecute_ShouldUseCorrectLogic_FindAllStudentsRelatedToCourse(){
-        InputStream originalIn = System.in;
-        PrintStream originalOut = System.out;
 
         List<Student> students = List.of(
                 new Student(1, null, "Vova", "IDK"),
@@ -44,32 +51,28 @@ class MenuFindAllStudentsRelatedToCourseTest {
                 new Student(3, null, "WHY", "IDK")
         );
 
-        try {
-            String input = String.format("%s%s", NAME_COURSE, System.lineSeparator());
+        String input = new StringJoiner(System.lineSeparator())
+                .add(NAME_COURSE).toString();
 
-            InputStream inputStream = new ByteArrayInputStream(input.getBytes());
-            ByteArrayOutputStream fakeOutput = new ByteArrayOutputStream();
-            PrintStream printStream = new PrintStream(fakeOutput);
+        InputStream inputStream = new ByteArrayInputStream(input.getBytes());
+        ByteArrayOutputStream fakeOutput = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(fakeOutput);
 
-            System.setIn(inputStream);
-            System.setOut(printStream);
+        System.setIn(inputStream);
+        System.setOut(printStream);
 
-            when(studentsDAO.findStudentsByCourseName(anyString())).thenReturn(students);
-            menuFindAllStudentsRelatedToCourse.execute();
+        when(studentsDAO.findStudentsByCourseName(anyString())).thenReturn(students);
+        menuFindAllStudentsRelatedToCourse.execute();
 
-            String expectedOutput = new StringJoiner(System.lineSeparator())
-                    .add("Now write the name of course 0_0")
-                    .add("All Students: ")
-                    .add("ID:   1 Initial: Vova IDK | Group: No group")
-                    .add("ID:   2 Initial:      IDK | Group: No group")
-                    .add("ID:   3 Initial: WHY  IDK | Group: No group")
-                    .add(dash).toString();
+        String expectedOutput = new StringJoiner(System.lineSeparator())
+                .add("Now write the name of course 0_0")
+                .add("All Students: ")
+                .add("ID:   1 Initial: Vova IDK | Group: No group")
+                .add("ID:   2 Initial:      IDK | Group: No group")
+                .add("ID:   3 Initial: WHY  IDK | Group: No group")
+                .add(dash).toString();
 
-            assertEquals(expectedOutput, fakeOutput.toString());
-        } finally {
-            System.setIn(originalIn);
-            System.setOut(originalOut);
-        }
+        assertEquals(expectedOutput, fakeOutput.toString());
     }
 
     @Test

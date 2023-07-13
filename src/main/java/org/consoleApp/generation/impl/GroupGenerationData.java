@@ -24,18 +24,14 @@ public class GroupGenerationData implements GenerationData<Group> {
 
     @Override
     public List<Group> generateData() {
-        StringBuilder resultBuilder = new StringBuilder();
-
         List<Group> result = new ArrayList<>();
 
         for (int index = 0; index < quantity; index++){
-            resultBuilder.append(generateRandomChars(amountOfLetters, true));
-            resultBuilder.append("-");
-            resultBuilder.append(generateRandomChars(amountOfNumbers, false));
+            String name = generateRandomChars(amountOfLetters, true) + "-" + generateRandomChars(amountOfNumbers, false);
 
-            result.add(new Group(null, resultBuilder.toString()));
-            resultBuilder.setLength(0);
+            result.add(new Group(null, name));
         }
+
         return result;
     }
 

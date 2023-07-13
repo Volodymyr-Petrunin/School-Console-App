@@ -1,0 +1,178 @@
+package org.consoleApp.dao.jdbc;
+
+import org.consoleApp.dao.CourseDAO;
+import org.consoleApp.domin.Course;
+
+import javax.sql.DataSource;
+import java.sql.*;
+import java.util.*;
+
+public class CourseDAOImpl implements CourseDAO {
+    private DataSource dataSource;
+
+    public CourseDAOImpl(DataSource dataSource) {
+        this.dataSource = dataSource;
+    }
+
+    @Override
+    public List<Course> findAll() {
+        List<Course> courses = new ArrayList<>();
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM courses ORDER BY course_id");
+             ResultSet resultSet = preparedStatement.executeQuery()) {
+
+            while (resultSet.next()){
+                courses.add(mapRow(resultSet));
+            }
+
+        } catch (SQLException e) {
+            throw new IllegalStateException("Can't fetch courses", e);
+        }
+
+        return courses;
+    }
+
+    @Override
+    public Optional<Course> findById(int courseId) {
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT * FROM courses WHERE course_id = ?")) {
+            preparedStatement.setInt(1, courseId);
+
+
+        try (ResultSet resultSet = preparedStatement.executeQuery()){
+            if (resultSet.next()){
+               return Optional.of(mapRow(resultSet));
+            }
+        }
+
+        } catch (SQLException e) {
+            throw new IllegalStateException("Can't fetch courses", e);
+        }
+
+        return Optional.empty();
+    }
+
+    @Override
+    public boolean insert(Course course) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO courses (course_name, course_description) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+
+            preparedStatement.setString(1,course.getName());
+            preparedStatement.setString(2,course.getDescription());
+
+            int rowsAffected = preparedStatement.executeUpdate();
+
+        try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()){
+
+            if (!generatedKeys.next()){
+                throw new IllegalStateException("Not enough generated keys returned during courses insert");
+            }
+
+            course.setId(generatedKeys.getInt(1));
+
+            if (generatedKeys.next()){
+                throw new IllegalStateException("Too many generated keys returned during courses insert");
+            }
+        }
+
+          return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            throw new IllegalStateException("Can't insert course", e);
+        }
+    }
+
+    @Override
+    public void insertBatch(List<Course> courses) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO courses (course_name, course_description) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS)) {
+
+
+            for (Course course : courses){
+                preparedStatement.setString(1, course.getName());
+                preparedStatement.setString(2, course.getDescription());
+
+                preparedStatement.addBatch();
+            }
+
+            preparedStatement.executeBatch();
+
+            try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()){
+                for (Course course : courses){
+
+                    if (!generatedKeys.next()){
+                        throw new IllegalStateException("Not enough generated keys returned during courses batch insert");
+                    }
+
+                    course.setId(generatedKeys.getInt(1));
+                }
+
+                if (generatedKeys.next()){
+                    throw new IllegalStateException("Too many generated keys returned during courses batch insert");
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new IllegalStateException("Can't insert batch of courses", e);
+        }
+    }
+
+    @Override
+    public boolean update(Course course) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("UPDATE courses SET course_name = ?, course_description = ? WHERE course_id = ?")) {
+
+            preparedStatement.setString(1,course.getName());
+            preparedStatement.setString(2,course.getDescription());
+            preparedStatement.setInt(3,course.getId());
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            throw new IllegalStateException("Can't update courses", e);
+        }
+    }
+
+    @Override
+    public boolean delete(Course course) {
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("DELETE FROM courses WHERE course_id = ?")) {
+            preparedStatement.setInt(1,course.getId());
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            throw new IllegalStateException("Can't delete courses", e);
+        }
+    }
+
+    @Override
+    public List<Course> findAllCourseByStudentsId(int studentId) {
+        List<Course> courses = new ArrayList<>();
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("SELECT c.course_id, c.course_name, c.course_description FROM courses c JOIN enrollments e ON c.course_id = e.course_id WHERE e.student_id = ?")){
+             preparedStatement.setInt(1, studentId);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery()){
+                while (resultSet.next()){
+                    courses.add(mapRow(resultSet));
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new IllegalStateException("Can't fetch courses", e);
+        }
+        return courses;
+    }
+
+    private Course mapRow(ResultSet resultSet) throws SQLException {
+        int courseId = resultSet.getInt("course_id");
+        String courseName = resultSet.getString("course_name");
+        String courseDescription = resultSet.getString("course_description");
+
+        return new Course(courseId, courseName, courseDescription);
+    }
+}

@@ -1,9 +1,9 @@
 package org.consoleApp.dao.spring_jdbc;
 
 import org.consoleApp.dao.StudentsDAO;
+import org.consoleApp.dao.spring_jdbc.rowMappers.StudentRowMapper;
 import org.consoleApp.domin.Student;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -11,26 +11,21 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class StudentsDAORepository implements StudentsDAO {
+public class StudentsRepository implements StudentsDAO {
+    private final StudentRowMapper studentRowMapper = new StudentRowMapper();
     private final JdbcTemplate jdbcTemplate;
     private String sql;
     private int rowAffected;
-    private List<Student> students;
 
-    public StudentsDAORepository(DataSource dataSource) {
+    public StudentsRepository(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     @Override
     public List<Student> findAll() {
         sql = "SELECT * FROM students ORDER BY student_id";
-        students = jdbcTemplate.query(sql, studentRowMapper);
 
-        if (students.isEmpty()){
-            throw new IllegalStateException("Can't fetch students");
-        }
-
-        return students;
+        return jdbcTemplate.query(sql, studentRowMapper);
     }
 
     @Override
@@ -91,13 +86,8 @@ public class StudentsDAORepository implements StudentsDAO {
     @Override
     public List<Student> findByFirstName(String firstName) {
         sql = "SELECT * FROM students WHERE first_name = ?";
-        students = jdbcTemplate.query(sql, studentRowMapper, firstName);
 
-        if (students.isEmpty()){
-            throw new IllegalStateException("Can't find by student firs name");
-        }
-
-        return students;
+        return jdbcTemplate.query(sql, studentRowMapper, firstName);
     }
 
     @Override
@@ -122,21 +112,6 @@ public class StudentsDAORepository implements StudentsDAO {
                 "JOIN enrollments e ON s.student_id = e.student_id JOIN courses c ON e.course_id = c.course_id " +
                 "WHERE c.course_name = ?";
 
-        students = jdbcTemplate.query(sql, studentRowMapper, courseName);
-
-        if (students.isEmpty()){
-            throw new IllegalStateException("Can't find batch by student id");
-        }
-
-        return students;
+        return jdbcTemplate.query(sql, studentRowMapper, courseName);
     }
-
-    private final RowMapper<Student> studentRowMapper = ((rs, rowNum) -> {
-        int id = rs.getInt("student_id");
-        Integer groupId = rs.getInt("group_id");
-        String firstName = rs.getString("first_name");
-        String lastName = rs.getString("last_name");
-
-        return new Student(id, groupId, firstName, lastName);
-    });
 }

@@ -1,9 +1,9 @@
 package org.consoleApp.dao.spring_jdbc;
 
 import org.consoleApp.dao.GroupDAO;
+import org.consoleApp.dao.spring_jdbc.rowMappers.GroupRowMapper;
 import org.consoleApp.domin.Group;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -11,25 +11,21 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class GroupDAORepository implements GroupDAO {
+public class GroupRepository implements GroupDAO {
+    private final GroupRowMapper groupRowMapper = new GroupRowMapper();
     private final JdbcTemplate jdbcTemplate;
     private String sql;
     private int rowAffected;
 
-    public GroupDAORepository(DataSource dataSource) {
+    public GroupRepository(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     @Override
     public List<Group> findAll() {
         sql = "SELECT * FROM groups ORDER BY group_id";
-        List<Group> groups = jdbcTemplate.query(sql, groupRowMapper);
 
-        if (groups.isEmpty()){
-            throw new IllegalStateException("Can't find groups");
-        }
-
-        return groups;
+        return jdbcTemplate.query(sql, groupRowMapper);
     }
 
     @Override
@@ -82,19 +78,7 @@ public class GroupDAORepository implements GroupDAO {
     @Override
     public List<Group> findGroupsWithLessOrEqualStudents(int maxStudents) {
         sql = "SELECT * FROM groups WHERE (SELECT COUNT(*) FROM students WHERE students.group_id = groups.group_id) <= ?";
-        List<Group> groups = jdbcTemplate.query(sql, new Object[]{maxStudents}, groupRowMapper);
 
-        if (groups.isEmpty()){
-            throw new IllegalStateException("Can't find groups with less or equal students");
-        }
-
-        return groups;
+        return jdbcTemplate.query(sql, new Object[]{maxStudents}, groupRowMapper);
     }
-
-    private final RowMapper<Group> groupRowMapper = ((rs, rowNum) -> {
-        int groupId = rs.getInt("group_id");
-        String groupName = rs.getString("group_name");
-
-        return new Group(groupId, groupName);
-    });
 }

@@ -1,6 +1,7 @@
 package org.consoleApp.dao.spring_jdbc;
 
 import org.consoleApp.dao.CourseDAO;
+import org.consoleApp.dao.spring_jdbc.rowMappers.CourseRowMapper;
 import org.consoleApp.domin.Course;
 import org.springframework.jdbc.core.*;
 import org.springframework.stereotype.Repository;
@@ -10,25 +11,21 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class CourseDAORepository implements CourseDAO {
+public class CourseRepository implements CourseDAO {
+    private final CourseRowMapper courseRowMapper = new CourseRowMapper();
     private final JdbcTemplate jdbcTemplate;
     private String sql;
     private int rowAffected;
 
-    public CourseDAORepository(DataSource dataSource) {
+    public CourseRepository(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     @Override
     public List<Course> findAll() {
         sql = "SELECT * FROM courses ORDER BY course_id";
-        List<Course> courses = jdbcTemplate.query(sql, courseRowMapper);
 
-        if (courses.isEmpty()){
-            throw new IllegalStateException("Can't fetch courses");
-        }
-
-        return courses;
+        return jdbcTemplate.query(sql, courseRowMapper);
     }
 
     @Override
@@ -82,19 +79,6 @@ public class CourseDAORepository implements CourseDAO {
     public List<Course> findAllCourseByStudentsId(int studentId) {
         sql = "SELECT c.course_id, c.course_name, c.course_description FROM courses c JOIN enrollments e ON c.course_id = e.course_id WHERE e.student_id = ?";
 
-        List<Course> courses = jdbcTemplate.query(sql, new Object[] {studentId}, courseRowMapper);
-
-        if (courses.isEmpty()){
-            throw new IllegalStateException("Can't fetch courses");
-        }
-
-        return courses;
+        return jdbcTemplate.query(sql, new Object[] {studentId}, courseRowMapper);
     }
-
-    private final RowMapper<Course> courseRowMapper = (rs, rowNum) -> {
-        int courseId = rs.getInt("course_id");
-        String courseName = rs.getString("course_name");
-        String courseDescription = rs.getString("course_description");
-        return new Course(courseId, courseName, courseDescription);
-    };
 }

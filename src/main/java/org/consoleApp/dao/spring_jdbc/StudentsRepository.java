@@ -12,10 +12,21 @@ import java.util.Optional;
 
 @Repository
 public class StudentsRepository implements StudentsDAO {
+    private static final String FIND_ALL = "SELECT * FROM students ORDER BY student_id";
+    private static final String FIND_BY_ID = "SELECT * FROM students WHERE student_id = ?";
+    private static final String INSERT = "INSERT INTO students (group_id, first_name, last_name) VALUES (?, ?, ?)";
+    private static final String INSERT_BATCH = "INSERT INTO students (group_id, first_name, last_name) VALUES (?, ?, ?)";
+    private static final String UPDATE = "UPDATE students SET group_id = ?, first_name = ?, last_name = ? WHERE student_id = ?";
+    private static final String DELETE = "DELETE FROM students WHERE student_id = ?";
+    private static final String DELETE_BY_STUDENT_ID = "DELETE FROM students WHERE student_id = ?";
+    private static final String FIND_BY_FIRST_NAME = "SELECT * FROM students WHERE first_name = ?";
+    private static final String ENROLL_STUDENT_IN_COURSE = "INSERT INTO enrollments (student_id,course_id) VALUES (?,?)";
+    private static final String REMOVE_STUDENT_FROM_COURSE = "DELETE FROM enrollments WHERE student_id = ? AND course_id = ?";
+    private static final String FIND_STUDENT_BY_COURSE_NAME = "SELECT s.student_id, s.group_id, s.first_name, s.last_name FROM students s " +
+            "JOIN enrollments e ON s.student_id = e.student_id JOIN courses c ON e.course_id = c.course_id " +
+            "WHERE c.course_name = ?";
     private final StudentRowMapper studentRowMapper = new StudentRowMapper();
     private final JdbcTemplate jdbcTemplate;
-    private String sql;
-    private int rowAffected;
 
     public StudentsRepository(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
@@ -23,95 +34,60 @@ public class StudentsRepository implements StudentsDAO {
 
     @Override
     public List<Student> findAll() {
-        sql = "SELECT * FROM students ORDER BY student_id";
-
-        return jdbcTemplate.query(sql, studentRowMapper);
+        return jdbcTemplate.query(FIND_ALL, studentRowMapper);
     }
 
     @Override
     public Optional<Student> findById(int id) {
-        sql = "SELECT * FROM students WHERE student_id = ?";
-        Student student = jdbcTemplate.queryForObject(sql, new Object[]{id}, studentRowMapper);
-
-        return Optional.ofNullable(student);
+        return Optional.ofNullable(jdbcTemplate.queryForObject(FIND_BY_ID, new Object[]{id}, studentRowMapper));
     }
 
     @Override
     public boolean insert(Student student) {
-        sql = "INSERT INTO students (group_id, first_name, last_name) VALUES (?, ?, ?)";
-        rowAffected = jdbcTemplate.update(sql, student);
-
-        return rowAffected > 0;
+        return jdbcTemplate.update(INSERT, student) > 0;
     }
 
     @Override
     public void insertBatch(List<Student> students) {
-        sql = "INSERT INTO students (group_id, first_name, last_name) VALUES (?, ?, ?)";
-
         List<Object[]> batchArgs = students.stream()
                 .map(student -> new Object[]{student.getGroupId(), student.getFirstName(), student.getLastName()})
                 .toList();
 
-        int[] rowAffected = jdbcTemplate.batchUpdate(sql, batchArgs);
-
-        if (rowAffected.length != students.size()){
-            throw new IllegalStateException("Not all students were inserted successfully");
-        }
+        jdbcTemplate.batchUpdate(INSERT_BATCH, batchArgs);
     }
 
     @Override
     public boolean update(Student student) {
-       sql = "UPDATE students SET group_id = ?, first_name = ?, last_name = ? WHERE student_id = ?";
-       rowAffected = jdbcTemplate.update(sql, student.getGroupId(), student.getFirstName(), student.getLastName(), student.getId());
-
-       return rowAffected > 0;
+        return jdbcTemplate.update(UPDATE, student.getGroupId(), student.getFirstName(), student.getLastName(), student.getId()) > 0;
     }
 
     @Override
     public boolean delete(Student student) {
-        sql = "DELETE FROM students WHERE student_id = ?";
-        rowAffected = jdbcTemplate.update(sql, student.getId());
-
-        return rowAffected > 0;
+        return jdbcTemplate.update(DELETE, student.getId()) > 0;
     }
 
     @Override
     public boolean deleteByStudentId(int studentId) {
-        sql = "DELETE FROM students WHERE student_id = ?";
-        rowAffected = jdbcTemplate.update(sql, studentId);
-
-        return rowAffected > 0;
+        return jdbcTemplate.update(DELETE_BY_STUDENT_ID, studentId) > 0;
     }
 
     @Override
     public List<Student> findByFirstName(String firstName) {
-        sql = "SELECT * FROM students WHERE first_name = ?";
-
-        return jdbcTemplate.query(sql, studentRowMapper, firstName);
+        return jdbcTemplate.query(FIND_BY_FIRST_NAME, studentRowMapper, firstName);
     }
 
     @Override
     public boolean enrollStudentInCourse(int studentId, int courseId) {
-        sql = "INSERT INTO enrollments (student_id,course_id) VALUES (?,?)";
-        rowAffected = jdbcTemplate.update(sql, studentId, courseId);
-
-        return rowAffected > 0;
+        return jdbcTemplate.update(ENROLL_STUDENT_IN_COURSE, studentId, courseId) > 0;
     }
 
     @Override
     public boolean removeStudentFromCourse(int studentId, int courseId) {
-        sql = "DELETE FROM enrollments WHERE student_id = ? AND course_id = ?";
-        rowAffected = jdbcTemplate.update(sql, studentId, courseId);
-
-        return rowAffected > 0;
+        return jdbcTemplate.update(REMOVE_STUDENT_FROM_COURSE, studentId, courseId) > 0;
     }
 
     @Override
     public List<Student> findStudentsByCourseName(String courseName) {
-        sql = "SELECT s.student_id, s.group_id, s.first_name, s.last_name FROM students s " +
-                "JOIN enrollments e ON s.student_id = e.student_id JOIN courses c ON e.course_id = c.course_id " +
-                "WHERE c.course_name = ?";
-
-        return jdbcTemplate.query(sql, studentRowMapper, courseName);
+        return jdbcTemplate.query(FIND_STUDENT_BY_COURSE_NAME, studentRowMapper, courseName);
     }
 }

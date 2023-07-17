@@ -12,10 +12,15 @@ import java.util.Optional;
 
 @Repository
 public class GroupRepository implements GroupDAO {
+    private static final String FIND_ALL = "SELECT * FROM groups ORDER BY group_id";
+    private static final String FIND_BY_ID = "SELECT * FROM groups WHERE group_id = ?";
+    private static final String INSERT = "INSERT INTO groups (group_name) VALUES (?)";
+    private static final String INSERT_BATCH = "INSERT INTO groups (group_name) VALUES (?)";
+    private static final String UPDATE = "UPDATE groups SET group_name = ? WHERE group_id = ?";
+    private static final String DELETE = "DELETE FROM groups WHERE group_id = ?";
+    private static final String FIND_GROUP_WITH_LESS_OR_EQUAL_STUDENTS = "SELECT * FROM groups WHERE (SELECT COUNT(*) FROM students WHERE students.group_id = groups.group_id) <= ?";
     private final GroupRowMapper groupRowMapper = new GroupRowMapper();
     private final JdbcTemplate jdbcTemplate;
-    private String sql;
-    private int rowAffected;
 
     public GroupRepository(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
@@ -23,62 +28,40 @@ public class GroupRepository implements GroupDAO {
 
     @Override
     public List<Group> findAll() {
-        sql = "SELECT * FROM groups ORDER BY group_id";
-
-        return jdbcTemplate.query(sql, groupRowMapper);
+        return jdbcTemplate.query(FIND_ALL, groupRowMapper);
     }
 
     @Override
     public Optional<Group> findById(int id) {
-        sql = "SELECT * FROM groups WHERE group_id = ?";
-        Group group = jdbcTemplate.queryForObject(sql, new Object[] {id}, groupRowMapper);
-
-        return Optional.ofNullable(group);
+        return Optional.ofNullable(jdbcTemplate.queryForObject(FIND_BY_ID, new Object[] {id}, groupRowMapper));
     }
 
     @Override
     public boolean insert(Group group) {
-        sql = "INSERT INTO groups (group_name) VALUES (?)";
-
-        rowAffected = jdbcTemplate.update(sql, group.getName());
-        return rowAffected > 0;
+       return jdbcTemplate.update(INSERT, group.getName()) > 0;
     }
 
     @Override
     public void insertBatch(List<Group> groups) {
-        sql = "INSERT INTO groups (group_name) VALUES (?)";
-
         List<Object[]> batchArgs = groups.stream()
                 .map(group -> new Object[] {group.getName() })
                 .toList();
 
-        int[] rowAffected = jdbcTemplate.batchUpdate(sql, batchArgs);
-
-        if (rowAffected.length != groups.size()){
-            throw new IllegalStateException("Not all groups were inserted successfully");
-        }
+        jdbcTemplate.batchUpdate(INSERT_BATCH, batchArgs);
     }
 
     @Override
     public boolean update(Group group) {
-       sql = "UPDATE groups SET group_name = ? WHERE group_id = ?";
-       rowAffected = jdbcTemplate.update(sql, group.getName(), group.getId());
-
-       return rowAffected > 0;
+       return jdbcTemplate.update(UPDATE, group.getName(), group.getId()) > 0;
     }
 
     @Override
     public boolean delete(Group group) {
-        sql = "DELETE FROM groups WHERE group_id = ?";
-        rowAffected = jdbcTemplate.update(sql, group.getId());
-
-        return rowAffected > 0;
+        return jdbcTemplate.update(DELETE, group.getId()) > 0;
     }
 
     @Override
     public List<Group> findGroupsWithLessOrEqualStudents(int maxStudents) {
-        sql = "SELECT * FROM groups WHERE (SELECT COUNT(*) FROM students WHERE students.group_id = groups.group_id) <= ?";
-
-        return jdbcTemplate.query(sql, new Object[]{maxStudents}, groupRowMapper);
+        return jdbcTemplate.query(FIND_GROUP_WITH_LESS_OR_EQUAL_STUDENTS, new Object[]{maxStudents}, groupRowMapper);
     }
 }

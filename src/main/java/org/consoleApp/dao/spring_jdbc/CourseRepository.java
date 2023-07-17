@@ -12,10 +12,15 @@ import java.util.Optional;
 
 @Repository
 public class CourseRepository implements CourseDAO {
+    private static final String FIND_ALL = "SELECT * FROM courses ORDER BY course_id";
+    private static final String FIND_BY_ID = "SELECT * FROM courses WHERE course_id = ?";
+    private static final String INSERT = "INSERT INTO courses (course_name, course_description) VALUES (?, ?)";
+    private static final String INSERT_BATCH = "INSERT INTO courses (course_name, course_description) VALUES (?, ?)";
+    private static final String UPDATE = "UPDATE courses SET course_name = ?, course_description = ? WHERE course_id = ?";
+    private static final String DELETE = "DELETE FROM courses WHERE course_id = ?";
+    private static final String FIND_ALL_COURSE_BY_STUDENT_ID = "SELECT c.course_id, c.course_name, c.course_description FROM courses c JOIN enrollments e ON c.course_id = e.course_id WHERE e.student_id = ?";
     private final CourseRowMapper courseRowMapper = new CourseRowMapper();
     private final JdbcTemplate jdbcTemplate;
-    private String sql;
-    private int rowAffected;
 
     public CourseRepository(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
@@ -23,62 +28,40 @@ public class CourseRepository implements CourseDAO {
 
     @Override
     public List<Course> findAll() {
-        sql = "SELECT * FROM courses ORDER BY course_id";
-
-        return jdbcTemplate.query(sql, courseRowMapper);
+        return jdbcTemplate.query(FIND_ALL, courseRowMapper);
     }
 
     @Override
     public Optional<Course> findById(int id) {
-        sql = "SELECT * FROM courses WHERE course_id = ?";
-        Course course = jdbcTemplate.queryForObject(sql, new Object[] {id}, courseRowMapper);
-
-        return Optional.ofNullable(course);
+        return Optional.ofNullable(jdbcTemplate.queryForObject(FIND_BY_ID, new Object[] {id}, courseRowMapper));
     }
 
     @Override
     public boolean insert(Course course) {
-        sql = "INSERT INTO courses (course_name, course_description) VALUES (?, ?)";
-        rowAffected = jdbcTemplate.update(sql, course.getName(), course.getDescription());
-
-        return rowAffected > 0;
+        return jdbcTemplate.update(INSERT, course.getName(), course.getDescription()) > 0;
     }
 
     @Override
     public void insertBatch(List<Course> courses) {
-        sql = "INSERT INTO courses (course_name, course_description) VALUES (?, ?)";
-
         List<Object[]> batchArgs = courses.stream()
                 .map(course -> new Object[] { course.getName(), course.getDescription() })
                 .toList();
 
-        int[] rowsAffected = jdbcTemplate.batchUpdate(sql, batchArgs);
-
-        if (rowsAffected.length != courses.size()) {
-            throw new IllegalStateException("Not all courses were inserted successfully");
-        }
+        jdbcTemplate.batchUpdate(INSERT_BATCH, batchArgs);
     }
 
     @Override
     public boolean update(Course course) {
-        sql = "UPDATE courses SET course_name = ?, course_description = ? WHERE course_id = ?";
-        rowAffected = jdbcTemplate.update(sql, course.getName(), course.getDescription(), course.getId());
-
-        return rowAffected > 0;
+        return jdbcTemplate.update(UPDATE, course.getName(), course.getDescription(), course.getId()) > 0;
     }
 
     @Override
     public boolean delete(Course course) {
-        sql = "DELETE FROM courses WHERE course_id = ?";
-        rowAffected = jdbcTemplate.update(sql, course.getId());
-
-        return rowAffected > 0;
+        return jdbcTemplate.update(DELETE, course.getId()) > 0;
     }
 
     @Override
     public List<Course> findAllCourseByStudentsId(int studentId) {
-        sql = "SELECT c.course_id, c.course_name, c.course_description FROM courses c JOIN enrollments e ON c.course_id = e.course_id WHERE e.student_id = ?";
-
-        return jdbcTemplate.query(sql, new Object[] {studentId}, courseRowMapper);
+        return jdbcTemplate.query(FIND_ALL_COURSE_BY_STUDENT_ID, new Object[] {studentId}, courseRowMapper);
     }
 }

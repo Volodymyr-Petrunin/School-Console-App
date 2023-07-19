@@ -1,7 +1,6 @@
-package org.consoleApp.menu.leaf;
+package org.consoleApp.menu.composite;
 
 import org.consoleApp.menu.MenuItem;
-import org.consoleApp.menu.composite.MenuComposite;
 
 import java.util.List;
 import java.util.StringJoiner;

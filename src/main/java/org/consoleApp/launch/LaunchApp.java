@@ -21,6 +21,7 @@ import org.consoleApp.dao.jdbc.StudentsDAOImpl;
 import org.consoleApp.generation.records.InitialAmountGeneration;
 import org.consoleApp.menu.MenuItem;
 import org.consoleApp.menu.composite.MenuComposite;
+import org.consoleApp.menu.composite.MenuSwapToSpringJDBC;
 import org.consoleApp.menu.leaf.*;
 import org.consoleApp.parser.impl.CourseParser;
 import org.consoleApp.readers.ResourcesFileReader;

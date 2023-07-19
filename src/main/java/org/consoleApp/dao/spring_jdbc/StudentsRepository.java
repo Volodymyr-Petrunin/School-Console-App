@@ -4,9 +4,11 @@ import org.consoleApp.dao.StudentsDAO;
 import org.consoleApp.dao.spring_jdbc.rowMappers.StudentRowMapper;
 import org.consoleApp.domin.Student;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SqlParameterValue;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.sql.Types;
 import java.util.List;
 import java.util.Optional;
 
@@ -44,13 +46,13 @@ public class StudentsRepository implements StudentsDAO {
 
     @Override
     public boolean insert(Student student) {
-        return jdbcTemplate.update(INSERT, student) > 0;
+        return jdbcTemplate.update(INSERT, new SqlParameterValue(Types.INTEGER, student.getGroupId().orElse(null)), student.getFirstName(), student.getLastName()) > 0;
     }
 
     @Override
     public void insertBatch(List<Student> students) {
         List<Object[]> batchArgs = students.stream()
-                .map(student -> new Object[]{student.getGroupId(), student.getFirstName(), student.getLastName()})
+                .map(student -> new Object[]{new SqlParameterValue(Types.INTEGER, student.getGroupId().orElse(null)), student.getFirstName(), student.getLastName()})
                 .toList();
 
         jdbcTemplate.batchUpdate(INSERT_BATCH, batchArgs);
@@ -58,7 +60,7 @@ public class StudentsRepository implements StudentsDAO {
 
     @Override
     public boolean update(Student student) {
-        return jdbcTemplate.update(UPDATE, student.getGroupId(), student.getFirstName(), student.getLastName(), student.getId()) > 0;
+        return jdbcTemplate.update(UPDATE, new SqlParameterValue(Types.INTEGER, student.getGroupId().orElse(null)), student.getFirstName(), student.getLastName(), student.getId()) > 0;
     }
 
     @Override

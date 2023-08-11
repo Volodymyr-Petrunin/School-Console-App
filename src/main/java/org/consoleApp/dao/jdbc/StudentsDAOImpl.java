@@ -2,6 +2,8 @@ package org.consoleApp.dao.jdbc;
 
 import org.consoleApp.dao.StudentsDAO;
 import org.consoleApp.domin.Student;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -9,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Profile("native-jdbc")
+@Repository
 public class StudentsDAOImpl implements StudentsDAO {
     private DataSource dataSource;
 

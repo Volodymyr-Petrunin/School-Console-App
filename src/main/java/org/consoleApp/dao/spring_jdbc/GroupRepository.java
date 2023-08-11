@@ -3,6 +3,8 @@ package org.consoleApp.dao.spring_jdbc;
 import org.consoleApp.dao.GroupDAO;
 import org.consoleApp.dao.spring_jdbc.rowMappers.GroupRowMapper;
 import org.consoleApp.domin.Group;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -10,6 +12,7 @@ import javax.sql.DataSource;
 import java.util.List;
 import java.util.Optional;
 
+@Profile("spring-jdbc")
 @Repository
 public class GroupRepository implements GroupDAO {
     private static final String FIND_ALL = "SELECT * FROM groups ORDER BY group_id";
@@ -22,6 +25,7 @@ public class GroupRepository implements GroupDAO {
     private final GroupRowMapper groupRowMapper = new GroupRowMapper();
     private final JdbcTemplate jdbcTemplate;
 
+    @Autowired
     public GroupRepository(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }

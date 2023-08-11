@@ -2,14 +2,20 @@ package org.consoleApp.dao.jdbc;
 
 import org.consoleApp.dao.CourseDAO;
 import org.consoleApp.domin.Course;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
+import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.sql.*;
 import java.util.*;
 
+@Profile("native-jdbc")
+@Repository
 public class CourseDAOImpl implements CourseDAO {
     private DataSource dataSource;
 
+    @Autowired
     public CourseDAOImpl(DataSource dataSource) {
         this.dataSource = dataSource;
     }

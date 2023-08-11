@@ -1,8 +1,13 @@
 package org.consoleApp.launch;
 
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
+
+@SpringBootApplication
+@ComponentScan("org.consoleApp")
 public class Main {
     public static void main(String[] args) {
-        LaunchApp launchApp = new LaunchApp();
-        launchApp.launch();
+        SpringApplication.run(Main.class, args);
     }
 }

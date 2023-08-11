@@ -3,6 +3,8 @@ package org.consoleApp.dao.spring_jdbc;
 import org.consoleApp.dao.StudentsDAO;
 import org.consoleApp.dao.spring_jdbc.rowMappers.StudentRowMapper;
 import org.consoleApp.domin.Student;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlParameterValue;
 import org.springframework.stereotype.Repository;
@@ -12,6 +14,7 @@ import java.sql.Types;
 import java.util.List;
 import java.util.Optional;
 
+@Profile("spring-jdbc")
 @Repository
 public class StudentsRepository implements StudentsDAO {
     private static final String FIND_ALL = "SELECT * FROM students ORDER BY student_id";
@@ -30,6 +33,7 @@ public class StudentsRepository implements StudentsDAO {
     private final StudentRowMapper studentRowMapper = new StudentRowMapper();
     private final JdbcTemplate jdbcTemplate;
 
+    @Autowired
     public StudentsRepository(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }

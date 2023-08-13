@@ -1,7 +1,6 @@
 package org.consoleApp.dao.parametrized;
 
 import org.consoleApp.dao.CourseDAO;
-import org.consoleApp.dao.jdbc.AbstractContainerBaseTest;
 import org.consoleApp.domin.Course;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -17,9 +16,9 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = DaoTestConfig.class)
-@ActiveProfiles({"jdbc-test"})
+@ActiveProfiles("jdbc-test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Sql(scripts = "classpath:SQLScript/CourseTestScript.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(scripts = "classpath:SQLScript/course_test_script.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class CourseParametrizedTests {
 
     @Autowired

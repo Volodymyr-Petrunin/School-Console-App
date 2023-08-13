@@ -26,8 +26,8 @@ public class CourseRepository implements CourseDAO {
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public CourseRepository(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    public CourseRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override

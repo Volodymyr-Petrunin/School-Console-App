@@ -26,8 +26,8 @@ public class GroupRepository implements GroupDAO {
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public GroupRepository(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    public GroupRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class GroupRepository implements GroupDAO {
 
     @Override
     public Optional<Group> findById(int id) {
-        return Optional.ofNullable(jdbcTemplate.queryForObject(FIND_BY_ID, new Object[] {id}, groupRowMapper));
+        return Optional.ofNullable(jdbcTemplate.queryForObject(FIND_BY_ID, groupRowMapper, id));
     }
 
     @Override
@@ -66,6 +66,6 @@ public class GroupRepository implements GroupDAO {
 
     @Override
     public List<Group> findGroupsWithLessOrEqualStudents(int maxStudents) {
-        return jdbcTemplate.query(FIND_GROUP_WITH_LESS_OR_EQUAL_STUDENTS, new Object[]{maxStudents}, groupRowMapper);
+        return jdbcTemplate.query(FIND_GROUP_WITH_LESS_OR_EQUAL_STUDENTS, groupRowMapper, maxStudents);
     }
 }

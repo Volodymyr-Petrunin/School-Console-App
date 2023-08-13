@@ -20,7 +20,8 @@ public class MenuComposite implements MenuItem {
     @Override
     public String getDescription() {
         return new StringJoiner(System.lineSeparator())
-                .add("\nPlease select an option: ").toString();
+                .add("")
+                .add("Please select an option: ").toString();
     }
 
     @Override

@@ -34,8 +34,8 @@ public class StudentsRepository implements StudentsDAO {
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
-    public StudentsRepository(DataSource dataSource) {
-        this.jdbcTemplate = new JdbcTemplate(dataSource);
+    public StudentsRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     @Override

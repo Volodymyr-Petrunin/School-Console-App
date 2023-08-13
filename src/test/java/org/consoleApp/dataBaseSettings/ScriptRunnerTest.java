@@ -1,6 +1,6 @@
 package org.consoleApp.dataBaseSettings;
 
-import org.consoleApp.dao.jdbc.AbstractContainerBaseTest;
+import org.consoleApp.parametrizedDAOTest.AbstractContainerBaseTest;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;

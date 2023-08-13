@@ -1,4 +1,4 @@
-package org.consoleApp.dao.parametrized;
+package org.consoleApp.parametrizedDAOTest;
 
 import org.consoleApp.dao.GroupDAO;
 import org.consoleApp.domin.Group;

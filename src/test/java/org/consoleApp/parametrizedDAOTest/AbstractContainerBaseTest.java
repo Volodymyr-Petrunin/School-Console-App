@@ -1,4 +1,4 @@
-package org.consoleApp.dao.jdbc;
+package org.consoleApp.parametrizedDAOTest;
 
 import org.postgresql.ds.PGSimpleDataSource;
 import org.testcontainers.containers.PostgreSQLContainer;

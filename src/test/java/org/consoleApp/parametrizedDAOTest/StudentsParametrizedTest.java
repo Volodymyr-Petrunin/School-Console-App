@@ -1,26 +1,40 @@
-package org.consoleApp.dao.jdbc;
+package org.consoleApp.parametrizedDAOTest;
 
+import org.consoleApp.dao.StudentsDAO;
 import org.consoleApp.domin.Course;
 import org.consoleApp.domin.Student;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.jdbc.Sql;
 
 import javax.sql.DataSource;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class StudentsDAOImplTest extends AbstractContainerBaseTest {
-    private static final DataSource dataSource = getDataSource();
-    private final StudentsDAOImpl studentsDAO = new StudentsDAOImpl(dataSource);
-    private final CleanupAndFillData cleanupAndFillData = new CleanupAndFillData(dataSource);
+@SpringBootTest(classes = DaoTestConfig.class)
+@ActiveProfiles(profiles = "jdbc-test")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Sql(value = "classpath:SQLScript/students_test_script.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+ class StudentsParametrizedTest {
+    @Autowired
+    private List<StudentsDAO> studentsDAOList;
+    @Autowired
+    private DataSource dataSource;
     private final List<Student> expectedStudents = List.of(
             new Student(1, null, "John", "Doe"),
             new Student(2, null, "Jane", "Smith"),
@@ -29,26 +43,21 @@ class StudentsDAOImplTest extends AbstractContainerBaseTest {
     private List<Student> expected;
     private List<Student> actual;
 
-    @BeforeAll
-    static void beforeAll(){
-        addCourse();
+    private Stream<StudentsDAO> getImpl(){
+        return studentsDAOList.stream();
     }
 
-    @BeforeEach
-    void cleanupAndFillData(){
-        cleanupAndFillData.deleteAll("students");
-        studentsDAO.insertBatch(expectedStudents);
-    }
-
-    @Test
-    void testFindAll_ShouldFindAllStudents() {
+    @ParameterizedTest
+    @MethodSource("getImpl")
+    void testFindAll_ShouldFindAllStudents(StudentsDAO studentsDAO) {
         actual = studentsDAO.findAll();
 
         assertEquals(expectedStudents, actual);
     }
 
-    @Test
-    void testFindById_ShouldFindCorrectStudentById() {
+    @ParameterizedTest
+    @MethodSource("getImpl")
+    void testFindById_ShouldFindCorrectStudentById(StudentsDAO studentsDAO) {
         Optional<Student> findStudent = studentsDAO.findById(1);
         Student actual = findStudent.orElseThrow(() -> new RuntimeException("Can't get student"));
 
@@ -57,8 +66,9 @@ class StudentsDAOImplTest extends AbstractContainerBaseTest {
         assertEquals(expected, actual);
     }
 
-    @Test
-    void testInsert_ShouldInsertStudent_AndReturnCorrectListOfStudents() {
+    @ParameterizedTest
+    @MethodSource("getImpl")
+    void testInsert_ShouldInsertStudent_AndReturnCorrectListOfStudents(StudentsDAO studentsDAO) {
         expected = new ArrayList<>(expectedStudents);
 
         Student newStudent = new Student(4, null, "Vova", "Petro");
@@ -70,8 +80,9 @@ class StudentsDAOImplTest extends AbstractContainerBaseTest {
         assertEquals(expected, actual);
     }
 
-    @Test
-    void testInsertBatch_ShouldInsertBatchOfStudents_AndReturnCorrectListOfStudents() {
+    @ParameterizedTest
+    @MethodSource("getImpl")
+    void testInsertBatch_ShouldInsertBatchOfStudents_AndReturnCorrectListOfStudents(StudentsDAO studentsDAO) {
         List<Student> studentsBatch = List.of(
                 new Student(4, null, "Vova", "Petro"),
                 new Student(5, null, "Max", "Kozak"),
@@ -87,8 +98,9 @@ class StudentsDAOImplTest extends AbstractContainerBaseTest {
         assertEquals(expected, actual);
     }
 
-    @Test
-    void testUpdate_ShouldUpdateFirstStudentsFromExpectedList() {
+    @ParameterizedTest
+    @MethodSource("getImpl")
+    void testUpdate_ShouldUpdateFirstStudentsFromExpectedList(StudentsDAO studentsDAO) {
         Student student = new Student(1, null, "Lando", "Brown");
 
         boolean update = studentsDAO.update(student);
@@ -101,8 +113,9 @@ class StudentsDAOImplTest extends AbstractContainerBaseTest {
         assertEquals(expected, actual);
     }
 
-    @Test
-    void testDelete_ShouldRemoveFirstStudentFromDB() {
+    @ParameterizedTest
+    @MethodSource("getImpl")
+    void testDelete_ShouldRemoveFirstStudentFromDB(StudentsDAO studentsDAO) {
         boolean delete = studentsDAO.delete(expectedStudents.get(0));
         actual = studentsDAO.findAll();
 
@@ -113,8 +126,9 @@ class StudentsDAOImplTest extends AbstractContainerBaseTest {
         assertEquals(expected, actual);
     }
 
-    @Test
-    void testDeleteByStudentId_ShouldRemoveStudentFromDBbyID_AndReturnCorrectList(){
+    @ParameterizedTest
+    @MethodSource("getImpl")
+    void testDeleteByStudentId_ShouldRemoveStudentFromDBbyID_AndReturnCorrectList(StudentsDAO studentsDAO){
         boolean delete = studentsDAO.deleteByStudentId(1);
 
         actual = studentsDAO.findAll();
@@ -126,8 +140,9 @@ class StudentsDAOImplTest extends AbstractContainerBaseTest {
         assertEquals(expected, actual);
     }
 
-    @Test
-    void testFindByFirstName_ShouldFindCorrectStudentByName_AndReturnCorrectList(){
+    @ParameterizedTest
+    @MethodSource("getImpl")
+    void testFindByFirstName_ShouldFindCorrectStudentByName_AndReturnCorrectList(StudentsDAO studentsDAO){
         String firstName = expectedStudents.get(0).getFirstName();
         actual = studentsDAO.findByFirstName(firstName);
 
@@ -135,8 +150,9 @@ class StudentsDAOImplTest extends AbstractContainerBaseTest {
         assertThat(actual, hasSize(1));
     }
 
-    @Test
-    void testEnrollStudentInCourse_ShouldEnrollStudentToCourse_AndReturnCorrectCourseList(){
+    @ParameterizedTest
+    @MethodSource("getImpl")
+    void testEnrollStudentInCourse_ShouldEnrollStudentToCourse_AndReturnCorrectCourseList(StudentsDAO studentsDAO){
         int courseID = 1;
 
         List<Course> expectedCourses = new ArrayList<>();
@@ -155,8 +171,9 @@ class StudentsDAOImplTest extends AbstractContainerBaseTest {
         assertThat(actualCourses, containsInAnyOrder(expectedCourses.toArray()));
     }
 
-    @Test
-    void testRemoveStudentFromCourse_ShouldRemoveStudentFromCourse(){
+    @ParameterizedTest
+    @MethodSource("getImpl")
+    void testRemoveStudentFromCourse_ShouldRemoveStudentFromCourse(StudentsDAO studentsDAO){
         int studentID = 1;
         int courseID = 1;
 
@@ -175,8 +192,9 @@ class StudentsDAOImplTest extends AbstractContainerBaseTest {
         assertEquals(expected, actual);
     }
 
-    @Test
-    void testFindStudentsByCourseName_ShouldFindCorrectStudentsByCourseName_AndReturnCorrectStudentsList(){
+    @ParameterizedTest
+    @MethodSource("getImpl")
+    void testFindStudentsByCourseName_ShouldFindCorrectStudentsByCourseName_AndReturnCorrectStudentsList(StudentsDAO studentsDAO){
         String courseName = "PE";
 
         expected = new ArrayList<>(expectedStudents);
@@ -189,26 +207,6 @@ class StudentsDAOImplTest extends AbstractContainerBaseTest {
         actual = studentsDAO.findStudentsByCourseName(courseName);
 
         assertEquals(expected, actual);
-    }
-
-
-    private static void insertCourseBatch(List<Course> courses) {
-        try (Connection connection = dataSource.getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO courses (course_name, course_description) VALUES (?, ?)")) {
-
-
-            for (Course course : courses) {
-                preparedStatement.setString(1, course.getName());
-                preparedStatement.setString(2, course.getDescription());
-
-                preparedStatement.addBatch();
-            }
-
-            preparedStatement.executeBatch();
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     private List<Course> findAllCourseByStudentsId(int studentId) {
@@ -232,16 +230,6 @@ class StudentsDAOImplTest extends AbstractContainerBaseTest {
             throw new IllegalStateException("Can't fetch courses", e);
         }
         return courses;
-    }
-
-    private static void addCourse(){
-        List<Course> courses = List.of(
-                new Course(1, "PE", "PE"),
-                new Course(2, "IT", "IT"),
-                new Course(3, "Music", "Skryabin")
-        );
-
-        insertCourseBatch(courses);
     }
 
     public List<Course> findAllCourses() {

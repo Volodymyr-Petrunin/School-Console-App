@@ -1,4 +1,4 @@
-package org.consoleApp.dao.parametrized;
+package org.consoleApp.parametrizedDAOTest;
 
 import org.consoleApp.dao.CourseDAO;
 import org.consoleApp.domin.Course;

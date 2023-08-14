@@ -19,8 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = DaoTestConfig.class)
-@ActiveProfiles("jdbc-test")
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ActiveProfiles({"spring-jdbc", "native-jdbc"})
 @Sql(value = "classpath:SQLScript/group_test_script.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class GroupParametrizedTests {
     @Autowired

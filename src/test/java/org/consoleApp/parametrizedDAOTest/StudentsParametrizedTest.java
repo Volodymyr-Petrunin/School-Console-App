@@ -26,9 +26,10 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = DaoTestConfig.class)
+@SpringBootTest
 @ActiveProfiles({"spring-jdbc", "native-jdbc"})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Sql(scripts = "classpath:SQLScript/create_tables.sql")
 @Sql(value = "classpath:SQLScript/students_test_script.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
  class StudentsParametrizedTest {
     @Autowired

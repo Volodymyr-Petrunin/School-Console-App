@@ -1,0 +1,3 @@
+TRUNCATE TABLE groups RESTART IDENTITY CASCADE;
+
+INSERT INTO groups (group_name) VALUES ('AA-11'), ('BB-22'), ('CC-33');

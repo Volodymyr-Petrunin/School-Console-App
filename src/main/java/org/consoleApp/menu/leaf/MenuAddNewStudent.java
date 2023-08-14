@@ -51,9 +51,8 @@ public class MenuAddNewStudent implements MenuItem {
         Student newStudent = new Student(null,groupId,firstName,lastName);
 
         boolean operationSuccessful = studentsDAO.insert(newStudent);
-        boolean enrollSuccessful = studentsDAO.enrollStudentInCourse(newStudent.getId(), groupId);
 
-        if (operationSuccessful && enrollSuccessful){
+        if (operationSuccessful){
             System.out.println("New student added successfully! :)");
             System.out.print(dash);
         }else {

@@ -19,7 +19,9 @@ public class MenuComposite implements MenuItem {
 
     @Override
     public String getDescription() {
-        return "Please select an option: ";
+        return new StringJoiner(System.lineSeparator())
+                .add("")
+                .add("Please select an option: ").toString();
     }
 
     @Override
@@ -30,7 +32,7 @@ public class MenuComposite implements MenuItem {
         }
     }
 
-    private void displayMenu() {
+    protected void displayMenu() {
         StringJoiner menu = new StringJoiner(System.lineSeparator());
 
         menu.add(getDescription());

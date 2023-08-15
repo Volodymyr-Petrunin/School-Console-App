@@ -1,8 +1,11 @@
 package org.consoleApp.dao.services;
 
 import org.consoleApp.dao.StudentsDAO;
+import org.consoleApp.dataFilling.DataFiller;
+import org.consoleApp.dataFilling.leaf.StudentsDataFiller;
 import org.consoleApp.domin.Student;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,10 +14,12 @@ import java.util.Optional;
 @Service
 public class StudentService {
     private final StudentsDAO studentsDAO;
+    private final DataFiller studentsDataFiller;
 
     @Autowired
-    public StudentService(StudentsDAO studentsDAO) {
+    public StudentService(StudentsDAO studentsDAO, @Qualifier("studentsDataFiller") DataFiller studentsDataFiller) {
         this.studentsDAO = studentsDAO;
+        this.studentsDataFiller = studentsDataFiller;
     }
 
     public List<Student> getAllStudents() {
@@ -55,5 +60,9 @@ public class StudentService {
 
     public List<Student> getStudentsByCourseName(String courseName) {
         return studentsDAO.findStudentsByCourseName(courseName);
+    }
+
+    public void generateDataAndPopulateDB(){
+        studentsDataFiller.fillData();
     }
 }

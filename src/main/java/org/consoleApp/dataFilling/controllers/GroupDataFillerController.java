@@ -11,7 +11,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Controller;
 
 @Controller
-@PropertySource("classpath:GroupDataFillerController.properties")
+@PropertySource("classpath:groupDataFillerController.properties")
 public class GroupDataFillerController {
     @Bean
     public GroupAmountGeneration groupAmountGeneration(@Value("${quantityGenerations}") int quantityGenerations,

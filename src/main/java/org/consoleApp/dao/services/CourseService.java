@@ -1,6 +1,7 @@
 package org.consoleApp.dao.services;
 
 import org.consoleApp.dao.CourseDAO;
+import org.consoleApp.dataFilling.DataFiller;
 import org.consoleApp.domin.Course;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,10 +12,12 @@ import java.util.Optional;
 @Service
 public class CourseService {
     private final CourseDAO courseDAO;
+    private final DataFiller coursesDataFiller;
 
     @Autowired
-    public CourseService(CourseDAO courseDAO) {
+    public CourseService(CourseDAO courseDAO, DataFiller coursesDataFiller) {
         this.courseDAO = courseDAO;
+        this.coursesDataFiller = coursesDataFiller;
     }
 
     public List<Course> getAllCourses() {
@@ -43,5 +46,9 @@ public class CourseService {
 
     public List<Course> getAllCoursesByStudentId(int studentId) {
         return courseDAO.findAllCourseByStudentsId(studentId);
+    }
+
+    public void generateDataAndPopulateDB(){
+        coursesDataFiller.fillData();
     }
 }

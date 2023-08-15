@@ -2,6 +2,7 @@ package org.consoleApp.dataFilling.leaf;
 
 import org.consoleApp.dao.jdbc.CourseDAOImpl;
 import org.consoleApp.domin.Course;
+import org.consoleApp.generation.impl.CoursesGeneratorService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +17,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class CoursesDataFillerTest {
     @Mock private CourseDAOImpl courseDAO;
+    @Mock private CoursesGeneratorService coursesGeneratorService;
     private final List<Course> expected = List.of(
             new Course(1, "PE", "PE"),
             new Course(2, "IT", "IT"),
@@ -25,12 +27,13 @@ class CoursesDataFillerTest {
 
     @BeforeEach
     void setup() {
-        dataFiller = new CoursesDataFiller(expected, courseDAO);
+        dataFiller = new CoursesDataFiller(coursesGeneratorService, courseDAO);
     }
 
 
     @Test
     void testFillData_ShouldUseCorrectLogic_(){
+        when(coursesGeneratorService.generateData()).thenReturn(expected);
         dataFiller.fillData();
         verify(courseDAO, times(1)).insertBatch(expected);
     }

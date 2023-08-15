@@ -3,6 +3,7 @@ package org.consoleApp.dataFilling.leaf;
 import org.consoleApp.dao.jdbc.GroupsDAOImpl;
 import org.consoleApp.dao.jdbc.StudentsDAOImpl;
 import org.consoleApp.domin.Group;
+import org.consoleApp.generation.impl.StudentsReaderService;
 import org.consoleApp.generation.records.InitialAmountGeneration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,6 +21,7 @@ class StudentsDataFillerTest{
     private final static int QUANTITY_GENERATION = 3;
     @Mock private StudentsDAOImpl studentsDAO;
     @Mock private GroupsDAOImpl groupsDAO;
+    @Mock private StudentsReaderService studentsReaderService;
     private final List<Group> expectedGroup = List.of(
             new Group(1, "AA-11"),
             new Group(2, "BB-22"),
@@ -37,11 +39,15 @@ class StudentsDataFillerTest{
     @BeforeEach
     void before(){
         doReturn(expectedGroup).when(groupsDAO).findAll();
-        dataFiller = new StudentsDataFiller(names, surnames, amountGeneration, studentsDAO, groupsDAO);
+        dataFiller = new StudentsDataFiller(studentsReaderService, studentsDAO, groupsDAO);
     }
 
     @Test
     void testFillData_ShouldInsertBatchOfStudentsInDB(){
+        when(studentsReaderService.getNameList()).thenReturn(names);
+        when(studentsReaderService.getSurnameList()).thenReturn(surnames);
+        when(studentsReaderService.getInitialAmountGeneration()).thenReturn(amountGeneration);
+
         dataFiller.fillData();
 
         verify(studentsDAO, times(1)).insertBatch(anyList());

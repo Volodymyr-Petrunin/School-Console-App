@@ -1,4 +1,4 @@
-package org.consoleApp.dao.services;
+package org.consoleApp.services;
 
 import org.consoleApp.dao.GroupDAO;
 import org.consoleApp.dataFilling.DataFiller;

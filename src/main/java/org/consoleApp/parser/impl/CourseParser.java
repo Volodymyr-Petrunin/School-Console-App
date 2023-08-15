@@ -2,8 +2,9 @@ package org.consoleApp.parser.impl;
 
 import org.consoleApp.domin.Course;
 import org.consoleApp.parser.Parser;
+import org.springframework.stereotype.Component;
 
-
+@Component
 public class CourseParser implements Parser<Course> {
     @Override
     public Course parse(String input) {

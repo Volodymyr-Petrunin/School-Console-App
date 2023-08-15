@@ -7,12 +7,12 @@ import org.consoleApp.generation.records.GroupAmountGeneration;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.stereotype.Controller;
 
-@Controller
-@PropertySource("classpath:groupDataFillerController.properties")
-public class GroupDataFillerController {
+@Configuration
+@PropertySource("classpath:groupDataFillerConfiguration.properties")
+public class GroupDataFillerConfiguration {
     @Bean
     public GroupAmountGeneration groupAmountGeneration(@Value("${quantityGenerations}") int quantityGenerations,
                                                        @Value("${amountOfLetters}") int amountOfLetters,

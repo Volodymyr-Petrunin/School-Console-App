@@ -1,8 +1,7 @@
-package org.consoleApp.dao.services;
+package org.consoleApp.services;
 
 import org.consoleApp.dao.StudentsDAO;
 import org.consoleApp.dataFilling.DataFiller;
-import org.consoleApp.dataFilling.leaf.StudentsDataFiller;
 import org.consoleApp.domin.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -54,8 +53,8 @@ public class StudentService {
         return studentsDAO.enrollStudentInCourse(studentId, courseId);
     }
 
-    public void removeStudentFromCourse(int studentId, int courseId) {
-        studentsDAO.findById(studentId).ifPresent(student -> removeStudentFromCourse(studentId, courseId));
+    public boolean removeStudentFromCourse(int studentId, int courseId) {
+        return studentsDAO.removeStudentFromCourse(studentId, courseId);
     }
 
     public List<Student> getStudentsByCourseName(String courseName) {

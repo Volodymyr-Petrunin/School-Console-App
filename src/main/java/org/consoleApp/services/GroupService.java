@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class GroupService {
+public class GroupService implements Services{
     private final GroupDAO groupDAO;
     private final DataFiller groupDataFiller;
 

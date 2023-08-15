@@ -1,7 +1,9 @@
 package org.consoleApp.dataFilling.controllers;
 
+import org.consoleApp.dao.CourseDAO;
 import org.consoleApp.dao.GroupDAO;
 import org.consoleApp.dao.StudentsDAO;
+import org.consoleApp.dataFilling.leaf.EnrollmentsDataFiller;
 import org.consoleApp.dataFilling.leaf.StudentsDataFiller;
 import org.consoleApp.generation.impl.StudentsReaderService;
 import org.consoleApp.generation.records.InitialAmountGeneration;
@@ -36,5 +38,11 @@ public class StudentsDataFillerConfiguration {
     @Bean
     public StudentsDataFiller studentsDataFiller(StudentsReaderService studentsReaderService, StudentsDAO studentsDAO, GroupDAO groupDAO){
         return new StudentsDataFiller(studentsReaderService, studentsDAO, groupDAO);
+    }
+
+    @Bean
+    public EnrollmentsDataFiller enrollmentsDataFiller(@Value("${numberOfStudentInOneCourse}") int numberOfStudentInOneCourse,
+                                                       StudentsDAO studentsDAO, CourseDAO courseDAO){
+        return new EnrollmentsDataFiller(numberOfStudentInOneCourse, studentsDAO, courseDAO);
     }
 }

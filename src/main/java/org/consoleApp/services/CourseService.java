@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CourseService {
+public class CourseService implements Services {
     private final CourseDAO courseDAO;
     private final DataFiller coursesDataFiller;
 
@@ -49,6 +49,7 @@ public class CourseService {
         return courseDAO.findAllCourseByStudentsId(studentId);
     }
 
+    @Override
     public void generateDataAndPopulateDB(){
         coursesDataFiller.fillData();
     }

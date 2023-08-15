@@ -11,14 +11,16 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class StudentService {
+public class StudentService implements Services{
     private final StudentsDAO studentsDAO;
     private final DataFiller studentsDataFiller;
+    private final DataFiller enrollDataFiller;
 
     @Autowired
-    public StudentService(StudentsDAO studentsDAO, @Qualifier("studentsDataFiller") DataFiller studentsDataFiller) {
+    public StudentService(StudentsDAO studentsDAO, @Qualifier("studentsDataFiller") DataFiller studentsDataFiller, @Qualifier("enrollmentsDataFiller")DataFiller enrollDataFiller) {
         this.studentsDAO = studentsDAO;
         this.studentsDataFiller = studentsDataFiller;
+        this.enrollDataFiller = enrollDataFiller;
     }
 
     public List<Student> getAllStudents() {
@@ -61,7 +63,9 @@ public class StudentService {
         return studentsDAO.findStudentsByCourseName(courseName);
     }
 
+    @Override
     public void generateDataAndPopulateDB(){
         studentsDataFiller.fillData();
+        enrollDataFiller.fillData();
     }
 }

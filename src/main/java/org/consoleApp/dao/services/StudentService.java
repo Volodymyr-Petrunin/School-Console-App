@@ -1,0 +1,59 @@
+package org.consoleApp.dao.services;
+
+import org.consoleApp.dao.StudentsDAO;
+import org.consoleApp.domin.Student;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class StudentService {
+    private final StudentsDAO studentsDAO;
+
+    @Autowired
+    public StudentService(StudentsDAO studentsDAO) {
+        this.studentsDAO = studentsDAO;
+    }
+
+    public List<Student> getAllStudents() {
+        return studentsDAO.findAll();
+    }
+
+    public Optional<Student> getStudentById(int studentId) {
+        return studentsDAO.findById(studentId);
+    }
+
+    public boolean createStudent(Student student) {
+        return studentsDAO.insert(student);
+    }
+
+    public void createMultipleStudents(List<Student> students) {
+        studentsDAO.insertBatch(students);
+    }
+
+    public boolean updateStudent(Student student) {
+        return studentsDAO.update(student);
+    }
+
+    public void deleteStudent(int studentId) {
+        studentsDAO.findById(studentId).ifPresent(studentsDAO::delete);
+    }
+
+    public List<Student> getStudentsByFirstName(String firstName) {
+        return studentsDAO.findByFirstName(firstName);
+    }
+
+    public boolean enrollStudentInCourse(int studentId, int courseId) {
+        return studentsDAO.enrollStudentInCourse(studentId, courseId);
+    }
+
+    public void removeStudentFromCourse(int studentId, int courseId) {
+        studentsDAO.findById(studentId).ifPresent(student -> removeStudentFromCourse(studentId, courseId));
+    }
+
+    public List<Student> getStudentsByCourseName(String courseName) {
+        return studentsDAO.findStudentsByCourseName(courseName);
+    }
+}

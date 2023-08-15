@@ -4,6 +4,7 @@ import org.consoleApp.dao.CourseDAO;
 import org.consoleApp.dataFilling.DataFiller;
 import org.consoleApp.domin.Course;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public class CourseService {
     private final DataFiller coursesDataFiller;
 
     @Autowired
-    public CourseService(CourseDAO courseDAO, DataFiller coursesDataFiller) {
+    public CourseService(CourseDAO courseDAO, @Qualifier("courseDataFiller") DataFiller coursesDataFiller) {
         this.courseDAO = courseDAO;
         this.coursesDataFiller = coursesDataFiller;
     }

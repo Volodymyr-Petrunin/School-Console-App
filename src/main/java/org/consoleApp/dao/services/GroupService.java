@@ -1,8 +1,10 @@
 package org.consoleApp.dao.services;
 
 import org.consoleApp.dao.GroupDAO;
+import org.consoleApp.dataFilling.DataFiller;
 import org.consoleApp.domin.Group;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,10 +13,12 @@ import java.util.Optional;
 @Service
 public class GroupService {
     private final GroupDAO groupDAO;
+    private final DataFiller groupDataFiller;
 
     @Autowired
-    public GroupService(GroupDAO groupDAO) {
+    public GroupService(GroupDAO groupDAO, @Qualifier("groupDataFiller") DataFiller groupDataFiller) {
         this.groupDAO = groupDAO;
+        this.groupDataFiller = groupDataFiller;
     }
 
     public List<Group> getAllGroups() {
@@ -43,5 +47,9 @@ public class GroupService {
 
     public List<Group> getGroupsWithLessOrEqualStudents(int maxStudents) {
         return groupDAO.findGroupsWithLessOrEqualStudents(maxStudents);
+    }
+
+    public void generateDataAndPopulateDB(){
+        groupDataFiller.fillData();
     }
 }

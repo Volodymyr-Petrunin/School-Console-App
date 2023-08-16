@@ -1,15 +1,16 @@
-package org.consoleApp.dataFilling.controllers;
+package org.consoleApp.dataFilling.configuration;
 
 import org.consoleApp.dao.CourseDAO;
-import org.consoleApp.dao.GroupDAO;
 import org.consoleApp.dao.StudentsDAO;
-import org.consoleApp.dataFilling.leaf.EnrollmentsDataFiller;
-import org.consoleApp.dataFilling.leaf.StudentsDataFiller;
-import org.consoleApp.generation.impl.StudentsReaderService;
+import org.consoleApp.generation.records.EnrollInfo;
+import org.consoleApp.generation.impl.EnrollmentsDataGeneration;
+import org.consoleApp.domin.Student;
+import org.consoleApp.generation.GenerationData;
+import org.consoleApp.generation.impl.StudentsGenerationData;
+import org.consoleApp.generation.impl.StudentsGeneratorService;
 import org.consoleApp.generation.records.InitialAmountGeneration;
-import org.consoleApp.readers.Reader;
 import org.consoleApp.readers.ResourcesFileReader;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.consoleApp.services.GroupService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,13 +37,13 @@ public class StudentsDataFillerConfiguration {
     }
 
     @Bean
-    public StudentsDataFiller studentsDataFiller(StudentsReaderService studentsReaderService, StudentsDAO studentsDAO, GroupDAO groupDAO){
-        return new StudentsDataFiller(studentsReaderService, studentsDAO, groupDAO);
+    public GenerationData<EnrollInfo> enrollmentsDataFiller(@Value("${numberOfStudentInOneCourse}") int numberOfStudentInOneCourse,
+                                                            StudentsDAO studentsDAO, CourseDAO courseDAO){
+        return new EnrollmentsDataGeneration(numberOfStudentInOneCourse, studentsDAO, courseDAO);
     }
 
     @Bean
-    public EnrollmentsDataFiller enrollmentsDataFiller(@Value("${numberOfStudentInOneCourse}") int numberOfStudentInOneCourse,
-                                                       StudentsDAO studentsDAO, CourseDAO courseDAO){
-        return new EnrollmentsDataFiller(numberOfStudentInOneCourse, studentsDAO, courseDAO);
+    public GenerationData<Student> studentsGeneration(StudentsGeneratorService studentsGeneratorService, GroupService groupService){
+        return new StudentsGenerationData(studentsGeneratorService, groupService.getAllGroups());
     }
 }

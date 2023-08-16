@@ -9,13 +9,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class StudentsReaderService {
+public class StudentsGeneratorService {
     private final Reader readerNames;
     private final Reader readerSurnames;
     private final InitialAmountGeneration initialAmountGeneration;
 
     @Autowired
-    public StudentsReaderService(@Qualifier("readNameFile") Reader readerNames, @Qualifier("readSurnameFile") Reader readerSurnames, InitialAmountGeneration initialAmountGeneration) {
+    public StudentsGeneratorService(@Qualifier("readNameFile") Reader readerNames, @Qualifier("readSurnameFile") Reader readerSurnames, InitialAmountGeneration initialAmountGeneration) {
         this.readerNames = readerNames;
         this.readerSurnames = readerSurnames;
         this.initialAmountGeneration = initialAmountGeneration;

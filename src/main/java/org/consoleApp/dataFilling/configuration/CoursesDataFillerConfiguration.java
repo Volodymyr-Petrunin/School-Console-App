@@ -1,9 +1,6 @@
-package org.consoleApp.dataFilling.controllers;
+package org.consoleApp.dataFilling.configuration;
 
-import org.consoleApp.dao.CourseDAO;
-import org.consoleApp.dataFilling.DataFiller;
-import org.consoleApp.dataFilling.leaf.CoursesDataFiller;
-import org.consoleApp.generation.impl.CoursesGeneratorService;
+
 import org.consoleApp.readers.ResourcesFileReader;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -16,10 +13,5 @@ public class CoursesDataFillerConfiguration {
     @Bean
     public ResourcesFileReader readCoursesFile(@Value("${courses}") String filename){
         return new ResourcesFileReader(filename);
-    }
-
-    @Bean
-    public DataFiller courseDataFiller(CoursesGeneratorService courses, CourseDAO courseDAO) {
-        return new CoursesDataFiller(courses, courseDAO);
     }
 }

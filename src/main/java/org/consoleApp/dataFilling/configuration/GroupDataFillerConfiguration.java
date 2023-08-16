@@ -1,8 +1,8 @@
-package org.consoleApp.dataFilling.controllers;
+package org.consoleApp.dataFilling.configuration;
 
-import org.consoleApp.dao.GroupDAO;
-import org.consoleApp.dataFilling.DataFiller;
-import org.consoleApp.dataFilling.leaf.GroupDataFiller;
+import org.consoleApp.domin.Group;
+import org.consoleApp.generation.GenerationData;
+import org.consoleApp.generation.impl.GroupGenerationData;
 import org.consoleApp.generation.records.GroupAmountGeneration;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +21,7 @@ public class GroupDataFillerConfiguration {
     }
 
     @Bean
-    public DataFiller groupDataFiller(@Qualifier("groupAmountGeneration") GroupAmountGeneration groupAmountGeneration, GroupDAO groupDAO){
-        return new GroupDataFiller(groupAmountGeneration, groupDAO);
+    public GenerationData<Group> groupGenerationData(@Qualifier("groupAmountGeneration") GroupAmountGeneration groupAmountGeneration){
+        return new GroupGenerationData(groupAmountGeneration);
     }
 }

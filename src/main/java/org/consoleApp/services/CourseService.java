@@ -1,24 +1,23 @@
 package org.consoleApp.services;
 
 import org.consoleApp.dao.CourseDAO;
-import org.consoleApp.dataFilling.DataFiller;
 import org.consoleApp.domin.Course;
+import org.consoleApp.generation.impl.CoursesGeneratorService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CourseService implements Services {
+public class CourseService implements ServicesDAO {
     private final CourseDAO courseDAO;
-    private final DataFiller coursesDataFiller;
+    private final CoursesGeneratorService generatorService;
 
     @Autowired
-    public CourseService(CourseDAO courseDAO, @Qualifier("courseDataFiller") DataFiller coursesDataFiller) {
+    public CourseService(CourseDAO courseDAO, CoursesGeneratorService generatorService) {
         this.courseDAO = courseDAO;
-        this.coursesDataFiller = coursesDataFiller;
+        this.generatorService = generatorService;
     }
 
     public List<Course> getAllCourses() {
@@ -51,6 +50,6 @@ public class CourseService implements Services {
 
     @Override
     public void generateDataAndPopulateDB(){
-        coursesDataFiller.fillData();
+        createMultipleCourses(generatorService.generateData());
     }
 }

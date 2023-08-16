@@ -1,8 +1,9 @@
 package org.consoleApp.services;
 
 import org.consoleApp.dao.StudentsDAO;
-import org.consoleApp.dataFilling.DataFiller;
+import org.consoleApp.generation.records.EnrollInfo;
 import org.consoleApp.domin.Student;
+import org.consoleApp.generation.GenerationData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -11,16 +12,17 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class StudentService implements Services{
+public class StudentService implements ServicesDAO {
     private final StudentsDAO studentsDAO;
-    private final DataFiller studentsDataFiller;
-    private final DataFiller enrollDataFiller;
+    private final GenerationData<EnrollInfo> enrollInfoGenerationData;
+    private final GenerationData<Student> studentGenerationData;
 
     @Autowired
-    public StudentService(StudentsDAO studentsDAO, @Qualifier("studentsDataFiller") DataFiller studentsDataFiller, @Qualifier("enrollmentsDataFiller")DataFiller enrollDataFiller) {
+    public StudentService(StudentsDAO studentsDAO, @Qualifier("enrollmentsDataFiller")GenerationData<EnrollInfo> enrollInfoGenerationData,
+                          @Qualifier("studentsGeneration") GenerationData<Student> studentsGenerationData) {
         this.studentsDAO = studentsDAO;
-        this.studentsDataFiller = studentsDataFiller;
-        this.enrollDataFiller = enrollDataFiller;
+        this.enrollInfoGenerationData = enrollInfoGenerationData;
+        this.studentGenerationData = studentsGenerationData;
     }
 
     public List<Student> getAllStudents() {
@@ -65,7 +67,11 @@ public class StudentService implements Services{
 
     @Override
     public void generateDataAndPopulateDB(){
-        studentsDataFiller.fillData();
-        enrollDataFiller.fillData();
+        createMultipleStudents(studentGenerationData.generateData());
+        List<EnrollInfo> generationEnroll = enrollInfoGenerationData.generateData();
+
+        for (EnrollInfo currentInfo : generationEnroll){
+            enrollStudentInCourse(currentInfo.studentId(), currentInfo.courseId());
+        }
     }
 }

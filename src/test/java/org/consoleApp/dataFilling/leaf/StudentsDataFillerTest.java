@@ -3,7 +3,7 @@ package org.consoleApp.dataFilling.leaf;
 import org.consoleApp.dao.jdbc.GroupsDAOImpl;
 import org.consoleApp.dao.jdbc.StudentsDAOImpl;
 import org.consoleApp.domin.Group;
-import org.consoleApp.generation.impl.StudentsReaderService;
+import org.consoleApp.generation.impl.StudentsGeneratorService;
 import org.consoleApp.generation.records.InitialAmountGeneration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -21,7 +20,7 @@ class StudentsDataFillerTest{
     private final static int QUANTITY_GENERATION = 3;
     @Mock private StudentsDAOImpl studentsDAO;
     @Mock private GroupsDAOImpl groupsDAO;
-    @Mock private StudentsReaderService studentsReaderService;
+    @Mock private StudentsGeneratorService studentsGeneratorService;
     private final List<Group> expectedGroup = List.of(
             new Group(1, "AA-11"),
             new Group(2, "BB-22"),
@@ -39,14 +38,14 @@ class StudentsDataFillerTest{
     @BeforeEach
     void before(){
         doReturn(expectedGroup).when(groupsDAO).findAll();
-        dataFiller = new StudentsDataFiller(studentsReaderService, studentsDAO, groupsDAO);
+        dataFiller = new StudentsDataFiller(studentsGeneratorService, studentsDAO, groupsDAO);
     }
 
     @Test
     void testFillData_ShouldInsertBatchOfStudentsInDB(){
-        when(studentsReaderService.getNameList()).thenReturn(names);
-        when(studentsReaderService.getSurnameList()).thenReturn(surnames);
-        when(studentsReaderService.getInitialAmountGeneration()).thenReturn(amountGeneration);
+        when(studentsGeneratorService.getNameList()).thenReturn(names);
+        when(studentsGeneratorService.getSurnameList()).thenReturn(surnames);
+        when(studentsGeneratorService.getInitialAmountGeneration()).thenReturn(amountGeneration);
 
         dataFiller.fillData();
 

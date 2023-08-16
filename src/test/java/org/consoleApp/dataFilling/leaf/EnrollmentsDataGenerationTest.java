@@ -4,6 +4,7 @@ import org.consoleApp.dao.jdbc.CourseDAOImpl;
 import org.consoleApp.dao.jdbc.StudentsDAOImpl;
 import org.consoleApp.domin.Course;
 import org.consoleApp.domin.Student;
+import org.consoleApp.generation.impl.EnrollmentsDataGeneration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,11 +13,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class EnrollmentsDataFillerTest {
+class EnrollmentsDataGenerationTest {
     private final static List<Student> students = List.of(
             new Student(1, null, "John", "Doe"),
             new Student(2, null, "Jane", "Smith"),
@@ -32,11 +32,11 @@ class EnrollmentsDataFillerTest {
     );
     @Mock private StudentsDAOImpl studentsDAO;
     @Mock private CourseDAOImpl courseDAO;
-    private EnrollmentsDataFiller dataFiller;
+    private EnrollmentsDataGeneration dataFiller;
 
     @BeforeEach
     void before(){
-        dataFiller = new EnrollmentsDataFiller(2, studentsDAO, courseDAO);
+        dataFiller = new EnrollmentsDataGeneration(2, studentsDAO, courseDAO);
     }
 
     @Test

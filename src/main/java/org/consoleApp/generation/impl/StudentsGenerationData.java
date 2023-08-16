@@ -16,12 +16,15 @@ public class StudentsGenerationData implements GenerationData<Student> {
     private int minSize;
     private List<Group> allGroups;
 
-    public StudentsGenerationData(List<String> firstName, List<String> lastName, InitialAmountGeneration amountGeneration, List<Group> allGroups) {
-        this.firstName = firstName;
-        this.lastName = lastName;
+    public StudentsGenerationData(StudentsGeneratorService generatorService ,List<Group> allGroups) {
+        this.firstName = generatorService.getNameList();
+        this.lastName = generatorService.getSurnameList();
+
+        InitialAmountGeneration amountGeneration = generatorService.getInitialAmountGeneration();
         this.quantity = amountGeneration.quantityGenerations();
         this.maxSize = amountGeneration.maxGroupSize();
         this.minSize = amountGeneration.minGroupSize();
+
         this.allGroups = allGroups;
     }
 

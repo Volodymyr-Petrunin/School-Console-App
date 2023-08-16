@@ -1,22 +1,22 @@
 package org.consoleApp.dataFilling.composite;
 
-import org.consoleApp.services.Services;
+import org.consoleApp.services.ServicesDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class DataServiceComposite implements Services {
-    private final List<Services> services;
+public class DataServiceComposite implements ServicesDAO {
+    private final List<ServicesDAO> services;
 
     @Autowired
-    public DataServiceComposite(List<Services> services) {
+    public DataServiceComposite(List<ServicesDAO> services) {
         this.services = services;
     }
 
     @Override
     public void generateDataAndPopulateDB() {
-        services.forEach(Services::generateDataAndPopulateDB);
+        services.forEach(ServicesDAO::generateDataAndPopulateDB);
     }
 }

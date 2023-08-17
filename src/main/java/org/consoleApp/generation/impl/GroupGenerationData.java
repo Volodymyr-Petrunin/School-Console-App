@@ -1,26 +1,24 @@
 package org.consoleApp.generation.impl;
 
-import org.consoleApp.generation.records.GroupAmountGeneration;
 import org.consoleApp.domin.Group;
 import org.consoleApp.generation.GenerationData;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
+@Component
+@PropertySource("classpath:groupDataFillerConfiguration.properties")
 public class GroupGenerationData implements GenerationData<Group> {
     private final Random random = new Random();
     private static final int ALPHABET_SIZE = 26;
     private static final int DIGITS_SIZE = 10;
-    private int quantity;
-    private int amountOfLetters;
-    private int amountOfNumbers;
 
-    public GroupGenerationData(GroupAmountGeneration groupAmountGeneration) {
-        this.quantity = groupAmountGeneration.quantityGenerations();
-        this.amountOfLetters = groupAmountGeneration.amountOfLetters();
-        this.amountOfNumbers = groupAmountGeneration.amountOfDigits();
-    }
+    @Value("${quantityGenerations}") private int quantity;
+    @Value("${amountOfLetters}") private int amountOfLetters;
+    @Value("${amountOfDigits}") private int amountOfNumbers;
 
     @Override
     public List<Group> generateData() {

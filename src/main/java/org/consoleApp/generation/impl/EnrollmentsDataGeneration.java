@@ -6,19 +6,22 @@ import org.consoleApp.generation.records.EnrollInfo;
 import org.consoleApp.domin.Course;
 import org.consoleApp.domin.Student;
 import org.consoleApp.generation.GenerationData;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
+@Component
 public class EnrollmentsDataGeneration implements GenerationData<EnrollInfo> {
     private final Random random = new Random();
-    private int numberOfStudentInOneCourse;
-    private StudentsDAO studentsDAO;
-    private CourseDAO courseDAO;
+    @Value("${numberOfStudentInOneCourse}") private int numberOfStudentInOneCourse;
+    private final StudentsDAO studentsDAO;
+    private final CourseDAO courseDAO;
 
-    public EnrollmentsDataGeneration(int numberOfStudentInOneCourse, StudentsDAO studentsDAO, CourseDAO courseDAO) {
-        this.numberOfStudentInOneCourse = numberOfStudentInOneCourse;
+    @Autowired
+    public EnrollmentsDataGeneration(StudentsDAO studentsDAO, CourseDAO courseDAO) {
         this.studentsDAO = studentsDAO;
         this.courseDAO = courseDAO;
     }

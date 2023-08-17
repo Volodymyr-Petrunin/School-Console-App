@@ -1,7 +1,8 @@
 package org.consoleApp.generation.impl;
 
-import org.consoleApp.generation.records.InitialAmountGeneration;
+import org.consoleApp.domin.Group;
 import org.consoleApp.readers.Reader;
+import org.consoleApp.services.GroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -12,13 +13,13 @@ import java.util.List;
 public class StudentsGeneratorService {
     private final Reader readerNames;
     private final Reader readerSurnames;
-    private final InitialAmountGeneration initialAmountGeneration;
+    private final GroupService groupService;
 
     @Autowired
-    public StudentsGeneratorService(@Qualifier("readNameFile") Reader readerNames, @Qualifier("readSurnameFile") Reader readerSurnames, InitialAmountGeneration initialAmountGeneration) {
+    public StudentsGeneratorService(@Qualifier("readNameFile") Reader readerNames, @Qualifier("readSurnameFile") Reader readerSurnames, GroupService groupService) {
         this.readerNames = readerNames;
         this.readerSurnames = readerSurnames;
-        this.initialAmountGeneration = initialAmountGeneration;
+        this.groupService = groupService;
     }
 
     public List<String> getNameList(){
@@ -29,7 +30,7 @@ public class StudentsGeneratorService {
         return readerSurnames.read();
     }
 
-    public InitialAmountGeneration getInitialAmountGeneration(){
-        return initialAmountGeneration;
+    public List<Group> getGroupList(){
+        return groupService.getAllGroups();
     }
 }

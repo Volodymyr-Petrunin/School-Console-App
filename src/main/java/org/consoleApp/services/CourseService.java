@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CourseService implements ServicesDAO {
+public class CourseService implements ServicesDAOImpl {
     private final CourseDAO courseDAO;
     private final CoursesGeneratorService generatorService;
 

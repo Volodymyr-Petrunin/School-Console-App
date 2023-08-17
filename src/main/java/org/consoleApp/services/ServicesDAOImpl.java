@@ -1,5 +1,5 @@
 package org.consoleApp.services;
 
-public interface ServicesDAO {
+public interface ServicesDAOImpl {
     void generateDataAndPopulateDB();
 }

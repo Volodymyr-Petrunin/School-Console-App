@@ -12,14 +12,14 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class StudentService implements ServicesDAO {
+public class StudentService implements ServicesDAOImpl {
     private final StudentsDAO studentsDAO;
     private final GenerationData<EnrollInfo> enrollInfoGenerationData;
     private final GenerationData<Student> studentGenerationData;
 
     @Autowired
-    public StudentService(StudentsDAO studentsDAO, @Qualifier("enrollmentsDataFiller")GenerationData<EnrollInfo> enrollInfoGenerationData,
-                          @Qualifier("studentsGeneration") GenerationData<Student> studentsGenerationData) {
+    public StudentService(StudentsDAO studentsDAO, @Qualifier("enrollmentsDataGeneration")GenerationData<EnrollInfo> enrollInfoGenerationData,
+                          @Qualifier("studentsGenerationData") GenerationData<Student> studentsGenerationData) {
         this.studentsDAO = studentsDAO;
         this.enrollInfoGenerationData = enrollInfoGenerationData;
         this.studentGenerationData = studentsGenerationData;

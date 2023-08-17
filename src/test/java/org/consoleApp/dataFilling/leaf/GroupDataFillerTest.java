@@ -13,16 +13,12 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class GroupDataFillerTest {
-    private final static int QUANTITY_GENERATION = 3;
-    private final static int AMOUNT_OF_LETTERS = 2;
-    private final static int AMOUNT_OF_DIGITS = 2;
-    private final GroupAmountGeneration amountGeneration = new GroupAmountGeneration(QUANTITY_GENERATION, AMOUNT_OF_LETTERS, AMOUNT_OF_DIGITS);
     @Mock private GroupsDAOImpl groupsDAO;
     private GroupDataFiller dataFiller;
 
     @BeforeEach
     void setup(){
-        dataFiller = new GroupDataFiller(amountGeneration, groupsDAO);
+        dataFiller = new GroupDataFiller(groupsDAO);
     }
 
     @Test

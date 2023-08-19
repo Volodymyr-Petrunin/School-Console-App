@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class StudentService implements ServicesDAOImpl {
+public class StudentService implements DataFiller {
     private final StudentsDAO studentsDAO;
     private final GenerationData<EnrollInfo> enrollInfoGenerationData;
     private final GenerationData<Student> studentGenerationData;

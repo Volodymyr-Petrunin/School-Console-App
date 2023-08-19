@@ -48,8 +48,10 @@ class EnrollmentsDataGenerationTest {
 
 
         for (EnrollInfo enrollment : enrollInfo) {
-            assertTrue(enrollment.studentId() >= 1 && enrollment.studentId() <= students.size());
-            assertTrue(enrollment.courseId() >= 1 && enrollment.courseId() <= courses.size());
+            assertTrue(enrollment.studentId() >= 1);
+            assertTrue(enrollment.studentId() <= students.size());
+            assertTrue(enrollment.courseId() >= 1);
+            assertTrue(enrollment.courseId() <= courses.size());
         }
     }
 }

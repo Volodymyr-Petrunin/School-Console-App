@@ -8,15 +8,15 @@ import java.util.List;
 
 @Service
 public class DataServiceComposite implements DataFiller {
-    private final List<DataFiller> services;
+    private final List<DataFiller> dataFillers;
 
     @Autowired
-    public DataServiceComposite(List<DataFiller> services) {
-        this.services = services;
+    public DataServiceComposite(List<DataFiller> dataFillers) {
+        this.dataFillers = dataFillers;
     }
 
     @Override
     public void generateDataAndPopulateDB() {
-        services.forEach(DataFiller::generateDataAndPopulateDB);
+        dataFillers.forEach(DataFiller::generateDataAndPopulateDB);
     }
 }

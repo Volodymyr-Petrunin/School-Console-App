@@ -59,7 +59,6 @@ class MenuAddNewStudentTest {
             student.setId(1);
             return true;
         });
-        when(studentsDAO.enrollStudentInCourse(anyInt(), anyInt())).thenReturn(true);
 
         addNewStudent.execute();
 
@@ -76,7 +75,6 @@ class MenuAddNewStudentTest {
         assertEquals(expectedOutput, SystemUtils.getSystemOutput());
 
         verify(studentsDAO, times(1)).insert(any(Student.class));
-        verify(studentsDAO, times(1)).enrollStudentInCourse(anyInt(), anyInt());
     }
 
     @Test

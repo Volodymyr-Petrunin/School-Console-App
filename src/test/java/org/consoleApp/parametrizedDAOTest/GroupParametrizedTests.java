@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest(classes = DaoTestConfig.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles({"spring-jdbc", "native-jdbc"})
-@Sql(scripts = "classpath:SQLScript/create_tables.sql")
+@Sql(value = "classpath:SQLScript/create_tables.sql")
 @Sql(value = "classpath:SQLScript/group_test_script.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class GroupParametrizedTests {
     @Autowired
@@ -119,7 +119,7 @@ class GroupParametrizedTests {
 
     @ParameterizedTest
     @MethodSource("getImpl")
-    @Sql("classpath:SQLScript/add_students_for_group_test.sql")
+    @Sql(value = {"classpath:SQLScript/add_students_for_group_test.sql"})
     void testFindGroupsWithLessOrEqualStudents_ShouldReturnGroupsWithMaxStudentsOrLess(GroupDAO groupDAO){
         int maxStudents = 2;
 

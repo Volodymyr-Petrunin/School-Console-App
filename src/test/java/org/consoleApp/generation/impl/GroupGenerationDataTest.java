@@ -1,16 +1,19 @@
 package org.consoleApp.generation.impl;
 
 import org.consoleApp.domin.Group;
-import org.consoleApp.generation.records.GroupAmountGeneration;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest(classes = GroupGenerationData.class)
+@TestPropertySource(properties= {"quantityGenerations=3", "amountOfLetters=2", "amountOfDigits=2"})
 class GroupGenerationDataTest {
-    private final GroupAmountGeneration groupAmountGeneration = new GroupAmountGeneration(3, 2, 2);
-    private final GroupGenerationData groupGenerationData = new GroupGenerationData(groupAmountGeneration);
+    @Autowired private GroupGenerationData groupGenerationData;
 
     @Test
     void testGenerateData_ShouldReturnCorrectListOfGroup(){

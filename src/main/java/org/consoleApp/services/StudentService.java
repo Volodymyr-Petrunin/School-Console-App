@@ -57,6 +57,10 @@ public class StudentService implements DataFiller {
         return studentsDAO.enrollStudentInCourse(studentId, courseId);
     }
 
+    public void enrollBatchStudentInCourse(List<EnrollInfo> enrollInfo){
+        studentsDAO.enrollBatchStudentInCourse(enrollInfo);
+    }
+
     public boolean removeStudentFromCourse(int studentId, int courseId) {
         return studentsDAO.removeStudentFromCourse(studentId, courseId);
     }
@@ -70,8 +74,6 @@ public class StudentService implements DataFiller {
         createMultipleStudents(studentGenerationData.generateData());
         List<EnrollInfo> generationEnroll = enrollInfoGenerationData.generateData();
 
-        for (EnrollInfo currentInfo : generationEnroll){
-            enrollStudentInCourse(currentInfo.studentId(), currentInfo.courseId());
-        }
+        enrollBatchStudentInCourse(generationEnroll);
     }
 }

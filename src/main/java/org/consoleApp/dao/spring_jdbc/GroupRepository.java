@@ -5,9 +5,12 @@ import org.consoleApp.dao.spring_jdbc.rowMappers.GroupRowMapper;
 import org.consoleApp.domin.Group;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.SqlParameterValue;
 import org.springframework.stereotype.Repository;
 
+import java.sql.Types;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,7 +39,12 @@ public class GroupRepository implements GroupDAO {
 
     @Override
     public Optional<Group> findById(int id) {
-        return Optional.ofNullable(jdbcTemplate.queryForObject(FIND_BY_ID, groupRowMapper, id));
+        try {
+            Group group = jdbcTemplate.queryForObject(FIND_BY_ID, groupRowMapper, new SqlParameterValue(Types.INTEGER, id));
+            return Optional.ofNullable(group);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     @Override

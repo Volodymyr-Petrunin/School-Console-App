@@ -4,7 +4,6 @@ import jakarta.annotation.PostConstruct;
 import org.consoleApp.dao.CourseDAO;
 import org.consoleApp.dao.GroupDAO;
 import org.consoleApp.dao.StudentsDAO;
-import org.consoleApp.dataBaseSettings.DBConnector;
 import org.consoleApp.dataBaseSettings.ScriptRunner;
 import org.consoleApp.dataFilling.composite.DataServiceComposite;
 import org.consoleApp.menu.MenuItem;
@@ -13,16 +12,11 @@ import org.consoleApp.menu.leaf.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.sql.DataSource;
-import java.io.InputStream;
 import java.util.List;
 
 @Service
 public class LaunchApp {
-    private final DBConnector dbConnector = new DBConnector();
-    private final DataSource dataSource = dbConnector.getDBConnection();
-    private final InputStream createTablesStream = getClass().getResourceAsStream("/SQLScript/create_tables.sql");
-    private final ScriptRunner scriptRunner = new ScriptRunner(dataSource);
+    private final ScriptRunner scriptRunner;
     private final CourseDAO courseDAO;
     private final GroupDAO groupsDAO;
     private final StudentsDAO studentsDAO;
@@ -30,16 +24,17 @@ public class LaunchApp {
     private final String dash = "-".repeat(50); // yes magic number. But it doesn't affect anything
 
     @Autowired
-    public LaunchApp(CourseDAO courseDAO, GroupDAO groupsDAO, StudentsDAO studentsDAO, DataServiceComposite serviceComposite) {
+    public LaunchApp(CourseDAO courseDAO, GroupDAO groupsDAO, StudentsDAO studentsDAO, DataServiceComposite serviceComposite, ScriptRunner scriptRunner) {
         this.courseDAO = courseDAO;
         this.groupsDAO = groupsDAO;
         this.studentsDAO = studentsDAO;
         this.serviceComposite = serviceComposite;
+        this.scriptRunner = scriptRunner;
     }
 
     @PostConstruct
     public void launch(){
-        scriptRunner.runScript(createTablesStream);
+        scriptRunner.runScript();
 
         List<MenuItem> menuItems = menuItems(courseDAO, groupsDAO, studentsDAO, dash);
 

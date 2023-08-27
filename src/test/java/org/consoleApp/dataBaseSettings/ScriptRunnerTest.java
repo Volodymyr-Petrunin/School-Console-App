@@ -17,15 +17,17 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ScriptRunnerTest extends AbstractContainerBaseTest {
     private final DataSource dataSource = getDataSource();
-    private final ScriptRunner scriptRunner = new ScriptRunner(dataSource);
+    private ScriptRunner scriptRunner;
     private InputStream inputStream;
 
     @Test
     void testRunScript_ShouldExecuteScriptSuccessfully(){
         String scriptContent = "INSERT INTO groups (group_id, group_name) VALUES " + "(1, 'AA-11')," + "(2, 'BB-22')";
-
         inputStream = new ByteArrayInputStream(scriptContent.getBytes(StandardCharsets.UTF_8));
-        scriptRunner.runScript(inputStream);
+
+        scriptRunner = new ScriptRunner(dataSource, inputStream);
+
+        scriptRunner.runScript();
 
         int expected = 2;
         int actual = countAllGroups();

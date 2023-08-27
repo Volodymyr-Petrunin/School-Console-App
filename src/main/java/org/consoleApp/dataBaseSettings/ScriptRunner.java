@@ -1,18 +1,23 @@
 package org.consoleApp.dataBaseSettings;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.sql.DataSource;
 import java.io.*;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 public class ScriptRunner {
-    private DataSource dataSource;
+    private final DataSource dataSource;
+    private final InputStream inputStream;
 
-    public ScriptRunner(DataSource dataSource) {
+    @Autowired
+    public ScriptRunner(DataSource dataSource, InputStream inputStream) {
         this.dataSource = dataSource;
+        this.inputStream = inputStream;
     }
 
-    public void runScript(InputStream inputStream){
+    public void runScript(){
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             StringBuilder scriptContent = new StringBuilder();
             String line;

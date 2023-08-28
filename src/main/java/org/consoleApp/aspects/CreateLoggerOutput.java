@@ -1,6 +1,7 @@
 package org.consoleApp.aspects;
 
 import org.aspectj.lang.JoinPoint;
+import org.consoleApp.domin.Course;
 import org.slf4j.Logger;
 
 import java.util.List;
@@ -36,7 +37,7 @@ public class CreateLoggerOutput {
 
     public void createOptionalLogInfoAfterReturning(JoinPoint joinPoint, Optional<?> optional){
         if (optional.isPresent()){
-            logger.debug("Method {} in class {} returned optional of course: {}",
+            logger.debug("Method {} in class {} returned optional: {}",
                     joinPoint.getSignature().getName(),
                     joinPoint.getTarget().getClass().getName(),
                     optional.get().toString());
@@ -48,9 +49,18 @@ public class CreateLoggerOutput {
     }
 
     public void createBooleanLogInfoAfterReturning(JoinPoint joinPoint, boolean result){
-        logger.info("Method {} in class {} returned: {}",
+        logger.debug("Method {} in class {} returned: {}",
                 joinPoint.getSignature().getName(),
                 joinPoint.getTarget().getClass().getName(),
                 result);
+    }
+
+    public void createCourseLogInfoAfterReturning(JoinPoint joinPoint, Course course){
+        if (course != null){
+            logger.debug("Method {} in class {} returned Course object: {}",
+                    joinPoint.getSignature().getName(),
+                    joinPoint.getTarget().getClass().getName(),
+                    course.toString());
+        }
     }
 }

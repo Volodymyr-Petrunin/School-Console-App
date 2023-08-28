@@ -2,6 +2,7 @@ package org.consoleApp.aspects;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
+import org.consoleApp.domin.Course;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -34,11 +35,16 @@ public class LoggingAspect {
     public void studentsGenerationData(){}
     @Pointcut("execution(* org.consoleApp.generation.impl.StudentsGeneratorService.*(..))")
     public void studentsGeneratorService(){}
+    @Pointcut("execution(* org.consoleApp.readers.ResourcesFileReader.*(..))")
+    public void resourcesFileReader(){}
+    @Pointcut("execution(* org.consoleApp.parser.impl.CourseParser.*(..))")
+    public void courseParser(){}
 
 
     @Before("coursesDAOMethods() || groupsDAOMethods() || studentsDAOMethods() || coursesGeneratorService() " +
-            "|| enrollmentsDataGeneration() || groupGenerationData() || studentsGenerationData() || studentsGeneratorService()")
-    public void beforeCoursesDAOMethodExecution(JoinPoint joinPoint){
+            "|| enrollmentsDataGeneration() || groupGenerationData() || studentsGenerationData() " +
+            "|| studentsGeneratorService() || resourcesFileReader() || courseParser()")
+    public void beforeMethodExecution(JoinPoint joinPoint){
         if (logger.isDebugEnabled()) {
             logger.debug(DEBUG, joinPoint.getSignature().getName(), joinPoint.getTarget().getClass().getName());
         }
@@ -46,30 +52,38 @@ public class LoggingAspect {
 
     @AfterReturning(pointcut = "coursesDAOMethods() || groupsDAOMethods() || studentsDAOMethods() " +
             "|| coursesGeneratorService() || enrollmentsDataGeneration() || groupGenerationData() " +
-            "|| studentsGenerationData() || studentsGeneratorService()", returning = "list")
-    public void coursesListReturningAdvice(JoinPoint joinPoint, List<?> list){
-        if (logger.isInfoEnabled()) {
+            "|| studentsGenerationData() || studentsGeneratorService() || resourcesFileReader()", returning = "list")
+    public void listReturningAdvice(JoinPoint joinPoint, List<?> list){
+        if (logger.isDebugEnabled()) {
             createLoggerOutput.createListLogInfoAfterReturning(joinPoint, list);
         }
     }
 
     @AfterReturning(pointcut = "coursesDAOMethods() || groupsDAOMethods() || studentsDAOMethods()", returning = "optional")
-    public void courseOptionalReturningAdvice(JoinPoint joinPoint, Optional<?> optional){
-        if (logger.isInfoEnabled()) {
+    public void optionalReturningAdvice(JoinPoint joinPoint, Optional<?> optional){
+        if (logger.isDebugEnabled()) {
             createLoggerOutput.createOptionalLogInfoAfterReturning(joinPoint, optional);
         }
     }
 
     @AfterReturning(pointcut = "coursesDAOMethods() || groupsDAOMethods() || studentsDAOMethods()", returning = "result")
-    public void courseBooleanReturningAdvice(JoinPoint joinPoint, boolean result){
-        if (logger.isInfoEnabled()) {
+    public void booleanReturningAdvice(JoinPoint joinPoint, boolean result){
+        if (logger.isDebugEnabled()) {
             createLoggerOutput.createBooleanLogInfoAfterReturning(joinPoint, result);
+        }
+    }
+
+    @AfterReturning(pointcut = "courseParser()", returning = "course")
+    public void courseReturningAdvice(JoinPoint joinPoint, Course course){
+        if (logger.isDebugEnabled()){
+            createLoggerOutput.createCourseLogInfoAfterReturning(joinPoint, course);
         }
     }
 
     @AfterThrowing(pointcut = "coursesDAOMethods() || groupsDAOMethods() || studentsDAOMethods() " +
             "|| coursesGeneratorService() || enrollmentsDataGeneration() || groupGenerationData() " +
-            "|| studentsGenerationData() || studentsGeneratorService()", throwing = "ex")
+            "|| studentsGenerationData() || studentsGeneratorService() || resourcesFileReader() " +
+            "|| courseParser()", throwing = "ex")
     public void afterThrowingAdvice(JoinPoint joinPoint, Exception ex){
         if (logger.isErrorEnabled()) {
             createLoggerOutput.createErrorString(joinPoint, ex);

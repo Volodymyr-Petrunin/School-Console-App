@@ -3,14 +3,18 @@ package org.consoleApp.menu.leaf;
 import org.consoleApp.dao.GroupDAO;
 import org.consoleApp.domin.Group;
 import org.consoleApp.menu.MenuItem;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Scanner;
 
+@Component
 public class MenuFindGroupsWithLessOrEqualStudents implements MenuItem {
     private GroupDAO groupsDAO;
     private String dash;
 
+    @Autowired
     public MenuFindGroupsWithLessOrEqualStudents(GroupDAO groupsDAO, String dash) {
         this.groupsDAO = groupsDAO;
         this.dash = dash;

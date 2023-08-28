@@ -5,16 +5,20 @@ import org.consoleApp.dao.StudentsDAO;
 import org.consoleApp.domin.Student;
 import org.consoleApp.menu.MenuItem;
 import org.consoleApp.menu.helper.PrintInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Scanner;
 
+@Component
 public class MenuFindAllStudentsRelatedToCourse implements MenuItem {
     private final PrintInfo printInfo = new PrintInfo();
     private StudentsDAO studentsDAO;
     private GroupDAO groupDAO;
     private String dash;
 
+    @Autowired
     public MenuFindAllStudentsRelatedToCourse(StudentsDAO studentsDAO, GroupDAO groupDAO, String dash) {
         this.studentsDAO = studentsDAO;
         this.groupDAO = groupDAO;

@@ -2,13 +2,17 @@ package org.consoleApp.menu.leaf;
 
 import org.consoleApp.dao.StudentsDAO;
 import org.consoleApp.menu.MenuItem;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.Scanner;
 
+@Component
 public class MenuDeleteStudent implements MenuItem {
     private StudentsDAO studentsDAO;
     private String dash;
 
+    @Autowired
     public MenuDeleteStudent(StudentsDAO studentsDAO , String dash) {
         this.studentsDAO = studentsDAO;
         this.dash = dash;

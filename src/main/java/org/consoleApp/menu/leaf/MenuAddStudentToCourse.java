@@ -7,10 +7,13 @@ import org.consoleApp.domin.Course;
 import org.consoleApp.domin.Student;
 import org.consoleApp.menu.MenuItem;
 import org.consoleApp.menu.helper.PrintInfo;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Scanner;
 
+@Component
 public class MenuAddStudentToCourse implements MenuItem {
     private final PrintInfo printInfo = new PrintInfo();
     private StudentsDAO studentsDAO;
@@ -18,6 +21,7 @@ public class MenuAddStudentToCourse implements MenuItem {
     private GroupDAO groupDAO;
     private String dash;
 
+    @Autowired
     public MenuAddStudentToCourse(StudentsDAO studentsDAO, CourseDAO courseDAO, GroupDAO groupDAO,String dash) {
         this.studentsDAO = studentsDAO;
         this.courseDAO = courseDAO;

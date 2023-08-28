@@ -24,16 +24,29 @@ public class LoggingAspect {
 
     @Pointcut("execution(* org.consoleApp.dao.StudentsDAO.*(..))")
     public void studentsDAOMethods(){}
+    @Pointcut("execution(* org.consoleApp.generation.impl.CoursesGeneratorService.*(..))")
+    public void coursesGeneratorService(){}
+    @Pointcut("execution(* org.consoleApp.generation.impl.EnrollmentsDataGeneration.*(..))")
+    public void enrollmentsDataGeneration(){}
+    @Pointcut("execution(* org.consoleApp.generation.impl.GroupGenerationData.*(..))")
+    public void groupGenerationData(){}
+    @Pointcut("execution(* org.consoleApp.generation.impl.StudentsGenerationData.*(..))")
+    public void studentsGenerationData(){}
+    @Pointcut("execution(* org.consoleApp.generation.impl.StudentsGeneratorService.*(..))")
+    public void studentsGeneratorService(){}
 
 
-    @Before("coursesDAOMethods() || groupsDAOMethods() || studentsDAOMethods()")
+    @Before("coursesDAOMethods() || groupsDAOMethods() || studentsDAOMethods() || coursesGeneratorService() " +
+            "|| enrollmentsDataGeneration() || groupGenerationData() || studentsGenerationData() || studentsGeneratorService()")
     public void beforeCoursesDAOMethodExecution(JoinPoint joinPoint){
         if (logger.isDebugEnabled()) {
             logger.debug(DEBUG, joinPoint.getSignature().getName(), joinPoint.getTarget().getClass().getName());
         }
     }
 
-    @AfterReturning(pointcut = "coursesDAOMethods() || groupsDAOMethods() || studentsDAOMethods()", returning = "list")
+    @AfterReturning(pointcut = "coursesDAOMethods() || groupsDAOMethods() || studentsDAOMethods() " +
+            "|| coursesGeneratorService() || enrollmentsDataGeneration() || groupGenerationData() " +
+            "|| studentsGenerationData() || studentsGeneratorService()", returning = "list")
     public void coursesListReturningAdvice(JoinPoint joinPoint, List<?> list){
         if (logger.isInfoEnabled()) {
             createLoggerOutput.createListLogInfoAfterReturning(joinPoint, list);
@@ -54,7 +67,9 @@ public class LoggingAspect {
         }
     }
 
-    @AfterThrowing(pointcut = "coursesDAOMethods() || groupsDAOMethods() || studentsDAOMethods()", throwing = "ex")
+    @AfterThrowing(pointcut = "coursesDAOMethods() || groupsDAOMethods() || studentsDAOMethods() " +
+            "|| coursesGeneratorService() || enrollmentsDataGeneration() || groupGenerationData() " +
+            "|| studentsGenerationData() || studentsGeneratorService()", throwing = "ex")
     public void afterThrowingAdvice(JoinPoint joinPoint, Exception ex){
         if (logger.isErrorEnabled()) {
             createLoggerOutput.createErrorString(joinPoint, ex);

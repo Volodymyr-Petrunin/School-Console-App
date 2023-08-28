@@ -4,7 +4,6 @@ import jakarta.annotation.PostConstruct;
 import org.consoleApp.dao.CourseDAO;
 import org.consoleApp.dao.GroupDAO;
 import org.consoleApp.dao.StudentsDAO;
-import org.consoleApp.dataBaseSettings.ScriptRunner;
 import org.consoleApp.dataFilling.composite.DataServiceComposite;
 import org.consoleApp.menu.MenuItem;
 import org.consoleApp.menu.composite.MenuComposite;
@@ -16,7 +15,6 @@ import java.util.List;
 
 @Service
 public class LaunchApp {
-    private final ScriptRunner scriptRunner;
     private final CourseDAO courseDAO;
     private final GroupDAO groupsDAO;
     private final StudentsDAO studentsDAO;
@@ -24,17 +22,15 @@ public class LaunchApp {
     private final String dash = "-".repeat(50); // yes magic number. But it doesn't affect anything
 
     @Autowired
-    public LaunchApp(CourseDAO courseDAO, GroupDAO groupsDAO, StudentsDAO studentsDAO, DataServiceComposite serviceComposite, ScriptRunner scriptRunner) {
+    public LaunchApp(CourseDAO courseDAO, GroupDAO groupsDAO, StudentsDAO studentsDAO, DataServiceComposite serviceComposite) {
         this.courseDAO = courseDAO;
         this.groupsDAO = groupsDAO;
         this.studentsDAO = studentsDAO;
         this.serviceComposite = serviceComposite;
-        this.scriptRunner = scriptRunner;
     }
 
     @PostConstruct
     public void launch(){
-        scriptRunner.runScript();
 
         List<MenuItem> menuItems = menuItems(courseDAO, groupsDAO, studentsDAO, dash);
 

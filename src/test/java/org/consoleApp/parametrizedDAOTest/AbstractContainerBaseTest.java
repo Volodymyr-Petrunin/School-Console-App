@@ -13,7 +13,7 @@ public abstract class AbstractContainerBaseTest {
                 .withDatabaseName("school-console-app")
                 .withUsername("postgres")
                 .withPassword("0403")
-                .withInitScript("SQLScript/create_tables.sql");
+                .withInitScript("schema.sql");
 
         postgreSQLContainer.start();
     }

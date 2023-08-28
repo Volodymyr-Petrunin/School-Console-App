@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.StringJoiner;
 
-public class CreateLoggerInfo {
+public class CreateLoggerOutput {
     private final Logger logger;
 
-    public CreateLoggerInfo(Logger logger) {
+    public CreateLoggerOutput(Logger logger) {
         this.logger = logger;
     }
 
@@ -28,40 +28,29 @@ public class CreateLoggerInfo {
     }
 
     public void createListLogInfoAfterReturning(JoinPoint joinPoint, List<?> list){
-        if (!list.isEmpty()){
-            logger.info("Method {} in class {} returned list with size: {}",
+            logger.debug("Method {} in class {} returned list with size: {}",
                     joinPoint.getSignature().getName(),
                     joinPoint.getTarget().getClass().getName(),
                     list.size());
-        } else {
-            logger.info("Method {} in class {} returned empty list",
-                    joinPoint.getSignature().getName(),
-                    joinPoint.getTarget().getClass().getName());
-        }
     }
 
     public void createOptionalLogInfoAfterReturning(JoinPoint joinPoint, Optional<?> optional){
         if (optional.isPresent()){
-            logger.info("Method {} in class {} returned optional of course: {}",
+            logger.debug("Method {} in class {} returned optional of course: {}",
                     joinPoint.getSignature().getName(),
                     joinPoint.getTarget().getClass().getName(),
                     optional.get().toString());
         }else {
-            logger.info("Method {} in class {} returned empty optional",
+            logger.debug("Method {} in class {} returned empty optional",
                     joinPoint.getSignature().getName(),
                     joinPoint.getTarget().getClass().getName());
         }
     }
 
     public void createBooleanLogInfoAfterReturning(JoinPoint joinPoint, boolean result){
-        if (result){
-            logger.info("Method {} in class {} returned: true",
-                    joinPoint.getSignature().getName(),
-                    joinPoint.getTarget().getClass().getName());
-        }else {
-            logger.info("Method {} in class {} returned: false",
-                    joinPoint.getSignature().getName(),
-                    joinPoint.getTarget().getClass().getName());
-        }
+        logger.info("Method {} in class {} returned: {}",
+                joinPoint.getSignature().getName(),
+                joinPoint.getTarget().getClass().getName(),
+                result);
     }
 }

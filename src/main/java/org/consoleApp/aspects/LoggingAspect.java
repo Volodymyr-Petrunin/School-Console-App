@@ -9,84 +9,89 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.StringJoiner;
 
 @Aspect
 @Component
 public class LoggingAspect {
     private static final Logger logger = LoggerFactory.getLogger(LoggingAspect.class);
-    private final CreateLoggerOutput createLoggerOutput = new CreateLoggerOutput(logger);
-    private static final String DEBUG = "Started using method {} in class {}";
+    private static final String BEFORE_METHOD = "Started using method {} in class {}";
+    private static final String RETURNING_LIST = "Method {} in class {} returned list with size: {}";
+    private static final String RETURNING_BOOLEAN = "Method {} in class {} returned: {}";
+    private static final String RETURNING_OPTIONAL = "Method {} in class {} returned optional: {}";
+    private static final String RETURNING_OPTIONAL_EMPTY = "Method {} in class {} returned empty optional";
+    private static final String RETURNING_COURSE_OBJECT = "Method {} in class {} returned Course object: {}";
+    private static final String EXCEPTION = new StringJoiner(System.lineSeparator())
+            .add("Exception occurred in method: {} in class: {}")
+            .add("Exception type: {}")
+            .add("Exception message: {}")
+            .toString();
 
-    @Pointcut("execution(* org.consoleApp.dao.CourseDAO.*(..))")
-    public void coursesDAOMethods(){}
-
-    @Pointcut("execution(* org.consoleApp.dao.GroupDAO.*(..))")
-    public void groupsDAOMethods(){}
-
-    @Pointcut("execution(* org.consoleApp.dao.StudentsDAO.*(..))")
-    public void studentsDAOMethods(){}
-    @Pointcut("execution(* org.consoleApp.generation.impl.CoursesGeneratorService.*(..))")
-    public void coursesGeneratorService(){}
-    @Pointcut("execution(* org.consoleApp.generation.impl.EnrollmentsDataGeneration.*(..))")
-    public void enrollmentsDataGeneration(){}
-    @Pointcut("execution(* org.consoleApp.generation.impl.GroupGenerationData.*(..))")
-    public void groupGenerationData(){}
-    @Pointcut("execution(* org.consoleApp.generation.impl.StudentsGenerationData.*(..))")
-    public void studentsGenerationData(){}
-    @Pointcut("execution(* org.consoleApp.generation.impl.StudentsGeneratorService.*(..))")
-    public void studentsGeneratorService(){}
+    @Pointcut("execution(* org.consoleApp.dao.*.*(..))")
+    public void methodsDAO(){}
+    @Pointcut("execution(* org.consoleApp.generation.impl.*.*(..))")
+    public void generatorService(){}
     @Pointcut("execution(* org.consoleApp.readers.ResourcesFileReader.*(..))")
     public void resourcesFileReader(){}
     @Pointcut("execution(* org.consoleApp.parser.impl.CourseParser.*(..))")
     public void courseParser(){}
 
 
-    @Before("coursesDAOMethods() || groupsDAOMethods() || studentsDAOMethods() || coursesGeneratorService() " +
-            "|| enrollmentsDataGeneration() || groupGenerationData() || studentsGenerationData() " +
-            "|| studentsGeneratorService() || resourcesFileReader() || courseParser()")
+    @Before("methodsDAO() || generatorService() || resourcesFileReader() || courseParser()")
     public void beforeMethodExecution(JoinPoint joinPoint){
         if (logger.isDebugEnabled()) {
-            logger.debug(DEBUG, joinPoint.getSignature().getName(), joinPoint.getTarget().getClass().getName());
+            logger.debug(BEFORE_METHOD, getMethodName(joinPoint), getClassName(joinPoint));
         }
     }
 
-    @AfterReturning(pointcut = "coursesDAOMethods() || groupsDAOMethods() || studentsDAOMethods() " +
-            "|| coursesGeneratorService() || enrollmentsDataGeneration() || groupGenerationData() " +
-            "|| studentsGenerationData() || studentsGeneratorService() || resourcesFileReader()", returning = "list")
+    @AfterReturning(pointcut = "methodsDAO() || generatorService() || resourcesFileReader()", returning = "list")
     public void listReturningAdvice(JoinPoint joinPoint, List<?> list){
         if (logger.isDebugEnabled()) {
-            createLoggerOutput.createListLogInfoAfterReturning(joinPoint, list);
+            logger.debug(RETURNING_LIST, getMethodName(joinPoint), getClassName(joinPoint), list.size());
         }
     }
 
-    @AfterReturning(pointcut = "coursesDAOMethods() || groupsDAOMethods() || studentsDAOMethods()", returning = "optional")
+    @AfterReturning(pointcut = "methodsDAO()", returning = "optional")
     public void optionalReturningAdvice(JoinPoint joinPoint, Optional<?> optional){
         if (logger.isDebugEnabled()) {
-            createLoggerOutput.createOptionalLogInfoAfterReturning(joinPoint, optional);
+            if (optional.isPresent()){
+                logger.debug(RETURNING_OPTIONAL, getMethodName(joinPoint), getClassName(joinPoint), optional.get().toString());
+            }else {
+                logger.debug(RETURNING_OPTIONAL_EMPTY, getMethodName(joinPoint), getClassName(joinPoint));
+            }
         }
     }
 
-    @AfterReturning(pointcut = "coursesDAOMethods() || groupsDAOMethods() || studentsDAOMethods()", returning = "result")
+    @AfterReturning(pointcut = "methodsDAO()", returning = "result")
     public void booleanReturningAdvice(JoinPoint joinPoint, boolean result){
         if (logger.isDebugEnabled()) {
-            createLoggerOutput.createBooleanLogInfoAfterReturning(joinPoint, result);
+            logger.debug(RETURNING_BOOLEAN, getMethodName(joinPoint), getClassName(joinPoint), result);
         }
     }
 
     @AfterReturning(pointcut = "courseParser()", returning = "course")
     public void courseReturningAdvice(JoinPoint joinPoint, Course course){
         if (logger.isDebugEnabled()){
-            createLoggerOutput.createCourseLogInfoAfterReturning(joinPoint, course);
+            logger.debug(RETURNING_COURSE_OBJECT, getMethodName(joinPoint), getClassName(joinPoint), course.toString());
         }
     }
 
-    @AfterThrowing(pointcut = "coursesDAOMethods() || groupsDAOMethods() || studentsDAOMethods() " +
-            "|| coursesGeneratorService() || enrollmentsDataGeneration() || groupGenerationData() " +
-            "|| studentsGenerationData() || studentsGeneratorService() || resourcesFileReader() " +
-            "|| courseParser()", throwing = "ex")
+    @AfterThrowing(pointcut = "methodsDAO() || generatorService() || resourcesFileReader() || courseParser()", throwing = "ex")
     public void afterThrowingAdvice(JoinPoint joinPoint, Exception ex){
         if (logger.isErrorEnabled()) {
-            createLoggerOutput.createErrorString(joinPoint, ex);
+            logger.error(EXCEPTION, getMethodName(joinPoint), getClassName(joinPoint), getExceptionClass(ex), ex.getMessage());
         }
+    }
+
+    private String getMethodName(JoinPoint joinPoint){
+        return joinPoint.getSignature().getName();
+    }
+
+    private String getClassName(JoinPoint joinPoint){
+        return joinPoint.getTarget().getClass().getName();
+    }
+
+    private String getExceptionClass(Exception exception){
+        return exception.getClass().getName();
     }
 }

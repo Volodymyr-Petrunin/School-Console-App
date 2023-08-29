@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.StringJoiner;
 
 @Aspect
 @Component
@@ -21,11 +20,7 @@ public class LoggingAspect {
     private static final String RETURNING_OPTIONAL = "Method {} in class {} returned optional: {}";
     private static final String RETURNING_OPTIONAL_EMPTY = "Method {} in class {} returned empty optional";
     private static final String RETURNING_COURSE_OBJECT = "Method {} in class {} returned Course object: {}";
-    private static final String EXCEPTION = new StringJoiner(System.lineSeparator())
-            .add("Exception occurred in method: {} in class: {}")
-            .add("Exception type: {}")
-            .add("Exception message: {}")
-            .toString();
+    private static final String EXCEPTION = "Exception occurred in method: {} in class: {}";
 
     @Pointcut("execution(* org.consoleApp.dao.*.*(..))")
     public void methodsDAO(){}
@@ -79,7 +74,7 @@ public class LoggingAspect {
     @AfterThrowing(pointcut = "methodsDAO() || generatorService() || resourcesFileReader() || courseParser()", throwing = "ex")
     public void afterThrowingAdvice(JoinPoint joinPoint, Exception ex){
         if (logger.isErrorEnabled()) {
-            logger.error(EXCEPTION, getMethodName(joinPoint), getClassName(joinPoint), getExceptionClass(ex), ex.getMessage());
+            logger.error(EXCEPTION, getMethodName(joinPoint), getClassName(joinPoint), ex);
         }
     }
 
@@ -89,9 +84,5 @@ public class LoggingAspect {
 
     private String getClassName(JoinPoint joinPoint){
         return joinPoint.getTarget().getClass().getName();
-    }
-
-    private String getExceptionClass(Exception exception){
-        return exception.getClass().getName();
     }
 }

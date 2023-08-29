@@ -1,21 +1,17 @@
 package org.consoleApp.menu.composite;
 
 import org.consoleApp.menu.MenuItem;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Scanner;
 import java.util.StringJoiner;
 
-@Component
 public class MenuComposite implements MenuItem {
     private final Scanner scan = new Scanner(System.in);
     private List<MenuItem> menuItems;
     private String dash;
     private boolean exit;
 
-    @Autowired
     public MenuComposite(List<MenuItem> menuItems, String dash) {
         this.menuItems = menuItems;
         this.dash = dash;

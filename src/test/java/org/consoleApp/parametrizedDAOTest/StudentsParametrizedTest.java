@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest
 @ActiveProfiles({"spring-jdbc", "native-jdbc"})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@Sql(scripts = "classpath:SQLScript/create_tables.sql")
+@Sql(scripts = "classpath:schema.sql")
 @Sql(value = "classpath:SQLScript/students_test_script.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
  class StudentsParametrizedTest {
     @Autowired

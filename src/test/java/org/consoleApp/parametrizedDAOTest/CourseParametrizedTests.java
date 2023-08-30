@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles({"spring-jdbc", "native-jdbc"})
-@Sql(scripts = "classpath:SQLScript/create_tables.sql")
+@Sql(scripts = "classpath:schema.sql")
 @Sql(scripts = "classpath:SQLScript/course_test_script.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class CourseParametrizedTests {
 

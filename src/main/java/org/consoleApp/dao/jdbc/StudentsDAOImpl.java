@@ -2,6 +2,7 @@ package org.consoleApp.dao.jdbc;
 
 import org.consoleApp.dao.StudentsDAO;
 import org.consoleApp.domin.Student;
+import org.consoleApp.generation.records.EnrollInfo;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
@@ -189,6 +190,25 @@ public class StudentsDAOImpl implements StudentsDAO {
             return rowsAffected > 0;
         } catch (SQLException e) {
             throw new IllegalStateException("Can't register", e);
+        }
+    }
+
+    @Override
+    public void enrollBatchStudentInCourse(List<EnrollInfo> enrollInfo){
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO enrollments (student_id,course_id) VALUES (?,?)")) {
+
+            for (EnrollInfo currentInfo : enrollInfo){
+                preparedStatement.setInt(1,currentInfo.studentId());
+                preparedStatement.setInt(2,currentInfo.courseId());
+
+                preparedStatement.addBatch();
+            }
+
+            preparedStatement.executeBatch();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 

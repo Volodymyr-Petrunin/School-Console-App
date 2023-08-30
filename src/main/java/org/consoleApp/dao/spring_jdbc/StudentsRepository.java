@@ -3,6 +3,7 @@ package org.consoleApp.dao.spring_jdbc;
 import org.consoleApp.dao.StudentsDAO;
 import org.consoleApp.dao.spring_jdbc.rowMappers.StudentRowMapper;
 import org.consoleApp.domin.Student;
+import org.consoleApp.generation.records.EnrollInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -85,6 +86,15 @@ public class StudentsRepository implements StudentsDAO {
     @Override
     public boolean enrollStudentInCourse(int studentId, int courseId) {
         return jdbcTemplate.update(ENROLL_STUDENT_IN_COURSE, studentId, courseId) > 0;
+    }
+
+    @Override
+    public void enrollBatchStudentInCourse(List<EnrollInfo> enrollInfo){
+        List<Object[]> batchArgs = enrollInfo.stream()
+                .map(currentInfo -> new Object[]{currentInfo.studentId(), currentInfo.courseId()})
+                .toList();
+
+        jdbcTemplate.batchUpdate(ENROLL_STUDENT_IN_COURSE, batchArgs);
     }
 
     @Override

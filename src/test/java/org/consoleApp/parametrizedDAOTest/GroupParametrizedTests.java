@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles({"spring-jdbc", "native-jdbc"})
 @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
-@Sql(value = "classpath:SQLScript/create_tables.sql")
+@Sql(value = "classpath:schema.sql")
 @Sql(value = "classpath:SQLScript/group_test_script.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class GroupParametrizedTests {
     @Autowired

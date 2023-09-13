@@ -1,10 +1,23 @@
 package org.consoleApp.domin;
 
+import jakarta.persistence.*;
+
 import java.util.Objects;
 
+@Entity
+@Table(name = "groups")
 public class Group {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "group_id")
     private Integer id;
+
+    @Column(name = "group_name")
     private String name;
+
+    public Group() {
+
+    }
 
     public Group(Integer id, String name) {
         this.id = id;

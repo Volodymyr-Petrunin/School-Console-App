@@ -21,11 +21,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = DaoTestConfig.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ActiveProfiles({"spring-jdbc", "native-jdbc"})
+@ActiveProfiles({"spring-jdbc", "native-jdbc", "hibernate_jdbc"})
 @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
 @Sql(value = "classpath:schema.sql")
 @Sql(value = "classpath:SQLScript/group_test_script.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class GroupParametrizedTests {
+
     @Autowired
     private List<GroupDAO> groupDAOList;
     private final static List<Group> expectedGroup = List.of(

@@ -1,11 +1,30 @@
 package org.consoleApp.domin;
 
+import jakarta.persistence.*;
+
+import java.util.List;
 import java.util.Objects;
 
+@Entity
+@Table(name = "courses")
 public class Course {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "course_id")
     private Integer id;
+    @Column(name = "course_name")
     private String name;
+    @Column(name = "course_description")
     private String description;
+    @ManyToMany
+    @JoinTable(name = "enrollments",
+            joinColumns = @JoinColumn(name = "course_id"),
+            inverseJoinColumns = @JoinColumn(name = "student_id"))
+    private List<Student> students;
+
+    public Course() {
+
+    }
 
     public Course(Integer id, String name, String description) {
         this.id = id;

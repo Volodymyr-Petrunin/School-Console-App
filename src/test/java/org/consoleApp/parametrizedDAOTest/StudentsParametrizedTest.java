@@ -2,6 +2,7 @@ package org.consoleApp.parametrizedDAOTest;
 
 import org.consoleApp.dao.StudentsDAO;
 import org.consoleApp.domin.Course;
+import org.consoleApp.domin.Group;
 import org.consoleApp.domin.Student;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -27,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
-@ActiveProfiles({"spring-jdbc", "native-jdbc", "hibernate_jdbc"})
+@ActiveProfiles({"spring-jdbc", "native-jdbc", "hibernate_jpa"})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @Sql(scripts = "classpath:schema.sql")
 @Sql(value = "classpath:SQLScript/students_test_script.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -37,9 +38,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
     @Autowired
     private DataSource dataSource;
     private final List<Student> expectedStudents = List.of(
-            new Student(1, null, "John", "Doe"),
-            new Student(2, null, "Jane", "Smith"),
-            new Student(3, null, "Michael", "Johnson")
+            new Student(1, (Group)null, "John", "Doe"),
+            new Student(2, (Group)null, "Jane", "Smith"),
+            new Student(3, (Group)null, "Michael", "Johnson")
     );
     private List<Student> expected;
     private List<Student> actual;
@@ -72,10 +73,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
     void testInsert_ShouldInsertStudent_AndReturnCorrectListOfStudents(StudentsDAO studentsDAO) {
         expected = new ArrayList<>(expectedStudents);
 
-        Student newStudent = new Student(4, null, "Vova", "Petro");
+        Student newStudent = new Student(null, (Group)null, "Vova", "Petro");
         expected.add(newStudent);
 
         studentsDAO.insert(newStudent);
+
+        expected.get(3).setId(4);
         actual = studentsDAO.findAll();
 
         assertEquals(expected, actual);
@@ -85,15 +88,20 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
     @MethodSource("getImpl")
     void testInsertBatch_ShouldInsertBatchOfStudents_AndReturnCorrectListOfStudents(StudentsDAO studentsDAO) {
         List<Student> studentsBatch = List.of(
-                new Student(4, null, "Vova", "Petro"),
-                new Student(5, null, "Max", "Kozak"),
-                new Student(6, null, "Lando", "Brown")
+                new Student(null, (Group)null, "Vova", "Petro"),
+                new Student(null, (Group)null, "Max", "Kozak"),
+                new Student(null, (Group)null, "Lando", "Brown")
         );
 
         expected = new ArrayList<>(expectedStudents);
         expected.addAll(studentsBatch);
 
         studentsDAO.insertBatch(studentsBatch);
+
+        expected.get(3).setId(4);
+        expected.get(4).setId(5);
+        expected.get(5).setId(6);
+
         actual = studentsDAO.findAll();
 
         assertEquals(expected, actual);
@@ -102,7 +110,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
     @ParameterizedTest
     @MethodSource("getImpl")
     void testUpdate_ShouldUpdateFirstStudentsFromExpectedList(StudentsDAO studentsDAO) {
-        Student student = new Student(1, null, "Lando", "Brown");
+        Student student = new Student(1, (Group)null, "Lando", "Brown");
 
         boolean update = studentsDAO.update(student);
         actual = studentsDAO.findAll();

@@ -1,4 +1,4 @@
-package org.consoleApp.dao.hibernate_jdbc;
+package org.consoleApp.dao.hibernate_jpa;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -10,25 +10,19 @@ import org.consoleApp.domin.Student;
 import org.consoleApp.generation.records.EnrollInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-@Profile("hibernate_jdbc")
+@Profile("hibernate_jpa")
 @Transactional
 @Repository
-@PropertySource("classpath:JPAImpl.properties")
 public class JPAStudentImpl implements StudentsDAO {
     @Value("${studentBatchSize}")
     private int BATCH_SIZE;
-    private static final String REMOVE_STUDENT_FROM_COURSE = "DELETE FROM enrollments WHERE student_id = ? AND course_id = ?";
-    private static final String FIND_STUDENT_BY_COURSE_NAME = "SELECT s.student_id, s.group_id, s.first_name, s.last_name FROM students s " +
-            "JOIN enrollments e ON s.student_id = e.student_id JOIN courses c ON e.course_id = c.course_id " +
-            "WHERE c.course_name = ?";
+    private static final String FIND_ALL = "SELECT s FROM Student s ORDER BY s.id";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -39,13 +33,7 @@ public class JPAStudentImpl implements StudentsDAO {
 
     @Override
     public List<Student> findAll() {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Student> query = criteriaBuilder.createQuery(Student.class);
-        Root<Student> studentRoot = query.from(Student.class);
-
-        query.select(studentRoot).orderBy(criteriaBuilder.asc(studentRoot.get("id")));
-
-        return entityManager.createQuery(query).getResultList();
+        return entityManager.createQuery(FIND_ALL, Student.class).getResultList();
     }
 
     @Override
@@ -57,12 +45,10 @@ public class JPAStudentImpl implements StudentsDAO {
     @Override
     public boolean insert(Student student) {
         try {
-            Student managedStudent = entityManager.merge(student);
-            entityManager.persist(managedStudent);
+            entityManager.persist(student);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+            throw new IllegalStateException("Can't insert student", e);
         }
     }
 
@@ -71,8 +57,8 @@ public class JPAStudentImpl implements StudentsDAO {
         int currentObj = 0;
 
         for (Student student : students){
-            Student managedStudent = entityManager.merge(student);
-            entityManager.persist(managedStudent);
+
+            entityManager.persist(student);
 
             if (currentObj % BATCH_SIZE == 0 && currentObj > 0){
                 entityManager.flush();
@@ -87,31 +73,23 @@ public class JPAStudentImpl implements StudentsDAO {
 
     @Override
     public boolean update(Student student) {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaUpdate<Student> queryUpdate = criteriaBuilder.createCriteriaUpdate(Student.class);
-        Root<Student> studentRoot = queryUpdate.from(Student.class);
-
-        Optional<Integer> groupIdOptional = student.getGroupId();
-        Integer groupId = groupIdOptional.orElse(null);
-
-        queryUpdate.set("groupId", groupId);
-        queryUpdate.set("firstName", student.getFirstName());
-        queryUpdate.set("lastName", student.getLastName());
-
-        queryUpdate.where(criteriaBuilder.equal(studentRoot.get("id"), student.getId()));
-
-        return entityManager.createQuery(queryUpdate).executeUpdate() > 0;
+        try {
+            entityManager.merge(student);
+            return true;
+        } catch (Exception e) {
+            throw new IllegalStateException("Can't update student", e);
+        }
     }
 
     @Override
     public boolean delete(Student student) {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaDelete<Student> deleteQuery = criteriaBuilder.createCriteriaDelete(Student.class);
-        Root<Student> groupRoot = deleteQuery.from(Student.class);
-
-        deleteQuery.where(criteriaBuilder.equal(groupRoot.get("id"), student.getId()));
-
-        return entityManager.createQuery(deleteQuery).executeUpdate() > 0;
+        try {
+            Student mergedStudent = entityManager.merge(student);
+            entityManager.remove(mergedStudent);
+            return true;
+        } catch (Exception e) {
+            throw new IllegalStateException("Can't delete student", e);
+        }
     }
 
     @Override
@@ -147,27 +125,23 @@ public class JPAStudentImpl implements StudentsDAO {
             entityManager.merge(course);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+            throw new IllegalStateException("Can't enroll student in course", e);
         }
     }
 
     @Override
     public void enrollBatchStudentInCourse(List<EnrollInfo> enrollInfo) {
-        List<Course> courses = new ArrayList<>();
-        Student student = new Student();
-        Course course = new Course();
+        Student student;
+        Course course;
 
         for (EnrollInfo currentInfo : enrollInfo){
             student = entityManager.find(Student.class, currentInfo.studentId());
             course = entityManager.find(Course.class, currentInfo.courseId());
 
-            courses.add(course);
+            student.getCourses().add(course);
+            entityManager.merge(course);
         }
 
-        student.setCourses(courses);
-
-        entityManager.merge(course);
     }
 
     @Override

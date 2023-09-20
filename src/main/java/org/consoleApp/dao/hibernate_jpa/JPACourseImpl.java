@@ -1,4 +1,4 @@
-package org.consoleApp.dao.hibernate_jdbc;
+package org.consoleApp.dao.hibernate_jpa;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -10,19 +10,18 @@ import org.consoleApp.domin.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-@Profile("hibernate_jdbc")
+@Profile("hibernate_jpa")
 @Transactional
 @Repository
-@PropertySource("classpath:JPAImpl.properties")
 public class JPACourseImpl implements CourseDAO {
     @Value("${courseBatchSize}")
     private int BATCH_SIZE;
+    private static final String FIND_ALL = "SELECT c FROM Course c ORDER BY c.id";
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -33,13 +32,7 @@ public class JPACourseImpl implements CourseDAO {
 
     @Override
     public List<Course> findAll() {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Course> query = criteriaBuilder.createQuery(Course.class);
-        Root<Course> courseRoot = query.from(Course.class);
-
-        query.select(courseRoot).orderBy(criteriaBuilder.asc(courseRoot.get("id")));
-
-        return entityManager.createQuery(query).getResultList();
+        return entityManager.createQuery(FIND_ALL, Course.class).getResultList();
     }
 
     @Override
@@ -51,12 +44,10 @@ public class JPACourseImpl implements CourseDAO {
     @Override
     public boolean insert(Course course) {
         try {
-            Course managedCourse = entityManager.merge(course);
-            entityManager.persist(managedCourse);
+            entityManager.persist(course);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+            throw new IllegalStateException("Can't insert course", e);
         }
     }
 
@@ -65,8 +56,7 @@ public class JPACourseImpl implements CourseDAO {
         int currentObj = 0;
 
         for (Course course : courses){
-            Course managedCourse = entityManager.merge(course);
-            entityManager.persist(managedCourse);
+            entityManager.persist(course);
 
             if (currentObj % BATCH_SIZE == 0 && currentObj > 0){
                 entityManager.flush();
@@ -82,26 +72,23 @@ public class JPACourseImpl implements CourseDAO {
 
     @Override
     public boolean update(Course course) {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaUpdate<Course> updateQuery = criteriaBuilder.createCriteriaUpdate(Course.class);
-        Root<Course> courseRoot = updateQuery.from(Course.class);
-
-        updateQuery.set("name", course.getName());
-        updateQuery.set("description", course.getDescription());
-        updateQuery.where(criteriaBuilder.equal(courseRoot.get("id"), course.getId()));
-
-        return entityManager.createQuery(updateQuery).executeUpdate() > 0;
+        try {
+            entityManager.merge(course);
+            return true;
+        } catch (Exception e) {
+            throw new IllegalStateException("Can't update course", e);
+        }
     }
 
     @Override
     public boolean delete(Course course) {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaDelete<Course> deleteQuery = criteriaBuilder.createCriteriaDelete(Course.class);
-        Root<Course> courseRoot = deleteQuery.from(Course.class);
-
-        deleteQuery.where(criteriaBuilder.equal(courseRoot.get("id"), course.getId()));
-
-        return entityManager.createQuery(deleteQuery).executeUpdate() > 0;
+        try {
+            Course findCourse = entityManager.find(Course.class, course.getId());
+            entityManager.remove(findCourse);
+            return true;
+        } catch (Exception e) {
+            throw new IllegalStateException("Can't delete course", e);
+        }
     }
 
     @Override

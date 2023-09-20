@@ -41,7 +41,7 @@ public class StudentsGenerationData implements GenerationData<Student> {
             String currentName = getRandomElement(firstName);
             String currentSurname = getRandomElement(lastName);
 
-            resultData.add(new Student(null,null, currentName, currentSurname));
+            resultData.add(new Student(null, (Group) null, currentName, currentSurname));
         }
 
         return resultData;
@@ -58,7 +58,7 @@ public class StudentsGenerationData implements GenerationData<Student> {
 
             for (int index = 0; index < groupSize; index++){
                 Student student = studentList.remove(0);
-                student.setGroupId(group.getId());
+                student.setGroup(group);
                 groupStudents.add(student);
             }
 

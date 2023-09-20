@@ -21,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = DaoTestConfig.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ActiveProfiles({"spring-jdbc", "native-jdbc", "hibernate_jdbc"})
+@ActiveProfiles({"spring-jdbc", "native-jdbc", "hibernate_jpa"})
 @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
 @Sql(value = "classpath:schema.sql")
 @Sql(value = "classpath:SQLScript/group_test_script.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -65,10 +65,12 @@ class GroupParametrizedTests {
     void testInsert_ShouldInsertGroup_AndReturnCorrectListOfGroups(GroupDAO groupDAO) {
         expected = new ArrayList<>(expectedGroup);
 
-        Group newGroup = new Group(4, "DD-44");
+        Group newGroup = new Group(null, "DD-44");
         expected.add(newGroup);
 
         groupDAO.insert(newGroup);
+
+        expected.get(3).setId(4);
         actual = groupDAO.findAll();
 
         assertEquals(expected, actual);
@@ -78,15 +80,20 @@ class GroupParametrizedTests {
     @MethodSource("getImpl")
     void testInsertBatch_ShouldInsertBatchOfGroups_AndReturnCorrectListOfGroups(GroupDAO groupDAO) {
         List<Group> groupBatch = List.of(
-                new Group(4, "DD-44"),
-                new Group(5, "EE-55"),
-                new Group(6, "FF-66")
+                new Group(null, "DD-44"),
+                new Group(null, "EE-55"),
+                new Group(null, "FF-66")
         );
 
         expected = new ArrayList<>(expectedGroup);
         expected.addAll(groupBatch);
 
         groupDAO.insertBatch(groupBatch);
+
+        expected.get(3).setId(4);
+        expected.get(4).setId(5);
+        expected.get(5).setId(6);
+
         actual = groupDAO.findAll();
 
         assertEquals(expected, actual);

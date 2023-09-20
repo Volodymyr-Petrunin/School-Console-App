@@ -1,4 +1,4 @@
-package org.consoleApp.dao.hibernate_jdbc;
+package org.consoleApp.dao.hibernate_jpa;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -10,20 +10,19 @@ import org.consoleApp.domin.Student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
-@Profile("hibernate_jdbc")
+@Profile("hibernate_jpa")
 @Transactional
 @Repository
-@PropertySource("classpath:JPAImpl.properties")
 public class JPAGroupImpl implements GroupDAO {
 
     @Value("${groupBatchSize}")
     private int BATCH_SIZE;
+    private static final String FIND_ALL = "SELECT g FROM Group g ORDER BY g.id";
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -34,13 +33,7 @@ public class JPAGroupImpl implements GroupDAO {
 
     @Override
     public List<Group> findAll() {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Group> criteriaQuery = criteriaBuilder.createQuery(Group.class);
-        Root<Group> root = criteriaQuery.from(Group.class);
-
-        criteriaQuery.select(root).orderBy(criteriaBuilder.asc(root.get("id")));
-
-        return entityManager.createQuery(criteriaQuery).getResultList();
+        return entityManager.createQuery(FIND_ALL, Group.class).getResultList();
     }
 
     @Override
@@ -52,12 +45,10 @@ public class JPAGroupImpl implements GroupDAO {
     @Override
     public boolean insert(Group group) {
         try {
-            Group managedGroup = entityManager.merge(group);
-            entityManager.persist(managedGroup);
+            entityManager.persist(group);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
-            return false;
+            throw new IllegalStateException("Can't insert group", e);
         }
     }
 
@@ -66,8 +57,7 @@ public class JPAGroupImpl implements GroupDAO {
         int currentObj = 0;
 
         for (Group group : groups){
-            Group managedGroup = entityManager.merge(group);
-            entityManager.persist(managedGroup);
+            entityManager.persist(group);
 
             if (currentObj % BATCH_SIZE == 0 && currentObj > 0){
                 entityManager.flush();
@@ -82,25 +72,23 @@ public class JPAGroupImpl implements GroupDAO {
 
     @Override
     public boolean update(Group group) {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaUpdate<Group> updateQuery = criteriaBuilder.createCriteriaUpdate(Group.class);
-        Root<Group> groupRoot = updateQuery.from(Group.class);
-
-        updateQuery.set("name", group.getName());
-        updateQuery.where(criteriaBuilder.equal(groupRoot.get("id"), group.getId()));
-
-        return entityManager.createQuery(updateQuery).executeUpdate() > 0;
+        try {
+            entityManager.merge(group);
+            return true;
+        } catch (Exception e) {
+            throw new IllegalStateException("Can't update group", e);
+        }
     }
 
     @Override
     public boolean delete(Group group) {
-        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaDelete<Group> deleteQuery = criteriaBuilder.createCriteriaDelete(Group.class);
-        Root<Group> groupRoot = deleteQuery.from(Group.class);
-
-        deleteQuery.where(criteriaBuilder.equal(groupRoot.get("id"), group.getId()));
-
-        return entityManager.createQuery(deleteQuery).executeUpdate() > 0;
+        try {
+            Group mergedGroup = entityManager.merge(group);
+            entityManager.remove(mergedGroup);
+            return true;
+        } catch (Exception e) {
+            throw new IllegalStateException("Can't delete group", e);
+        }
     }
 
     @Override

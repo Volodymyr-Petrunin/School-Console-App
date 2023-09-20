@@ -9,7 +9,8 @@ import java.util.Objects;
 @Table(name = "courses")
 public class Course {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "courses_seq")
+    @SequenceGenerator(name = "courses_seq", sequenceName = "courses_seq", allocationSize = 1)
     @Column(name = "course_id")
     private Integer id;
     @Column(name = "course_name")

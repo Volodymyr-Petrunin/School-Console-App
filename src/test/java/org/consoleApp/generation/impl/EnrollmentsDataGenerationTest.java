@@ -3,6 +3,7 @@ package org.consoleApp.generation.impl;
 import org.consoleApp.dao.CourseDAO;
 import org.consoleApp.dao.StudentsDAO;
 import org.consoleApp.domin.Course;
+import org.consoleApp.domin.Group;
 import org.consoleApp.domin.Student;
 import org.consoleApp.generation.records.EnrollInfo;
 import org.junit.jupiter.api.Test;
@@ -20,12 +21,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @TestPropertySource(properties="numberOfStudentInOneCourse=3")
 class EnrollmentsDataGenerationTest {
     private final static List<Student> students = List.of(
-            new Student(1, null, "John", "Doe"),
-            new Student(2, null, "Jane", "Smith"),
-            new Student(3, null, "Michael", "Johnson"),
-            new Student(4, null, "Vova", "Petro"),
-            new Student(5, null, "Max", "Kozak"),
-            new Student(6, null, "Lando", "Brown")
+            new Student(1, (Group) null, "John", "Doe"),
+            new Student(2, (Group) null, "Jane", "Smith"),
+            new Student(3, (Group) null, "Michael", "Johnson"),
+            new Student(4, (Group) null, "Vova", "Petro"),
+            new Student(5, (Group) null, "Max", "Kozak"),
+            new Student(6, (Group) null, "Lando", "Brown")
     );
     private final static List<Course> courses = List.of(
             new Course(1, "PE", "PE"),

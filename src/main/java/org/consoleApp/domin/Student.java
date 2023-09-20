@@ -10,11 +10,13 @@ import java.util.Optional;
 @Table(name = "students")
 public class Student {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "students_seq")
+    @SequenceGenerator(name = "students_seq", sequenceName = "students_seq", allocationSize = 1)
     @Column(name = "student_id")
     private Integer id;
-    @Column(name = "group_id", insertable=false, updatable=false)
-    private Integer groupId;
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "group_id")
+    private Group group;
     @Column(name = "first_name")
     private String firstName;
     @Column(name = "last_name")
@@ -26,16 +28,18 @@ public class Student {
             inverseJoinColumns = @JoinColumn(name = "course_id"))
     private List<Course> courses;
 
-    @ManyToOne
-    @JoinColumn(name = "group_id")
-    private Group group;
-
     public Student() {
     }
 
     public Student(Integer id, Integer groupId, String firstName, String lastName) {
         this.id = id;
-        this.groupId = groupId;
+        this.group = new Group(groupId, null);
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+    public Student(Integer id, Group group, String firstName, String lastName) {
+        this.id = id;
+        this.group = group;
         this.firstName = firstName;
         this.lastName = lastName;
     }
@@ -49,11 +53,18 @@ public class Student {
     }
 
     public Optional<Integer> getGroupId() {
-        return Optional.ofNullable(groupId);
+        if (group != null) {
+            return Optional.ofNullable(group.getId());
+        }
+        return Optional.empty();
     }
 
-    public void setGroupId(int groupId) {
-        this.groupId = groupId;
+    public Group getGroup(){
+        return this.group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
     }
 
     public String getFirstName() {
@@ -77,13 +88,13 @@ public class Student {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Student student = (Student) o;
-        return Objects.equals(id, student.id) && Objects.equals(student.groupId, 0) || Objects.equals(student.groupId, null)
-                || Objects.equals(groupId, student.groupId) && Objects.equals(firstName, student.firstName)
+        return Objects.equals(id, student.id) && Objects.equals(student.group, new Group(0, null)) || Objects.equals(student.group, null)
+                || Objects.equals(group, student.group) && Objects.equals(firstName, student.firstName)
                 && Objects.equals(lastName, student.lastName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, groupId, firstName, lastName);
+        return Objects.hash(id, group, firstName, lastName);
     }
 }

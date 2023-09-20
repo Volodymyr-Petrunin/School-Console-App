@@ -8,7 +8,8 @@ import java.util.Objects;
 @Table(name = "groups")
 public class Group {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "groups_seq")
+    @SequenceGenerator(name = "groups_seq", sequenceName = "groups_seq", allocationSize = 1)
     @Column(name = "group_id")
     private Integer id;
 
@@ -24,7 +25,7 @@ public class Group {
         this.name = name;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -32,7 +33,7 @@ public class Group {
         return name;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

@@ -21,7 +21,7 @@ import java.util.Optional;
 public class JPAGroupImpl implements GroupDAO {
 
     @Value("${groupBatchSize}")
-    private int BATCH_SIZE;
+    private int batchSize;
     private static final String FIND_ALL = "SELECT g FROM Group g ORDER BY g.id";
     @PersistenceContext
     private EntityManager entityManager;
@@ -59,7 +59,7 @@ public class JPAGroupImpl implements GroupDAO {
         for (Group group : groups){
             entityManager.persist(group);
 
-            if (currentObj % BATCH_SIZE == 0 && currentObj > 0){
+            if (currentObj % batchSize == 0 && currentObj > 0){
                 entityManager.flush();
                 entityManager.clear();
             }

@@ -20,7 +20,7 @@ import java.util.Optional;
 @Repository
 public class JPACourseImpl implements CourseDAO {
     @Value("${courseBatchSize}")
-    private int BATCH_SIZE;
+    private int batchSize;
     private static final String FIND_ALL = "SELECT c FROM Course c ORDER BY c.id";
     @PersistenceContext
     private EntityManager entityManager;
@@ -58,7 +58,7 @@ public class JPACourseImpl implements CourseDAO {
         for (Course course : courses){
             entityManager.persist(course);
 
-            if (currentObj % BATCH_SIZE == 0 && currentObj > 0){
+            if (currentObj % batchSize == 0 && currentObj > 0){
                 entityManager.flush();
                 entityManager.clear();
             }

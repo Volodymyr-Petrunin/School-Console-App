@@ -21,7 +21,7 @@ import java.util.Optional;
 @Repository
 public class JPAStudentImpl implements StudentsDAO {
     @Value("${studentBatchSize}")
-    private int BATCH_SIZE;
+    private int batchSize;
     private static final String FIND_ALL = "SELECT s FROM Student s ORDER BY s.id";
 
     @PersistenceContext
@@ -60,7 +60,7 @@ public class JPAStudentImpl implements StudentsDAO {
 
             entityManager.persist(student);
 
-            if (currentObj % BATCH_SIZE == 0 && currentObj > 0){
+            if (currentObj % batchSize == 0 && currentObj > 0){
                 entityManager.flush();
                 entityManager.clear();
             }

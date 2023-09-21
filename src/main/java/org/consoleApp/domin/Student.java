@@ -11,7 +11,7 @@ import java.util.Optional;
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "students_seq")
-    @SequenceGenerator(name = "students_seq", sequenceName = "students_seq", allocationSize = 1)
+    @SequenceGenerator(name = "students_seq", sequenceName = "students_seq", allocationSize = 100)
     @Column(name = "student_id")
     private Integer id;
     @ManyToOne(cascade = CascadeType.MERGE)
@@ -53,10 +53,7 @@ public class Student {
     }
 
     public Optional<Integer> getGroupId() {
-        if (group != null) {
-            return Optional.ofNullable(group.getId());
-        }
-        return Optional.empty();
+        return Optional.ofNullable(group).map(Group::getId);
     }
 
     public Group getGroup(){

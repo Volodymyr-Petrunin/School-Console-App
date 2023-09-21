@@ -9,7 +9,7 @@ import java.util.Objects;
 public class Group {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "groups_seq")
-    @SequenceGenerator(name = "groups_seq", sequenceName = "groups_seq", allocationSize = 1)
+    @SequenceGenerator(name = "groups_seq", sequenceName = "groups_seq", allocationSize = 100)
     @Column(name = "group_id")
     private Integer id;
 

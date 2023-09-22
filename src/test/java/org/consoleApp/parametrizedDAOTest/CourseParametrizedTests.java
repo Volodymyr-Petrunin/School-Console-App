@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ActiveProfiles({"spring-jdbc", "native-jdbc"})
+@ActiveProfiles({"spring-jdbc", "native-jdbc", "hibernate_jpa"})
 @Sql(scripts = "classpath:schema.sql")
 @Sql(scripts = "classpath:SQLScript/course_test_script.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class CourseParametrizedTests {
@@ -61,10 +61,12 @@ class CourseParametrizedTests {
     void testInsert_ShouldInsertCourse_AndReturnCorrectListOfCourses(CourseDAO courseDAO){
         expected = new ArrayList<>(expectedCourses);
 
-        Course newCourse = new Course(4, "History", "History course");
+        Course newCourse = new Course(null, "History", "History course");
         expected.add(newCourse);
 
         courseDAO.insert(newCourse);
+
+        expected.get(3).setId(4);
         actual = courseDAO.findAll();
 
         assertEquals(expected, actual);
@@ -74,9 +76,9 @@ class CourseParametrizedTests {
     @MethodSource("getImpls")
     void testInsertBatch_ShouldInsertBatchOfCourse_AndReturnCorrectListOfCourses(CourseDAO courseDAO){
         List<Course> coursesBatch = List.of(
-                new Course(4, "History", "History course"),
-                new Course(5, "Biology", "Biology course"),
-                new Course(6, "Mathematics", "Mathematics course")
+                new Course(null, "History", "History course"),
+                new Course(null, "Biology", "Biology course"),
+                new Course(null, "Mathematics", "Mathematics course")
         );
 
         courseDAO.insertBatch(coursesBatch);
@@ -84,6 +86,10 @@ class CourseParametrizedTests {
 
         expected = new ArrayList<>(expectedCourses);
         expected.addAll(coursesBatch);
+
+        expected.get(3).setId(4);
+        expected.get(4).setId(5);
+        expected.get(5).setId(6);
 
         assertEquals(expected, actual);
     }

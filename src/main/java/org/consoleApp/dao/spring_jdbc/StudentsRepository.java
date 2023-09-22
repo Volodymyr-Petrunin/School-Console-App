@@ -10,7 +10,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.SqlParameterValue;
 import org.springframework.stereotype.Repository;
 
-import javax.sql.DataSource;
 import java.sql.Types;
 import java.util.List;
 import java.util.Optional;

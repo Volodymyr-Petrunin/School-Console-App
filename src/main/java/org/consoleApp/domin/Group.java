@@ -1,17 +1,31 @@
 package org.consoleApp.domin;
 
+import jakarta.persistence.*;
+
 import java.util.Objects;
 
+@Entity
+@Table(name = "groups")
 public class Group {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "groups_seq")
+    @SequenceGenerator(name = "groups_seq", sequenceName = "groups_seq", allocationSize = 100)
+    @Column(name = "group_id")
     private Integer id;
+
+    @Column(name = "group_name")
     private String name;
+
+    public Group() {
+
+    }
 
     public Group(Integer id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -19,7 +33,7 @@ public class Group {
         return name;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

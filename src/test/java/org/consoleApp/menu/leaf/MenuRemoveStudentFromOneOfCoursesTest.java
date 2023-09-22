@@ -4,6 +4,7 @@ import org.consoleApp.dao.jdbc.CourseDAOImpl;
 import org.consoleApp.dao.jdbc.GroupsDAOImpl;
 import org.consoleApp.dao.jdbc.StudentsDAOImpl;
 import org.consoleApp.domin.Course;
+import org.consoleApp.domin.Group;
 import org.consoleApp.domin.Student;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,7 +45,7 @@ class MenuRemoveStudentFromOneOfCoursesTest {
 
     @Test
     void testExecute_ShouldUseCorrectLogic_RemoveStudentFromOneOfCourses(){
-        Student student = new Student(STUDENT_ID, null, STUDENT_NAME, "Surname");
+        Student student = new Student(STUDENT_ID, (Group)null, STUDENT_NAME, "Surname");
         Course course = new Course(7, "IT", "description");
 
         String input = new StringJoiner(System.lineSeparator())

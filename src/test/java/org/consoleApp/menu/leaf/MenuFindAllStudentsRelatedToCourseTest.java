@@ -2,6 +2,7 @@ package org.consoleApp.menu.leaf;
 
 import org.consoleApp.dao.jdbc.GroupsDAOImpl;
 import org.consoleApp.dao.jdbc.StudentsDAOImpl;
+import org.consoleApp.domin.Group;
 import org.consoleApp.domin.Student;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,9 +41,9 @@ class MenuFindAllStudentsRelatedToCourseTest {
     void testExecute_ShouldUseCorrectLogic_FindAllStudentsRelatedToCourse(){
 
         List<Student> students = List.of(
-                new Student(1, null, "Vova", "IDK"),
-                new Student(2, null, "", "IDK"),
-                new Student(3, null, "WHY", "IDK")
+                new Student(1, (Group)null, "Vova", "IDK"),
+                new Student(2, (Group)null, "", "IDK"),
+                new Student(3, (Group)null, "WHY", "IDK")
         );
 
         String input = new StringJoiner(System.lineSeparator())

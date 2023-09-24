@@ -121,7 +121,7 @@ public class JPAStudentImpl implements StudentsDAO {
             Student student = entityManager.find(Student.class, studentId);
             Course course = entityManager.find(Course.class, courseId);
 
-            student.setCourses(Collections.singletonList(course));
+            student.setCourses(course);
             entityManager.merge(course);
             return true;
         } catch (Exception e) {

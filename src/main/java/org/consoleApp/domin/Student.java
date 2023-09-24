@@ -76,8 +76,8 @@ public class Student {
         return courses;
     }
 
-    public void setCourses(List<Course> courses) {
-        this.courses = courses;
+    public void setCourses(Course courses) {
+        this.courses.add(courses);
     }
 
     @Override

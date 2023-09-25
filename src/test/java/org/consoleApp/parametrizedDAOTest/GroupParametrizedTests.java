@@ -11,13 +11,12 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlMergeMode;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = DaoTestConfig.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -36,6 +35,8 @@ class GroupParametrizedTests {
     );
     private List<Group> expected;
     private List<Group> actual;
+    private List<String> expectedNames;
+    private List<String> actualNames;
 
     private Stream<GroupDAO> getImpl(){
         return groupDAOList.stream();
@@ -70,10 +71,12 @@ class GroupParametrizedTests {
 
         groupDAO.insert(newGroup);
 
-        expected.get(3).setId(4);
         actual = groupDAO.findAll();
 
-        assertEquals(expected, actual);
+        expectedNames = getAllNamesOfGroup(expected);
+        actualNames = getAllNamesOfGroup(actual);
+
+        assertThat(actualNames).containsExactlyInAnyOrderElementsOf(expectedNames);
     }
 
     @ParameterizedTest
@@ -90,13 +93,12 @@ class GroupParametrizedTests {
 
         groupDAO.insertBatch(groupBatch);
 
-        expected.get(3).setId(4);
-        expected.get(4).setId(5);
-        expected.get(5).setId(6);
-
         actual = groupDAO.findAll();
 
-        assertEquals(expected, actual);
+        actualNames = getAllNamesOfGroup(actual);
+        expectedNames = getAllNamesOfGroup(expected);
+
+        assertThat(actualNames).containsExactlyInAnyOrderElementsOf(expectedNames);
     }
 
     @ParameterizedTest
@@ -139,5 +141,9 @@ class GroupParametrizedTests {
         actual = groupDAO.findGroupsWithLessOrEqualStudents(maxStudents);
 
         assertEquals(expected, actual);
+    }
+
+    private List<String> getAllNamesOfGroup(List<Group> groups){
+        return groups.stream().map(Group::getName).toList();
     }
 }

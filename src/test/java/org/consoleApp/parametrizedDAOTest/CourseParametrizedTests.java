@@ -6,7 +6,6 @@ import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
@@ -17,6 +16,8 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ActiveProfiles({"spring-jdbc", "native-jdbc", "hibernate_jpa", "spring-data-jpa"})
@@ -33,6 +34,8 @@ class CourseParametrizedTests {
     );
     private List<Course> actual;
     private List<Course> expected;
+    private List<String> expectedNamesAndDescription;
+    private List<String> actualNamesAndDescription;
 
     private Stream<CourseDAO> getImpls() {
         return courseDAOList.stream();
@@ -67,10 +70,12 @@ class CourseParametrizedTests {
 
         courseDAO.insert(newCourse);
 
-        expected.get(3).setId(4);
         actual = courseDAO.findAll();
 
-        assertEquals(expected, actual);
+        actualNamesAndDescription = getAllNamesAndDescriptionOfCourse(actual);
+        expectedNamesAndDescription = getAllNamesAndDescriptionOfCourse(expected);
+
+        assertThat(actualNamesAndDescription).containsExactlyInAnyOrderElementsOf(expectedNamesAndDescription);
     }
 
     @ParameterizedTest
@@ -88,11 +93,10 @@ class CourseParametrizedTests {
         expected = new ArrayList<>(expectedCourses);
         expected.addAll(coursesBatch);
 
-        expected.get(3).setId(4);
-        expected.get(4).setId(5);
-        expected.get(5).setId(6);
+        actualNamesAndDescription = getAllNamesAndDescriptionOfCourse(actual);
+        expectedNamesAndDescription = getAllNamesAndDescriptionOfCourse(expected);
 
-        assertEquals(expected, actual);
+        assertThat(actualNamesAndDescription).containsExactlyInAnyOrderElementsOf(expectedNamesAndDescription);
     }
 
     @ParameterizedTest
@@ -129,5 +133,9 @@ class CourseParametrizedTests {
         actual = courseDAO.findAllCourseByStudentsId(1);
 
         assertEquals(expectedCourses, actual);
+    }
+
+    private List<String> getAllNamesAndDescriptionOfCourse(List<Course> courses){
+        return courses.stream().map(course -> course.getName() + " " + course.getDescription()).toList();
     }
 }

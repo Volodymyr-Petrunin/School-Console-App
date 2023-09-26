@@ -16,7 +16,6 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -34,8 +33,6 @@ class CourseParametrizedTests {
     );
     private List<Course> actual;
     private List<Course> expected;
-    private List<String> expectedNamesAndDescription;
-    private List<String> actualNamesAndDescription;
 
     private Stream<CourseDAO> getImpls() {
         return courseDAOList.stream();
@@ -72,10 +69,7 @@ class CourseParametrizedTests {
 
         actual = courseDAO.findAll();
 
-        actualNamesAndDescription = getAllNamesAndDescriptionOfCourse(actual);
-        expectedNamesAndDescription = getAllNamesAndDescriptionOfCourse(expected);
-
-        assertThat(actualNamesAndDescription).containsExactlyInAnyOrderElementsOf(expectedNamesAndDescription);
+        assertTrue(checkLists(actual, expected));
     }
 
     @ParameterizedTest
@@ -93,10 +87,7 @@ class CourseParametrizedTests {
         expected = new ArrayList<>(expectedCourses);
         expected.addAll(coursesBatch);
 
-        actualNamesAndDescription = getAllNamesAndDescriptionOfCourse(actual);
-        expectedNamesAndDescription = getAllNamesAndDescriptionOfCourse(expected);
-
-        assertThat(actualNamesAndDescription).containsExactlyInAnyOrderElementsOf(expectedNamesAndDescription);
+        assertTrue(checkLists(actual, expected));
     }
 
     @ParameterizedTest
@@ -135,7 +126,18 @@ class CourseParametrizedTests {
         assertEquals(expectedCourses, actual);
     }
 
-    private List<String> getAllNamesAndDescriptionOfCourse(List<Course> courses){
-        return courses.stream().map(course -> course.getName() + " " + course.getDescription()).toList();
+    private boolean checkLists(List<Course> actual, List<Course> expected){
+        if (actual.size() != expected.size()){
+            return false;
+        }
+
+        List<String> actualNameAndDescription = actual.stream()
+                .map(act -> act.getName() + " " + act.getDescription()).toList();
+
+        List<String> expectedNameAndDescription = expected.stream()
+                .map(ex -> ex.getName() + " " + ex.getDescription()).toList();
+
+        return actualNameAndDescription.containsAll(expectedNameAndDescription)
+                && expectedNameAndDescription.containsAll(actualNameAndDescription);
     }
 }

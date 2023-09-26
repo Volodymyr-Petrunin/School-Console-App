@@ -92,7 +92,7 @@ public class JPAStudentRepositoryAdapter implements StudentsDAO {
             Student student = repositoryJPA.findFirstById(studentId);
             Course course = repositoryJPA.findCourseById(courseId);
 
-            student.setCourses(course);
+            student.addCourse(course);
             repositoryJPA.save(student);
             return true;
         }

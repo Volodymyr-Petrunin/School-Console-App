@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Repository;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -121,7 +120,7 @@ public class JPAStudentImpl implements StudentsDAO {
             Student student = entityManager.find(Student.class, studentId);
             Course course = entityManager.find(Course.class, courseId);
 
-            student.setCourses(course);
+            student.addCourse(course);
             entityManager.merge(course);
             return true;
         } catch (Exception e) {

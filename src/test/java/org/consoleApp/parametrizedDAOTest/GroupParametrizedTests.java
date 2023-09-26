@@ -16,7 +16,6 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(classes = DaoTestConfig.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -35,8 +34,6 @@ class GroupParametrizedTests {
     );
     private List<Group> expected;
     private List<Group> actual;
-    private List<String> expectedNames;
-    private List<String> actualNames;
 
     private Stream<GroupDAO> getImpl(){
         return groupDAOList.stream();
@@ -73,10 +70,7 @@ class GroupParametrizedTests {
 
         actual = groupDAO.findAll();
 
-        expectedNames = getAllNamesOfGroup(expected);
-        actualNames = getAllNamesOfGroup(actual);
-
-        assertThat(actualNames).containsExactlyInAnyOrderElementsOf(expectedNames);
+        assertTrue(checkLists(actual, expected));
     }
 
     @ParameterizedTest
@@ -95,10 +89,7 @@ class GroupParametrizedTests {
 
         actual = groupDAO.findAll();
 
-        actualNames = getAllNamesOfGroup(actual);
-        expectedNames = getAllNamesOfGroup(expected);
-
-        assertThat(actualNames).containsExactlyInAnyOrderElementsOf(expectedNames);
+        assertTrue(checkLists(actual, expected));
     }
 
     @ParameterizedTest
@@ -143,7 +134,15 @@ class GroupParametrizedTests {
         assertEquals(expected, actual);
     }
 
-    private List<String> getAllNamesOfGroup(List<Group> groups){
-        return groups.stream().map(Group::getName).toList();
+    private boolean checkLists(List<Group> actual, List<Group> expected){
+        if (actual.size() != expected.size()){
+            return false;
+        }
+
+        List<String> actualGroupName = actual.stream().map(Group::getName).toList();
+        List<String> expectedGroupName = expected.stream().map(Group::getName).toList();
+
+       return actualGroupName.containsAll(expectedGroupName)
+               && expectedGroupName.containsAll(actualGroupName);
     }
 }

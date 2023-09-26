@@ -1,5 +1,6 @@
 package org.consoleApp.dao.spring_jpa.adapters;
 
+import jakarta.transaction.Transactional;
 import org.consoleApp.dao.GroupDAO;
 import org.consoleApp.dao.spring_jpa.GroupRepositoryJPA;
 import org.consoleApp.domin.Group;
@@ -13,6 +14,7 @@ import java.util.Optional;
 
 @Component
 @Profile("spring-data-jpa")
+@Transactional
 public class JPAGroupRepositoryAdapter implements GroupDAO {
     private final GroupRepositoryJPA repositoryJPA;
 

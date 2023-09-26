@@ -1,5 +1,6 @@
 package org.consoleApp.dao.spring_jpa.adapters;
 
+import jakarta.transaction.Transactional;
 import org.consoleApp.dao.CourseDAO;
 import org.consoleApp.dao.spring_jpa.CourseRepositoryJPA;
 import org.consoleApp.domin.Course;
@@ -13,6 +14,7 @@ import java.util.Optional;
 
 @Component
 @Profile("spring-data-jpa")
+@Transactional
 public class JPACourseRepositoryAdapter implements CourseDAO {
     private final CourseRepositoryJPA repositoryJPA;
 

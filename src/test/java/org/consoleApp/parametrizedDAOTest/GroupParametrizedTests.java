@@ -12,10 +12,12 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlMergeMode;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.consoleApp.parametrizedDAOTest.AssertionUtils.assertSameList;
 
 @SpringBootTest(classes = DaoTestConfig.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -32,6 +34,7 @@ class GroupParametrizedTests {
             new Group(2, "BB-22"),
             new Group(3, "CC-33")
     );
+    private final Function<Group, String> function = Group::getName;
     private List<Group> expected;
     private List<Group> actual;
 
@@ -70,7 +73,7 @@ class GroupParametrizedTests {
 
         actual = groupDAO.findAll();
 
-        assertTrue(checkLists(actual, expected));
+        assertSameList(actual, expected, function);
     }
 
     @ParameterizedTest
@@ -89,7 +92,7 @@ class GroupParametrizedTests {
 
         actual = groupDAO.findAll();
 
-        assertTrue(checkLists(actual, expected));
+        assertSameList(actual, expected, function);
     }
 
     @ParameterizedTest
@@ -132,17 +135,5 @@ class GroupParametrizedTests {
         actual = groupDAO.findGroupsWithLessOrEqualStudents(maxStudents);
 
         assertEquals(expected, actual);
-    }
-
-    private boolean checkLists(List<Group> actual, List<Group> expected){
-        if (actual.size() != expected.size()){
-            return false;
-        }
-
-        List<String> actualGroupName = actual.stream().map(Group::getName).toList();
-        List<String> expectedGroupName = expected.stream().map(Group::getName).toList();
-
-       return actualGroupName.containsAll(expectedGroupName)
-               && expectedGroupName.containsAll(actualGroupName);
     }
 }

@@ -13,9 +13,11 @@ import org.springframework.test.context.jdbc.Sql;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.consoleApp.parametrizedDAOTest.AssertionUtils.assertSameList;
 
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -31,6 +33,7 @@ class CourseParametrizedTests {
             new Course(2, "IT", "IT"),
             new Course(3, "Music", "Skryabin")
     );
+    private final Function<Course, String> function = course -> course.getName() + " " + course.getDescription();
     private List<Course> actual;
     private List<Course> expected;
 
@@ -69,7 +72,7 @@ class CourseParametrizedTests {
 
         actual = courseDAO.findAll();
 
-        assertTrue(checkLists(actual, expected));
+        assertSameList(actual, expected, function);
     }
 
     @ParameterizedTest
@@ -87,7 +90,7 @@ class CourseParametrizedTests {
         expected = new ArrayList<>(expectedCourses);
         expected.addAll(coursesBatch);
 
-        assertTrue(checkLists(actual, expected));
+        assertSameList(actual, expected, function);
     }
 
     @ParameterizedTest
@@ -124,20 +127,5 @@ class CourseParametrizedTests {
         actual = courseDAO.findAllCourseByStudentsId(1);
 
         assertEquals(expectedCourses, actual);
-    }
-
-    private boolean checkLists(List<Course> actual, List<Course> expected){
-        if (actual.size() != expected.size()){
-            return false;
-        }
-
-        List<String> actualNameAndDescription = actual.stream()
-                .map(act -> act.getName() + " " + act.getDescription()).toList();
-
-        List<String> expectedNameAndDescription = expected.stream()
-                .map(ex -> ex.getName() + " " + ex.getDescription()).toList();
-
-        return actualNameAndDescription.containsAll(expectedNameAndDescription)
-                && expectedNameAndDescription.containsAll(actualNameAndDescription);
     }
 }

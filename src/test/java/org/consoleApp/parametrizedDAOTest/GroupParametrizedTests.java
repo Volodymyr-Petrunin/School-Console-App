@@ -11,17 +11,17 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlMergeMode;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.consoleApp.parametrizedDAOTest.AssertionUtils.assertSameList;
 
 @SpringBootTest(classes = DaoTestConfig.class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ActiveProfiles({"spring-jdbc", "native-jdbc", "hibernate_jpa"})
+@ActiveProfiles({"spring-jdbc", "native-jdbc", "hibernate_jpa", "spring-data-jpa"})
 @SqlMergeMode(SqlMergeMode.MergeMode.MERGE)
 @Sql(value = "classpath:schema.sql")
 @Sql(value = "classpath:SQLScript/group_test_script.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -34,6 +34,7 @@ class GroupParametrizedTests {
             new Group(2, "BB-22"),
             new Group(3, "CC-33")
     );
+    private final Function<Group, String> function = Group::getName;
     private List<Group> expected;
     private List<Group> actual;
 
@@ -70,10 +71,9 @@ class GroupParametrizedTests {
 
         groupDAO.insert(newGroup);
 
-        expected.get(3).setId(4);
         actual = groupDAO.findAll();
 
-        assertEquals(expected, actual);
+        assertSameList(actual, expected, function);
     }
 
     @ParameterizedTest
@@ -90,13 +90,9 @@ class GroupParametrizedTests {
 
         groupDAO.insertBatch(groupBatch);
 
-        expected.get(3).setId(4);
-        expected.get(4).setId(5);
-        expected.get(5).setId(6);
-
         actual = groupDAO.findAll();
 
-        assertEquals(expected, actual);
+        assertSameList(actual, expected, function);
     }
 
     @ParameterizedTest

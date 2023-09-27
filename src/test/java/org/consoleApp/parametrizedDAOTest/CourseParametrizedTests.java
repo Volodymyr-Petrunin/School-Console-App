@@ -13,12 +13,15 @@ import org.springframework.test.context.jdbc.Sql;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.consoleApp.parametrizedDAOTest.AssertionUtils.assertSameList;
+
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@ActiveProfiles({"spring-jdbc", "native-jdbc", "hibernate_jpa"})
+@ActiveProfiles({"spring-jdbc", "native-jdbc", "hibernate_jpa", "spring-data-jpa"})
 @Sql(scripts = "classpath:schema.sql")
 @Sql(scripts = "classpath:SQLScript/course_test_script.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 class CourseParametrizedTests {
@@ -30,6 +33,7 @@ class CourseParametrizedTests {
             new Course(2, "IT", "IT"),
             new Course(3, "Music", "Skryabin")
     );
+    private final Function<Course, String> function = course -> course.getName() + " " + course.getDescription();
     private List<Course> actual;
     private List<Course> expected;
 
@@ -66,10 +70,9 @@ class CourseParametrizedTests {
 
         courseDAO.insert(newCourse);
 
-        expected.get(3).setId(4);
         actual = courseDAO.findAll();
 
-        assertEquals(expected, actual);
+        assertSameList(actual, expected, function);
     }
 
     @ParameterizedTest
@@ -87,11 +90,7 @@ class CourseParametrizedTests {
         expected = new ArrayList<>(expectedCourses);
         expected.addAll(coursesBatch);
 
-        expected.get(3).setId(4);
-        expected.get(4).setId(5);
-        expected.get(5).setId(6);
-
-        assertEquals(expected, actual);
+        assertSameList(actual, expected, function);
     }
 
     @ParameterizedTest
